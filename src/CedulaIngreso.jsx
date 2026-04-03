@@ -372,12 +372,12 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
       <div
         className="card-section"
         style={{
-          background: isLite ? "#fff" : "rgba(255,255,255,0.22)",
+          background: isLite ? "rgba(22,34,56,0.92)" : "rgba(255,255,255,0.22)",
           borderRadius: "18px",
-          boxShadow: isLite ? "0 2px 12px rgba(0,0,0,0.10)" : "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+          boxShadow: isLite ? "0 0 0 1px rgba(0,212,255,0.2)" : "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
           backdropFilter: isLite ? undefined : "blur(8px)",
           WebkitBackdropFilter: isLite ? undefined : "blur(8px)",
-          border: isLite ? "1px solid #e0e0e0" : "1px solid rgba(255,255,255,0.28)",
+          border: isLite ? "1px solid rgba(0,212,255,0.25)" : "1px solid rgba(255,255,255,0.28)",
           padding: "32px 24px",
           maxWidth: 400,
           margin: "0 auto",
@@ -392,7 +392,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
           value={cedula}
           onChange={e => setCedula(e.target.value)}
           placeholder="Número de identificación"
-          style={isLite ? { background: "#f7faff", border: "1.5px solid #c5d5ea" } : undefined}
+          style={isLite ? { background: "rgba(22,34,56,0.92)", border: "1px solid rgba(0,212,255,0.2)" } : undefined}
         />
         <button className="button" onClick={handleBuscar} style={{ marginTop: 16 }}>
           Continuar
@@ -442,12 +442,12 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
         >
           <div
             style={{
-              background: isLite ? "#fff" : "rgba(255,255,255,0.22)",
+              background: isLite ? "rgba(22,34,56,0.92)" : "rgba(255,255,255,0.22)",
               borderRadius: 18,
-              boxShadow: isLite ? "0 2px 12px rgba(0,0,0,0.10)" : "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+              boxShadow: isLite ? "0 0 0 1px rgba(0,212,255,0.2)" : "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
               backdropFilter: isLite ? undefined : "blur(8px)",
               WebkitBackdropFilter: isLite ? undefined : "blur(8px)",
-              border: isLite ? "1px solid #e0e0e0" : "1.5px solid rgba(255,255,255,0.28)",
+              border: isLite ? "1px solid rgba(0,212,255,0.25)" : "1.5px solid rgba(255,255,255,0.28)",
               padding: "32px 24px",
               minWidth: 300,
               textAlign: "center",
@@ -466,7 +466,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                 margin: "0 auto 14px auto",
                 display: "flex",
                 alignItems: "center",
-                background: "#f7faff",
+                background: "rgba(255,255,255,0.06)",
                 borderRadius: 8,
                 border: "1.5px solid #00D4FF",
                 boxShadow: "0 2px 8px rgba(0,212,255,0.07)",
@@ -485,7 +485,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                   borderRadius: 8,
                   fontSize: 16,
                   background: "transparent",
-                  color: "#222",
+                  color: "#F0F4F8",
                   fontFamily: "inherit",
                   outline: "none",
                   minWidth: 0,
@@ -594,12 +594,12 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
         >
           <div
             style={{
-              background: isLite ? "#fff" : "rgba(255,255,255,0.28)",
+              background: isLite ? "rgba(22,34,56,0.92)" : "rgba(255,255,255,0.28)",
               borderRadius: 18,
-              boxShadow: isLite ? "0 2px 12px rgba(0,0,0,0.10)" : "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+              boxShadow: isLite ? "0 0 0 1px rgba(0,212,255,0.2)" : "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
               backdropFilter: isLite ? undefined : "blur(12px)",
               WebkitBackdropFilter: isLite ? undefined : "blur(12px)",
-              border: isLite ? "1px solid #e0e0e0" : "1.5px solid rgba(255,255,255,0.35)",
+              border: isLite ? "1px solid rgba(0,212,255,0.25)" : "1.5px solid rgba(255,255,255,0.35)",
               padding: "32px 24px",
               minWidth: 300,
               maxWidth: 360,
@@ -622,11 +622,11 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
               Registrar llave de acceso
             </h3>
             
-            <p style={{ color: "#333", fontSize: 14, marginBottom: 8, lineHeight: 1.5 }}>
+            <p style={{ color: "rgba(240,244,248,0.85)", fontSize: 14, marginBottom: 8, lineHeight: 1.5 }}>
               No hay llaves de acceso disponibles en este dispositivo.
             </p>
-            
-            <p style={{ color: "#555", fontSize: 13, marginBottom: 20, lineHeight: 1.5 }}>
+
+            <p style={{ color: "rgba(240,244,248,0.65)", fontSize: 13, marginBottom: 20, lineHeight: 1.5 }}>
               ¿Deseas registrar una nueva llave de acceso (huella dactilar o Face ID) para iniciar sesión desde este dispositivo?
             </p>
             
@@ -656,15 +656,15 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                 onClick={handleCancelarRegistroLlave}
                 disabled={registrarLlaveLoading}
                 style={{
-                  background: "#f5f5f5",
-                  color: "#666",
-                  border: "1px solid #ddd",
+                  background: "rgba(22,34,56,0.6)",
+                  color: "rgba(240,244,248,0.5)",
+                  border: "1px solid rgba(0,212,255,0.25)",
                   borderRadius: 8,
                   padding: "10px 20px",
                   fontSize: 15,
                   fontWeight: 500,
                   cursor: registrarLlaveLoading ? "not-allowed" : "pointer",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                  boxShadow: "none",
                   letterSpacing: 0.5
                 }}
               >
@@ -682,10 +682,10 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
           display: "flex", alignItems: "center", justifyContent: "center"
         }}>
           <div style={{
-            background: isLite ? "#fff" : "rgba(255,255,255,0.28)", borderRadius: 18,
-            boxShadow: isLite ? "0 2px 12px rgba(0,0,0,0.10)" : "0 8px 32px 0 rgba(31,38,135,0.37)",
+            background: isLite ? "rgba(22,34,56,0.92)" : "rgba(255,255,255,0.28)", borderRadius: 18,
+            boxShadow: isLite ? "0 0 0 1px rgba(0,212,255,0.2)" : "0 8px 32px 0 rgba(31,38,135,0.37)",
             backdropFilter: isLite ? undefined : "blur(12px)", WebkitBackdropFilter: isLite ? undefined : "blur(12px)",
-            border: isLite ? "1px solid #e0e0e0" : "1.5px solid rgba(255,255,255,0.35)",
+            border: isLite ? "1px solid rgba(0,212,255,0.25)" : "1.5px solid rgba(255,255,255,0.35)",
             padding: "32px 24px", minWidth: 300, maxWidth: 360,
             textAlign: "center", fontFamily: "inherit"
           }}>
@@ -699,7 +699,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
               {pinModo === 'crear' ? 'Crea tu PIN de acceso' : 'Ingresa tu PIN'}
             </h3>
             {pinModo === 'crear' && (
-              <p style={{ color: "#555", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>
+              <p style={{ color: "rgba(240,244,248,0.65)", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>
                 Este dispositivo usará un PIN en lugar de huella dactilar. Elige un PIN de 4 a 8 dígitos.
               </p>
             )}
@@ -716,7 +716,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                 width: "100%", boxSizing: "border-box",
                 padding: "12px 14px", border: "1.5px solid #00D4FF",
                 borderRadius: 8, fontSize: 20, letterSpacing: 6,
-                textAlign: "center", background: "#f7faff",
+                textAlign: "center", background: "rgba(255,255,255,0.06)", color: "#F0F4F8",
                 marginBottom: 12, outline: "none", fontFamily: "inherit"
               }}
               autoFocus
@@ -735,7 +735,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                   width: "100%", boxSizing: "border-box",
                   padding: "12px 14px", border: "1.5px solid #00D4FF",
                   borderRadius: 8, fontSize: 20, letterSpacing: 6,
-                  textAlign: "center", background: "#f7faff",
+                  textAlign: "center", background: "rgba(255,255,255,0.06)", color: "#F0F4F8",
                   marginBottom: 12, outline: "none", fontFamily: "inherit"
                 }}
               />
@@ -758,7 +758,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                 onClick={() => { setShowPinModal(false); setPendingUsuario(null); }}
                 disabled={pinLoading}
                 style={{
-                  background: "#f5f5f5", color: "#666", border: "1px solid #ddd",
+                  background: "rgba(22,34,56,0.6)", color: "rgba(240,244,248,0.5)", border: "1px solid rgba(0,212,255,0.25)",
                   borderRadius: 8, padding: "10px 20px", fontSize: 15,
                   fontWeight: 500, cursor: pinLoading ? "not-allowed" : "pointer"
                 }}
@@ -777,10 +777,10 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
           display: "flex", alignItems: "center", justifyContent: "center"
         }}>
           <div style={{
-            background: isLite ? "#fff" : "rgba(255,255,255,0.28)", borderRadius: 18,
-            boxShadow: isLite ? "0 2px 12px rgba(0,0,0,0.10)" : "0 8px 32px 0 rgba(31,38,135,0.37)",
+            background: isLite ? "rgba(22,34,56,0.92)" : "rgba(255,255,255,0.28)", borderRadius: 18,
+            boxShadow: isLite ? "0 0 0 1px rgba(0,212,255,0.2)" : "0 8px 32px 0 rgba(31,38,135,0.37)",
             backdropFilter: isLite ? undefined : "blur(12px)", WebkitBackdropFilter: isLite ? undefined : "blur(12px)",
-            border: isLite ? "1px solid #e0e0e0" : "1.5px solid rgba(255,255,255,0.35)",
+            border: isLite ? "1px solid rgba(0,212,255,0.25)" : "1.5px solid rgba(255,255,255,0.35)",
             padding: "32px 24px", minWidth: 300, maxWidth: 370,
             textAlign: "center", fontFamily: "inherit"
           }}>
@@ -794,10 +794,10 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
             <h3 style={{ marginBottom: 12, color: "#F5A623", fontWeight: 700, fontSize: 17 }}>
               {diagnostico.titulo}
             </h3>
-            <p style={{ color: "#555", fontSize: 13, marginBottom: 14, lineHeight: 1.5 }}>
+            <p style={{ color: "rgba(240,244,248,0.65)", fontSize: 13, marginBottom: 14, lineHeight: 1.5 }}>
               Para solucionar el problema, verifica lo siguiente:
             </p>
-            <ol style={{ textAlign: "left", color: "#333", fontSize: 13, lineHeight: 1.8, paddingLeft: 20, marginBottom: 20 }}>
+            <ol style={{ textAlign: "left", color: "rgba(240,244,248,0.85)", fontSize: 13, lineHeight: 1.8, paddingLeft: 20, marginBottom: 20 }}>
               {diagnostico.pasos.map((paso, i) => (
                 <li key={i}>{paso}</li>
               ))}

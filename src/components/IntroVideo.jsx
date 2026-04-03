@@ -31,7 +31,8 @@ function IntroVideo({ onVideoEnd, onSlowDetected }) {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => escape(false), MAX_WAIT_MS);
+    // DEMO MODE: banner de modo lite siempre activo
+    const timer = setTimeout(() => escape(true), MAX_WAIT_MS);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

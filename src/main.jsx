@@ -115,7 +115,7 @@ function getUsuarioObra() {
   return { usuario, obra };
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://gruaman-bomberman-back.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 /**
  * Se suscribe a cambios en el ancho del viewport y retorna true cuando
@@ -266,7 +266,7 @@ function SOSButton() {
 
   const handleLlamar = () => {
     setShowModal(false);
-    window.location.href = "tel:573183485318";
+    window.location.href = "";
   };
 
   const handleWhatsApp = () => {
@@ -277,12 +277,12 @@ function SOSButton() {
 
   const handleRole = (role) => {
     setShowRoleModal(false);
-    if (role === "bomberman") {
+    if (role === "") {
       setShowRegionModal(true);
       return;
     }
-    if (role === "gruaman") {
-      handleRegion('https://chat.whatsapp.com/F9SaM1zAVuw5EoS7SKQ6rK?mode=gi_c');
+    if (role === "") {
+      handleRegion('');
     }
   };
 
@@ -433,21 +433,21 @@ function SOSButton() {
           <button
             className="permiso-trabajo-btn"
             style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-            onClick={() => handleRegion('https://chat.whatsapp.com/J3GqgX5SvOUAnPp30mB1ab?mode=gi_c')}
+            onClick={() => handleRegion('')}
           >
             Cundinamarca
           </button>
           <button
             className="permiso-trabajo-btn"
             style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-            onClick={() => handleRegion('https://chat.whatsapp.com/EDHaafxQQtcIDsxrm0plMR?mode=gi_c')}
+            onClick={() => handleRegion('')}
           >
             Antioquia
           </button>
           <button
             className="permiso-trabajo-btn"
             style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-            onClick={() => handleRegion('https://chat.whatsapp.com/DkkCKXpMxPj751BoltbLBq?mode=gi_c')}
+            onClick={() => handleRegion('')}
           >
             Atlantico
           </button>
@@ -541,421 +541,6 @@ function SOSButton() {
   );
 }
 
-/**
- * Botón flotante de paro de obra (STP) visible únicamente en móvil.
- *
- * Replica el patrón de SOSButton pero para paros no críticos. Ofrece llamada
- * (con sub-selección Bomberman / Gruaman) y reporte por WhatsApp con
- * enrutamiento por rol y región. Copia un mensaje STP preformateado al
- * portapapeles antes de abrir la URL del grupo.
- */
-function STPButton() {
-  const isMobile = useIsMobile();
-  const [showModal, setShowModal] = React.useState(false);
-  const [showCallModal, setShowCallModal] = React.useState(false);
-  const [mensaje, setMensaje] = React.useState("");
-  const [showRegionModalSTP, setShowRegionModalSTP] = React.useState(false);
-  const [showRoleModalSTP, setShowRoleModalSTP] = React.useState(false);
-  const { pos: stpPos, onPointerDown: stpDown, onPointerMove: stpMove, onPointerUp: stpUp, onClickCapture: stpClickCapture } =
-    useDraggable(() => ({ x: window.innerWidth - 78, y: window.innerHeight - 144 }));
-
-  if (!isMobile) return null;
-
-  function getUsuarioObra() {
-    let usuario = "";
-    let obra = "";
-    const nombreTrabajador = localStorage.getItem("nombre_trabajador");
-    if (nombreTrabajador && nombreTrabajador.trim()) {
-      usuario = nombreTrabajador;
-    } else {
-      const usuarioStorage = localStorage.getItem("usuario");
-      if (usuarioStorage) {
-        try {
-          const usuarioParsed = JSON.parse(usuarioStorage);
-          if (usuarioParsed && typeof usuarioParsed === "object" && usuarioParsed.nombre) {
-            usuario = usuarioParsed.nombre;
-          } else if (typeof usuarioParsed === "string") {
-            usuario = usuarioParsed;
-          } else {
-            usuario = usuarioStorage;
-          }
-        } catch {
-          usuario = usuarioStorage;
-        }
-      }
-    }
-    const obraStorage = localStorage.getItem("obra");
-    if (obraStorage && obraStorage.trim()) {
-      obra = obraStorage;
-    } else {
-      const nombreProyecto = localStorage.getItem("nombre_proyecto");
-      if (nombreProyecto && nombreProyecto.trim()) {
-        obra = nombreProyecto;
-      } else {
-        try {
-          const obraParsed = JSON.parse(obraStorage);
-          if (obraParsed && typeof obraParsed === "object" && obraParsed.nombre) {
-            obra = obraParsed.nombre;
-          } else if (typeof obraParsed === "string") {
-            obra = obraParsed;
-          }
-        } catch {
-          obra = obraStorage;
-        }
-      }
-    }
-    return { usuario, obra };
-  }
-
-  const handleSTP = () => {
-    setShowModal(true);
-    setMensaje("");
-  };
-
-  const handleWhatsApp = () => {
-    setShowModal(false);
-    setShowRoleModalSTP(true);
-    setMensaje("");
-  };
-
-  const handleRoleSTP = (role) => {
-    setShowRoleModalSTP(false);
-    if (role === "bomberman") {
-      setShowRegionModalSTP(true);
-      return;
-    }
-    if (role === "gruaman") {
-      handleRegionSTP('https://chat.whatsapp.com/F9SaM1zAVuw5EoS7SKQ6rK?mode=gi_c');
-    }
-  };
-
-  /**
-   * Copia el mensaje de paro de obra al portapapeles y abre la URL del grupo
-   * regional de WhatsApp.
-   * @param {string} regionUrl - Enlace profundo al grupo de WhatsApp de destino.
-   */
-  const handleRegionSTP = (regionUrl) => {
-    setShowRegionModalSTP(false);
-    const { usuario, obra } = getUsuarioObra();
-    const mensajeRegion = `Soy ${usuario || "un usuario"} en la obra ${obra || "desconocida"}, tuve un paro en obra, necesito asistencia`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(mensajeRegion);
-      setTimeout(() => {
-        window.location.href = regionUrl;
-      }, 300);
-      setMensaje("Mensaje copiado. Pega el mensaje en el grupo de WhatsApp.");
-    } else {
-      window.location.href = regionUrl;
-      setMensaje("Copia y pega este mensaje en el grupo: " + mensajeRegion);
-    }
-    setTimeout(() => setMensaje(""), 3000);
-  };
-
-  const handleLlamar = () => {
-    setShowModal(false);
-    setShowCallModal(true);
-  };
-
-  const handleLlamarBomberman = () => {
-    setShowCallModal(false);
-    window.location.href = "tel:573174319739";
-  };
-
-  const handleLlamarGruaman = () => {
-    setShowCallModal(false);
-    window.location.href = "tel:3134998161";
-  };
-
-  return (
-    <>
-      <button
-        style={{
-          position: "fixed",
-          left: stpPos.x,
-          top: stpPos.y,
-          zIndex: 1000,
-          borderRadius: "50%",
-          width: 64,
-          height: 64,
-          background: "#FFD600",
-          color: "#fff",
-          border: "none",
-          fontSize: 24,
-          fontWeight: "bold",
-          boxShadow: "0 2px 12px #FFD600",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 0,
-          lineHeight: "1",
-          cursor: "grab",
-          touchAction: "none",
-          userSelect: "none",
-        }}
-        onPointerDown={stpDown}
-        onPointerMove={stpMove}
-        onPointerUp={stpUp}
-        onClickCapture={stpClickCapture}
-        title="STP"
-        onClick={handleSTP}
-      >
-        <span style={{ fontSize: 24, fontWeight: "bold", letterSpacing: 2 }}>
-          <span style={{ color: "#fff" }}>S</span>
-          <span style={{ color: "#1976d2" }}>T</span>
-          <span style={{ color: "#fff" }}>P</span>
-        </span>
-      </button>
-      {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            left: 0,
-            top: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.25)",
-            zIndex: 2000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onClick={() => setShowModal(false)}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 14,
-              boxShadow: "0 2px 12px #FFD600",
-              padding: "24px 18px",
-              minWidth: 220,
-              display: "flex",
-              flexDirection: "column",
-              gap: 16,
-              alignItems: "center"
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 8 }}>¿Qué deseas hacer?</div>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#FFD600", color: "#222", minWidth: 120, fontWeight: 600 }}
-              onClick={handleLlamar}
-            >
-              Llamar
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#25D366", color: "#fff", minWidth: 120, fontWeight: 600 }}
-              onClick={handleWhatsApp}
-            >
-              Escribir mensaje
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#eee", color: "#222", minWidth: 120, fontWeight: 600 }}
-              onClick={() => setShowModal(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
-      {showRegionModalSTP && (
-        <div
-          style={{
-            position: "fixed",
-            left: 0,
-            top: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.25)",
-            zIndex: 2050,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onClick={() => setShowRegionModalSTP(false)}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 14,
-              boxShadow: "0 2px 12px #FFD600",
-              padding: "18px",
-              minWidth: 260,
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              alignItems: "center"
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ fontWeight: 600, fontSize: 16 }}>Elige la región</div>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-              onClick={() => handleRegionSTP('https://chat.whatsapp.com/J3GqgX5SvOUAnPp30mB1ab?mode=gi_c')}
-            >
-              Cundinamarca
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-              onClick={() => handleRegionSTP('https://chat.whatsapp.com/EDHaafxQQtcIDsxrm0plMR?mode=gi_c')}
-            >
-              Antioquia
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-              onClick={() => handleRegionSTP('https://chat.whatsapp.com/DkkCKXpMxPj751BoltbLBq?mode=gi_c')}
-            >
-              Atlantico
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#eee", color: "#222", minWidth: 120, fontWeight: 600 }}
-              onClick={() => setShowRegionModalSTP(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
-      {showRoleModalSTP && (
-        <div
-          style={{
-            position: "fixed",
-            left: 0,
-            top: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.25)",
-            zIndex: 2040,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onClick={() => setShowRoleModalSTP(false)}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 14,
-              boxShadow: "0 2px 12px #FFD600",
-              padding: "18px",
-              minWidth: 260,
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              alignItems: "center"
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ fontWeight: 600, fontSize: 16 }}>¿Eres bomberman o gruaman?</div>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-              onClick={() => handleRoleSTP('bomberman')}
-            >
-              Bomberman
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#c00", color: "#fff", minWidth: 160, fontWeight: 600 }}
-              onClick={() => handleRoleSTP('gruaman')}
-            >
-              Gruaman
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#eee", color: "#222", minWidth: 120, fontWeight: 600 }}
-              onClick={() => setShowRoleModalSTP(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
-      {showCallModal && (
-        <div
-          style={{
-            position: "fixed",
-            left: 0,
-            top: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.25)",
-            zIndex: 2100,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onClick={() => setShowCallModal(false)}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 14,
-              boxShadow: "0 2px 12px #FFD600",
-              padding: "24px 18px",
-              minWidth: 220,
-              display: "flex",
-              flexDirection: "column",
-              gap: 16,
-              alignItems: "center"
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 8 }}>¿Eres bomberman o gruaman?</div>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#1976d2", color: "#fff", minWidth: 120, fontWeight: 600 }}
-              onClick={handleLlamarBomberman}
-            >
-              Bomberman
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#c00", color: "#fff", minWidth: 120, fontWeight: 600 }}
-              onClick={handleLlamarGruaman}
-            >
-              Gruaman
-            </button>
-            <button
-              className="permiso-trabajo-btn"
-              style={{ background: "#eee", color: "#222", minWidth: 120, fontWeight: 600 }}
-              onClick={() => setShowCallModal(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
-      {mensaje && (
-        <div
-          style={{
-            position: "fixed",
-            right: 14,
-            bottom: "150px",
-            zIndex: 1100,
-            background: "#fff",
-            border: "2px solid #FFD600",
-            borderRadius: 12,
-            padding: "8px 16px",
-            boxShadow: "0 2px 8px #FFD600",
-            minWidth: 220,
-            color: "#1976d2",
-            fontWeight: "bold",
-            textAlign: "center"
-          }}
-        >
-          {mensaje}
-        </div>
-      )}
-    </>
-  );
-}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -1005,7 +590,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <span className="global-cloud global-cloud--4">☁️</span>
         </div>
         <SOSButton />
-        <STPButton />
         <div style={{ position: "relative", zIndex: 1 }}>
           <Routes>
             <Route path="/game/rotate-screen" element={<GameFlow key="rotate" step="rotate" />} />

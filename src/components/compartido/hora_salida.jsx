@@ -153,14 +153,14 @@ export default function HoraSalida() {
             style={{
               marginTop: 6,
               fontSize: 20,
-              background: "rgba(255,255,255,0.22)",
-              borderRadius: "14px",
-              boxShadow: "0 4px 16px 0 rgba(31, 38, 135, 0.18)",
+              background: "rgba(255,255,255,0.05)",
+              borderRadius: "10px",
+              boxShadow: "0 0 0 1px rgba(0,212,255,0.2)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              border: "1px solid rgba(255,255,255,0.28)",
+              border: "1px solid rgba(0,212,255,0.25)",
               textAlign: "center",
-              color: "#222",
+              color: "#F0F4F8",
               fontWeight: 600,
               minHeight: 48,
               display: "flex",
@@ -183,14 +183,14 @@ export default function HoraSalida() {
       </div>
       <button
         className="button"
-        style={{ width: "100%", background: "#1976d2", color: "#fff" }}
+        style={{ width: "100%", background: "#00D4FF", color: "#0C1624" }}
         onClick={handleGuardar}
         disabled={!horaSalida}
       >
         Guardar
       </button>
       {guardado && (
-        <div style={{ color: "#1976d2", marginTop: 16, textAlign: "center", fontWeight: 600 }}>
+        <div style={{ color: "#00D4FF", marginTop: 16, textAlign: "center", fontWeight: 600 }}>
           ¡Hora de salida registrada y guardada!
         </div>
       )}
