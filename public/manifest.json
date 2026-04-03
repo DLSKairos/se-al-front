@@ -1,0 +1,13 @@
+{
+  "gcm_sender_id": "103953800507",
+  "short_name": "SEÑAL",
+  "name": "SEÑAL — Tu operación en movimiento",
+  "icons": [
+    { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0C1624",
+  "background_color": "#0C1624"
+}

@@ -1,0 +1,96 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ─── Variables globales SEÑAL ─── */
+:root {
+  --navy:        #0C1624;
+  --navy-mid:    #111E30;
+  --navy-light:  #162238;
+  --signal:      #00D4FF;
+  --signal-dim:  rgba(0,212,255,0.12);
+  --signal-glow: rgba(0,212,255,0.35);
+  --amber:       #F5A623;
+  --amber-dim:   rgba(245,166,35,0.15);
+  --off-white:   #F0F4F8;
+  --muted:       rgba(240,244,248,0.45);
+
+  /* Liquid glass */
+  --glass-bg:       rgba(22,34,56,0.75);
+  --glass-bg-light: rgba(22,34,56,0.6);
+  --glass-border:   rgba(0,212,255,0.15);
+  --glass-blur:     blur(16px);
+  --glass-shadow:   0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+  --radius-glass:   18px;
+  --radius-glass-md: 12px;
+  --radius-input:   10px;
+  --radius-btn:     8px;
+  --radius-badge:   4px;
+
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: var(--signal);
+  text-decoration: inherit;
+}
+a:hover {
+  color: var(--off-white);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--navy);
+  color: var(--off-white);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-attachment: fixed;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  background: var(--glass-bg-light);
+  backdrop-filter: var(--glass-blur);
+  color: var(--signal);
+  transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+  margin-bottom: 5%;
+}
+
+button:hover {
+  box-shadow: 0 0 16px var(--signal-glow);
+  color: var(--off-white);
+}

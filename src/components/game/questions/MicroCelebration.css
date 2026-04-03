@@ -1,0 +1,68 @@
+@import './shared.css';
+
+/* ─── Overlay común ─── */
+.mc-overlay {
+  position:        fixed;
+  inset:           0;
+  z-index:         200;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  pointer-events:  none;  /* no bloquea interacción por si acaso */
+}
+
+/* ─── Positivo: fondo semitransparente verdoso ─── */
+.mc-overlay--positive {
+  background: rgba(22, 163, 74, 0.08);
+}
+
+/* ─── Negativo: fondo anaranjado suave ─── */
+.mc-overlay--negative {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* ─── Neutral: sin fondo ─── */
+.mc-overlay--neutral {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Partícula de confetti ─── */
+.mc-particle {
+  position:  absolute;
+  animation: confettiFall var(--celebration-duration) ease-in both;
+}
+
+/* ─── Ícono central ─── */
+.mc-check {
+  font-size:   4.5rem;
+  font-weight: 700;
+  line-height: 1;
+  animation:   fadeInScale 0.3s ease both;
+}
+
+.mc-check--positive {
+  color:       var(--color-yes);
+  text-shadow: 0 2px 12px rgba(22, 163, 74, 0.4);
+}
+
+.mc-check--neutral {
+  color:       var(--color-na);
+}
+
+/* ─── Negativo: shake + ícono ─── */
+.mc-warning-icon {
+  font-size:  4rem;
+  line-height: 1;
+  animation:  shakeX 0.5s ease both;
+}
+
+.mc-warning-text {
+  margin:      0.5rem 0 0;
+  font-size:   1rem;
+  font-weight: 600;
+  color:       var(--color-no-dark);
+  animation:   fadeInScale 0.35s 0.2s ease both;
+  opacity:     0;
+  animation-fill-mode: both;
+}
