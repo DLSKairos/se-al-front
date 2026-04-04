@@ -251,10 +251,8 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
         setAdminError("");
         setShowAdminModal(false);
         localStorage.setItem("admin_rol", data.rol);
-        if (data.rol === "gruaman") {
-          window.location.href = "/administrador";
-        } else if (data.rol === "bomberman") {
-          window.location.href = "/administrador_bomberman";
+        if (data.rol === "gruaman" || data.rol === "bomberman") {
+          window.location.href = "/admin";
         } else {
           setAdminError("Rol no reconocido.");
         }

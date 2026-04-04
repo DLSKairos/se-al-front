@@ -1,7 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App";
 import Eleccion from "./components/gruaman/eleccion";
+import AdminGuard          from "./components/admin/layout/AdminGuard";
+import AdminLayout         from "./components/admin/layout/AdminLayout";
+import AdminDashboard      from "./components/admin/pages/AdminDashboard";
+import AdminPermisosPanel  from "./components/admin/pages/AdminPermisos";
+import AdminUsuariosPanel  from "./components/admin/pages/AdminUsuarios";
+import AdminObrasPanel     from "./components/admin/pages/AdminObras";
+import AdminChatPanel      from "./components/admin/pages/AdminChat";
 import EleccionAIC from "./components/bomberman/eleccionaic";
 import PlanillaBombeo from "./components/bomberman/planillabombeo";
 import Checklist from "./components/bomberman/checklist";
@@ -116,6 +124,10 @@ function getUsuarioObra() {
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
+});
 
 /**
  * Se suscribe a cambios en el ancho del viewport y retorna true cuando
@@ -558,6 +570,7 @@ if ('serviceWorker' in navigator) {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <div
         style={{
@@ -652,11 +665,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="/eleccion_tecnicos/*" element={<EleccionTecnicos />} />
             <Route path="/pqr" element={<PQR />} />
             <Route path="/hallazgos" element={<Hallazgos />} />
+
+            {/* ── Nuevo panel admin /admin ── */}
+            <Route element={<AdminGuard />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="permisos" element={<AdminPermisosPanel />} />
+                <Route path="usuarios" element={<AdminUsuariosPanel />} />
+                <Route path="obras"    element={<AdminObrasPanel />} />
+                <Route path="chat"     element={<AdminChatPanel />} />
+              </Route>
+            </Route>
           </Routes>
           {/* <Footer /> */}
         </div>
       </div>
     </BrowserRouter>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

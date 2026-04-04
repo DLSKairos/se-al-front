@@ -94,3 +94,50 @@ button:hover {
   box-shadow: 0 0 16px var(--signal-glow);
   color: var(--off-white);
 }
+
+/* ─── Tailwind 4 tokens para admin panel ─── */
+@theme {
+  --color-signal:      #00D4FF;
+  --color-amber:       #F5A623;
+  --color-success:     #22c55e;
+  --color-destructive: #ef4444;
+  --color-navy:        #0C1624;
+  --color-navy-mid:    #111E30;
+  --color-navy-light:  #162238;
+  --font-syne: 'Syne', sans-serif;
+  --font-dm:   'DM Sans', sans-serif;
+  --radius-glass:    18px;
+  --radius-glass-md: 12px;
+  --radius-badge:    4px;
+}
+
+/* ─── Glassmorphism utilities ─── */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-glass);
+}
+.glass-card-md {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-glass-md);
+}
+.glow-btn {
+  box-shadow: 0 0 20px var(--signal-glow), 0 0 40px rgba(0,212,255,0.15);
+}
+.text-gradient {
+  background: linear-gradient(135deg, #00D4FF, #F5A623);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-glow { box-shadow: 0 0 30px var(--signal-dim); }
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
