@@ -95,6 +95,15 @@ button:hover {
   color: var(--off-white);
 }
 
+/* ─── Suprimir botones nativos del navegador en inputs ─── */
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-strong-password-auto-fill-button {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* ─── Tailwind 4 tokens para admin panel ─── */
 @theme {
   --color-signal:      #00D4FF;

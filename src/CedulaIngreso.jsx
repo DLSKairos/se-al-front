@@ -462,13 +462,6 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                 width: "100%",
                 maxWidth: 320,
                 margin: "0 auto 14px auto",
-                display: "flex",
-                alignItems: "center",
-                background: "rgba(255,255,255,0.06)",
-                borderRadius: 8,
-                border: "1.5px solid #00D4FF",
-                boxShadow: "0 2px 8px rgba(0,212,255,0.07)",
-                transition: "box-shadow 0.2s",
               }}
             >
               <input
@@ -477,18 +470,21 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                 value={adminPass}
                 onChange={e => setAdminPass(e.target.value)}
                 style={{
-                  flex: 1,
+                  display: "block",
+                  width: "100%",
+                  boxSizing: "border-box",
                   padding: "12px 44px 12px 14px",
-                  border: "none",
+                  border: "1.5px solid #00D4FF",
                   borderRadius: 8,
                   fontSize: 16,
-                  background: "transparent",
+                  background: "rgba(255,255,255,0.06)",
                   color: "#F0F4F8",
                   fontFamily: "inherit",
                   outline: "none",
-                  minWidth: 0,
+                  boxShadow: "0 2px 8px rgba(0,212,255,0.07)",
                 }}
                 onKeyDown={e => { if (e.key === "Enter") handleAdminLogin(); }}
+                autoComplete="new-password"
                 autoFocus
               />
               <button
@@ -497,23 +493,32 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
                 tabIndex={-1}
                 style={{
                   position: "absolute",
-                  right: 10,
+                  right: 8,
                   top: "50%",
                   transform: "translateY(-50%)",
+                  WebkitAppearance: "none",
+                  appearance: "none",
                   background: "none",
+                  backdropFilter: "none",
+                  WebkitBackdropFilter: "none",
                   border: "none",
+                  boxShadow: "none",
                   cursor: "pointer",
                   padding: 0,
                   margin: 0,
+                  marginBottom: 0,
                   outline: "none",
-                  zIndex: 2,
                   display: "flex",
                   alignItems: "center",
-                  height: 32,
-                  width: 32,
                   justifyContent: "center",
+                  height: 28,
+                  width: 28,
                   borderRadius: "50%",
-                  transition: "background 0.15s",
+                  lineHeight: 1,
+                  boxSizing: "border-box",
+                  color: "inherit",
+                  fontWeight: "normal",
+                  zIndex: 1,
                 }}
                 aria-label={adminShowPass ? "Ocultar contraseña" : "Mostrar contraseña"}
                 onMouseDown={e => e.preventDefault()}
