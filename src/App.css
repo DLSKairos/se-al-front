@@ -51,30 +51,6 @@ body {
   margin-bottom: 28px;
 }
 
-.empresa-boton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 !important;
-  height: 64px;
-  width: 100px;
-  min-width: 80px;
-  max-width: 100px;
-  border-radius: var(--radius-glass-md);
-  box-shadow: none;
-  background: none !important;
-  border: none !important;
-}
-.empresa-boton.selected {
-  box-shadow: 0 2px 12px var(--signal-dim);
-  border: 3px solid var(--signal) !important;
-  background: var(--signal-dim) !important;
-  border-radius: var(--radius-glass-md);
-}
-.empresa-boton.selected[data-empresa="AIC"] {
-  border: 3px solid var(--amber) !important;
-  background: var(--amber-dim) !important;
-}
 .empresa-img {
   height: 56px;
   width: auto;

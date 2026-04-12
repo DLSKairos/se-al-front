@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
  * Soporta tanto la clave "admin_rol" (nuevo panel /admin) como las claves
  * legadas "rol_admin" y "rol" para no romper el flujo antiguo.
  *
- * Valores esperados: "gruaman" | "bomberman"
+ * empresaId se lee directamente de "admin_empresa_id" en localStorage,
+ * almacenado durante el login por el backend.
  */
 export function useAdminRole() {
   const navigate = useNavigate();
@@ -19,11 +20,13 @@ export function useAdminRole() {
     ""
   ).toLowerCase();
 
-  const empresaId = rol === "gruaman" ? 1 : rol === "bomberman" ? 2 : null;
+  const empresaId =
+    parseInt(localStorage.getItem("admin_empresa_id") || "", 10) || null;
 
   const logout = useCallback(() => {
     const keysToRemove = [
       "admin_rol",
+      "admin_empresa_id",
       "rol_admin",
       "rol",
       "nombre_trabajador",
@@ -40,8 +43,6 @@ export function useAdminRole() {
   return {
     rol,
     empresaId,
-    isGruaman: rol === "gruaman",
-    isBomberman: rol === "bomberman",
     logout,
   };
 }

@@ -11,7 +11,7 @@ import axios from "axios";
 
 /** URL base de la API, configurable mediante la variable de entorno VITE_API_BASE_URL. */
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://gruaman-bomberman-back.onrender.com";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 /** Instancia preconfigurada de Axios lista para ser importada por cualquier módulo. */
 const api = axios.create({ baseURL: API_BASE_URL });

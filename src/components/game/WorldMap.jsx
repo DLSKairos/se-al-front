@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getWorldsByCharacter, getCharacterName } from '../../config/gameConfig';
+import { getWorldsByCharacter } from '../../config/gameConfig';
 import { getCompletedWorlds, computeWorldStatus, markWorldComplete } from '../../db/gameProgress';
 import WorldNode        from './WorldNode';
 import CircleTransition from './CircleTransition';
@@ -18,10 +18,9 @@ const TUTORIAL_KEY = 'game_tutorial_seen';
 export default function WorldMap() {
   const navigate = useNavigate();
 
-  const character     = localStorage.getItem('selectedCharacter') || 'bomberman';
-  const userName      = localStorage.getItem('nombre_trabajador')  || 'Héroe';
-  const characterName = getCharacterName(character);
-  const isCrane       = character === 'gruaman';
+  const character     = localStorage.getItem('selectedCharacter') || 'trabajador';
+  const userName      = localStorage.getItem('nombre_trabajador')  || 'Operario';
+  const characterName = localStorage.getItem('cargo_trabajador') || 'Operario';
 
   const worlds      = getWorldsByCharacter(character);
   const dailyWorlds = worlds.filter(w => w.daily !== false);
@@ -98,7 +97,7 @@ export default function WorldMap() {
             />
           ) : (
             <span className="wm-avatar-emoji" aria-hidden="true">
-              {isCrane ? '🏗️' : '💧'}
+              👷
             </span>
           )}
         </div>

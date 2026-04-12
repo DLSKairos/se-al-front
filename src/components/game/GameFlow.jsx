@@ -27,7 +27,7 @@ function GameFlow({ step }) {
   const [revealing, setRevealing] = useState(step !== 'rotate');
   const [covering,  setCovering]  = useState(false);
 
-  const character = localStorage.getItem('selectedCharacter') || 'bomberman';
+  const character = localStorage.getItem('selectedCharacter') || 'trabajador';
   const obraName  =
     localStorage.getItem('obra') ||
     localStorage.getItem('nombre_proyecto') ||

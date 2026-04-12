@@ -133,8 +133,7 @@
   letter-spacing: 0.8px;
 }
 
-.wm-char-name--bomberman { color: #F5A623; }
-.wm-char-name--gruaman   { color: #00D4FF; }
+.wm-char-name--trabajador { color: #00D4FF; }
 
 /* Progreso */
 .wm-progress-wrap {

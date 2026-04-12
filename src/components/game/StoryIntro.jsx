@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { getCharacterName } from '../../config/gameConfig';
 import './StoryIntro.css';
 
 const TYPEWRITER_SPEED = 50; // ms por carácter
@@ -7,10 +6,10 @@ const DIALOG_PAUSE    = 1600; // ms de pausa después de terminar de tipear
 
 function buildDialogs(characterName, obraName) {
   return [
-    `${characterName}, has sido seleccionado para una importante misión`,
-    `El día de hoy en ${obraName}, tu experiencia es crucial para el equipo`,
-    `Antes de iniciar la obra, debes completar tu checklist de héroe`,
-    `Un gran poder conlleva una gran responsabilidad. ¡Adelante, héroe!`,
+    `${characterName}, hoy tienes una jornada importante por delante`,
+    `En ${obraName}, tu trabajo marca la diferencia`,
+    `Completa tus registros del día para mantener la operación al día`,
+    `Todo listo. ¡Que tengas una jornada segura!`,
   ];
 }
 
@@ -18,12 +17,12 @@ function buildDialogs(characterName, obraName) {
  * StoryIntro — intro cinematográfica con diálogos tipo typewriter
  *
  * Props:
- *   character  string  — 'bomberman' | 'gruaman'
+ *   character  string  — clave del personaje (ignorada; el nombre viene de localStorage)
  *   obraName   string  — nombre de la obra seleccionada
  *   onComplete fn      — callback al terminar todos los diálogos
  */
-function StoryIntro({ character = 'bomberman', obraName = 'la obra', onComplete }) {
-  const characterName = getCharacterName(character);
+function StoryIntro({ character = 'trabajador', obraName = 'la obra', onComplete }) {
+  const characterName = localStorage.getItem('cargo_trabajador') || 'Operario';
   const dialogs       = buildDialogs(characterName, obraName);
 
   const [dialogIndex,   setDialogIndex]   = useState(0);
@@ -77,7 +76,7 @@ function StoryIntro({ character = 'bomberman', obraName = 'la obra', onComplete 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogIndex]);
 
-  const charEmoji = character === 'gruaman' ? '🏗️' : '💧';
+  const charEmoji = '👷';
 
   return (
     <div className="si-overlay">

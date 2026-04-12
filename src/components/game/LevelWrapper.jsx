@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getWorldById, getCharacterName } from '../../config/gameConfig';
+import { getWorldById } from '../../config/gameConfig';
 import CircleTransition  from './CircleTransition';
 import QuestionWrapper   from './questions/QuestionWrapper';
 import { parseFormToQuestions, submitFormData } from '../../utils/formParser';
@@ -16,24 +16,9 @@ import './LevelWrapper.css';
  * entre renderizados.
  */
 const FORM_MAP = {
-  'hora-ingreso':              lazy(() => import('../compartido/horada_ingreso')),
-  'permiso-trabajo':           lazy(() => import('../compartido/permiso_trabajo')),
-  'chequeo-altura':            lazy(() => import('../compartido/chequeo_alturas')),
-  'hora-salida':               lazy(() => import('../compartido/hora_salida')),
-
-  'planilla-bombeo':           lazy(() => import('../bomberman/planillabombeo')),
-  'checklist':                 lazy(() => import('../bomberman/checklist')),
-  'inspeccion-epcc-bomberman': lazy(() => import('../bomberman/inspeccion_epcc_bomberman')),
-  'inventarios-obra':          lazy(() => import('../bomberman/inventariosobra')),
-  'herramientas-mantenimiento':lazy(() => import('../bomberman/herramientas_mantenimiento')),
-  'kit-limpieza':              lazy(() => import('../bomberman/kit_limpieza')),
-
-  'chequeo-torregruas':        lazy(() => import('../gruaman/chequeo_torregruas')),
-  'inspeccion-epcc':           lazy(() => import('../gruaman/inspeccion_epcc')),
-  'inspeccion-izaje':          lazy(() => import('../gruaman/inspeccion_izaje')),
-  'chequeo-elevador':          lazy(() => import('../gruaman/chequeo_elevador')),
-
-  'ats':  lazy(() => import('../gruaman/AtsSelector')),
+  'hora-ingreso':   lazy(() => import('../compartido/horada_ingreso')),
+  'permiso-trabajo':lazy(() => import('../compartido/permiso_trabajo')),
+  'hora-salida':    lazy(() => import('../compartido/hora_salida')),
 };
 
 /**
@@ -57,9 +42,9 @@ export default function LevelWrapper() {
   const { worldId } = useParams();
   const navigate    = useNavigate();
 
-  const character     = localStorage.getItem('selectedCharacter') || 'bomberman';
-  const characterName = getCharacterName(character);
-  const world         = getWorldById(character, worldId);
+  const character     = localStorage.getItem('selectedCharacter') || 'trabajador';
+  const characterName = localStorage.getItem('cargo_trabajador') || 'Operario';
+  const world         = getWorldById(worldId);
 
   const [imgError,  setImgError]  = useState(false);
   const [revealing, setRevealing] = useState(true);
@@ -100,7 +85,6 @@ export default function LevelWrapper() {
 
   const shortName  = world?.name.replace(/^Misión:\s*/i, '') || worldId;
   const orderLabel = world?.order ? `MISIÓN ${world.order}` : 'MISIÓN';
-  const isCrane    = character === 'gruaman';
 
   const handleExit = () => {
     localStorage.removeItem('game_mode');
@@ -138,7 +122,7 @@ export default function LevelWrapper() {
     setSubmitError(null);
     try {
       await submitFormData(worldId, merged);
-      markWorldComplete(worldId.startsWith('ats-') ? 'ats' : worldId);
+      markWorldComplete(worldId);
       localStorage.removeItem('game_mode');
       sessionStorage.removeItem('lw_answers_' + worldId);
       setMissionDone(true);
@@ -180,7 +164,7 @@ export default function LevelWrapper() {
             />
           ) : (
             <span className="lw-avatar-emoji" aria-hidden="true">
-              {isCrane ? '🏗️' : '💧'}
+              👷
             </span>
           )}
         </div>

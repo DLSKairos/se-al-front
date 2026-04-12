@@ -3,7 +3,7 @@ import axios from "axios";
 import { registerWebAuthn, authenticateWebAuthn, WebAuthnError, checkWebAuthnSupport } from "./components/webauthn";
 import { subscribeUser } from "./pushNotifications";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://gruaman-bomberman-back.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 /**
  * Se suscribe a cambios en el ancho del viewport y retorna true cuando
@@ -28,21 +28,6 @@ function useIsMobile() {
   return isMobile;
 }
 
-/**
- * Convierte un empresa_id numérico a su identificador de unidad de negocio en cadena.
- *
- * @param {number|string} id - empresa_id proveniente de la respuesta de la API.
- * @returns {'GyE'|'AIC'|'SST'|'Lideres'|''}
- */
-function empresaFromId(id) {
-  const n = Number(id);
-  if (n === 1) return "GyE";
-  if (n === 2) return "AIC";
-  if (n === 3) return "Tecnicos";
-  if (n === 4) return "SST";
-  if (n === 5) return "Lideres";
-  return "";
-}
 
 /**
  * Pantalla de ingreso por cédula con autenticación biométrica (WebAuthn) y
@@ -72,7 +57,6 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
 
   const [cedula, setCedula] = useState("");
   const [error, setError] = useState("");
-  const [gifIndex, setGifIndex] = useState(0);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminPass, setAdminPass] = useState("");
   const [adminError, setAdminError] = useState("");
@@ -92,14 +76,6 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
   const isMobile = useIsMobile();
   const isLite   = sessionStorage.getItem('lite_mode') === 'true';
 
-  useEffect(() => {
-    if (isLite) return; // sin GIFs rotativos en modo lite
-    const gifs = ["/gruaman1.1.gif", "/bomberman1.1.gif"];
-    const interval = setInterval(() => {
-      setGifIndex(prev => (prev + 1) % gifs.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, [isLite]);
 
   const handleBuscar = async () => {
     setError("");
@@ -121,7 +97,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
           const nombre = usuario.nombre || usuario.nombres || usuario.nombre_trabajador || "";
           const numeroId = usuario.numero_identificacion || usuario.cedula || usuario.id || cedula;
           const cargo = usuario.cargo || usuario.cargo_trabajador || usuario.puesto || "";
-          const empresaName = empresaFromId(usuario.empresa_id) || usuario.empresa || "";
+          const empresaName = usuario.empresa || "";
           const obra = usuario.obra || usuario.nombre_proyecto || usuario.nombre_obra || "";
 
           localStorage.setItem("nombre_trabajador", nombre);
@@ -222,7 +198,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
 
         handleUsuarioAutenticado({
           nombre: usuario.nombre,
-          empresa: empresaFromId(usuario.empresa_id),
+          empresa: usuario.empresa || "",
           numero_identificacion: usuario.numero_identificacion
         }, usuario.empresa_id);
       } else {
@@ -250,12 +226,9 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
       if (data.success) {
         setAdminError("");
         setShowAdminModal(false);
-        localStorage.setItem("admin_rol", data.rol);
-        if (data.rol === "gruaman" || data.rol === "bomberman") {
-          window.location.href = "/admin";
-        } else {
-          setAdminError("Rol no reconocido.");
-        }
+        if (data.rol) localStorage.setItem("admin_rol", data.rol);
+        if (data.empresa_id) localStorage.setItem("admin_empresa_id", String(data.empresa_id));
+        window.location.href = "/admin";
       } else {
         setAdminError(data.error || "Contraseña incorrecta.");
       }
@@ -281,7 +254,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
       setShowRegistrarLlaveModal(false);
       handleUsuarioAutenticado({
         nombre: pendingUsuario.nombre,
-        empresa: empresaFromId(pendingUsuario.empresa_id),
+        empresa: pendingUsuario.empresa || "",
         numero_identificacion: pendingUsuario.numero_identificacion
       }, pendingUsuario.empresa_id);
       setPendingUsuario(null);
@@ -327,7 +300,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
           setPendingUsuario(null);
           handleUsuarioAutenticado({
             nombre: pendingUsuario.nombre,
-            empresa: empresaFromId(pendingUsuario.empresa_id),
+            empresa: pendingUsuario.empresa || "",
             numero_identificacion: numeroId
           }, pendingUsuario.empresa_id);
         } else {
@@ -347,7 +320,7 @@ function CedulaIngreso({ onUsuarioEncontrado }) {
           setPendingUsuario(null);
           handleUsuarioAutenticado({
             nombre: pendingUsuario.nombre,
-            empresa: empresaFromId(pendingUsuario.empresa_id),
+            empresa: pendingUsuario.empresa || "",
             numero_identificacion: numeroId
           }, pendingUsuario.empresa_id);
         } else {

@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App";
-import Eleccion from "./components/gruaman/eleccion";
 import AdminGuard          from "./components/admin/layout/AdminGuard";
 import AdminLayout         from "./components/admin/layout/AdminLayout";
 import AdminDashboard      from "./components/admin/pages/AdminDashboard";
@@ -10,63 +9,17 @@ import AdminPermisosPanel  from "./components/admin/pages/AdminPermisos";
 import AdminUsuariosPanel  from "./components/admin/pages/AdminUsuarios";
 import AdminObrasPanel     from "./components/admin/pages/AdminObras";
 import AdminChatPanel      from "./components/admin/pages/AdminChat";
-import EleccionAIC from "./components/bomberman/eleccionaic";
-import PlanillaBombeo from "./components/bomberman/planillabombeo";
-import Checklist from "./components/bomberman/checklist";
-import InventarioObra from "./components/bomberman/inventariosobra";
-import HerramientasMantenimiento from "./components/bomberman/herramientas_mantenimiento";
-import KitLimpieza from "./components/bomberman/kit_limpieza";
-import Administrador from "./components/administrador_gruaman/administrador";
 import Footer from "./components/Footer";
 import PermisoTrabajo from "./components/compartido/permiso_trabajo";
-import ChequeoAlturas from "./components/compartido/chequeo_alturas";
-import ChequeoTorreGruas from "./components/gruaman/chequeo_torregruas";
-import InspeccionEPCC from "./components/gruaman/inspeccion_epcc";
-import InspeccionIzaje from "./components/gruaman/inspeccion_izaje";
-import InspeccionEPCCBomberman from "./components/bomberman/inspeccion_epcc_bomberman";
-import ChequeoElevador from "./components/gruaman/chequeo_elevador";
+import HoraIngreso from "./components/compartido/horada_ingreso";
+import HoraSalida from "./components/compartido/hora_salida";
 import CedulaIngreso from "./CedulaIngreso";
 import BienvenidaSeleccion from "./BienvenidaSeleccion";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
-import PermisoTrabajoAdmin from "./components/administrador_gruaman/permiso_trabajo_admin";
-import ChequeoAlturasAdmin from "./components/administrador_gruaman/chequeo_alturas_admin";
-import ChequeoTorreGruasAdmin from "./components/administrador_gruaman/chequeo_torregruas_admin";
-import ChequeoElevadorAdmin from "./components/administrador_gruaman/chequeo_elevador_admin";
-import InspeccionEPCCAdmins from "./components/administrador_gruaman/inspeccion_EPCC_admins";
-import InspeccionIzajeAdmin from "./components/administrador_gruaman/inspeccion_izaje_admin";
-import AdministradorBomberman from "./components/administrador_bomberman/administrador_bomberman";
-import PlanillaBombeoAdmin from "./components/administrador_bomberman/planilla_bombeo_admin";
-import InventariosObraAdmin from "./components/administrador_bomberman/inventarios_obra_admin";
-import ChecklistAdmin from "./components/administrador_bomberman/checklist_admin";
-import InspeccionEPCCBombermanAdmin from "./components/administrador_bomberman/inspeccion_epcc_bomberman_admin";
-import HerramientasMantenimientoAdmin from "./components/administrador_bomberman/herramientas_mantenimiento_admin";
-import KitLimpiezaAdmin from "./components/administrador_bomberman/kit_limpieza_admin";
-import AdminUsuarios from "./components/administrador_gruaman/admin_usuarios";
-import AdminUsuariosBomberman from "./components/administrador_bomberman/admin_usuarios_bomberman";
-import AdminsObras from "./components/administrador_gruaman/admins_obras";
-import AdminObrasBomberman from "./components/administrador_bomberman/admin_obras_bomberman";
-import HoraIngreso from "./components/compartido/horada_ingreso";
-import HoraSalida from "./components/compartido/hora_salida";
-import HorasExtraBombermanAdmin from "./components/administrador_bomberman/horas_extra_bomberman";
-import HorasExtraGruamanAdmin from "./components/administrador_gruaman/horas_extra_gruaman";
-import EleccionLideres from "./components/Lideres_bombas/eleccion_lideres";
 import RegistrosDiariosAdmin from './components/administrador/RegistrosDiariosAdmin';
-import EleccionSST from './components/sst/eleccion_sst';
-import EleccionTecnicos from './components/tecnicos/eleccion_tecnicos';
-import PQR from './components/sst/pqr';
-import Hallazgos from './components/sst/hallazgos';
 import GameFlow     from './components/game/GameFlow';
 import LevelWrapper from './components/game/LevelWrapper';
-import AtsSelector           from './components/gruaman/AtsSelector';
-import AtsOperacionTorregrua from './components/gruaman/ats/AtsOperacionTorregrua';
-import AtsMandoInalam        from './components/gruaman/ats/AtsMandoInalam';
-import AtsMontajeTorregrua   from './components/gruaman/ats/AtsMontajeTorregrua';
-import AtsMontajeElevador    from './components/gruaman/ats/AtsMontajeElevador';
-import AtsDesmontajeTorregrua from './components/gruaman/ats/AtsDesmontajeTorregrua';
-import AtsTelescopaje        from './components/gruaman/ats/AtsTelescopaje';
-import AtsMantenimiento      from './components/gruaman/ats/AtsMantenimiento';
-import AtsElevador           from './components/gruaman/ats/AtsElevador';
 
 /**
  * Resuelve el nombre del trabajador y la obra activa desde localStorage,
@@ -219,7 +172,6 @@ function SOSButton() {
   const [mensaje, setMensaje] = React.useState("");
   const [showModal, setShowModal] = React.useState(false);
   const [showRegionModal, setShowRegionModal] = React.useState(false);
-  const [showRoleModal, setShowRoleModal] = React.useState(false);
   const { pos: sosPos, onPointerDown: sosDown, onPointerMove: sosMove, onPointerUp: sosUp, onClickCapture: sosClickCapture } =
     useDraggable(() => ({ x: 14, y: window.innerHeight - 144 }));
 
@@ -283,19 +235,8 @@ function SOSButton() {
 
   const handleWhatsApp = () => {
     setShowModal(false);
-    setShowRoleModal(true);
+    setShowRegionModal(true);
     setMensaje("");
-  };
-
-  const handleRole = (role) => {
-    setShowRoleModal(false);
-    if (role === "") {
-      setShowRegionModal(true);
-      return;
-    }
-    if (role === "") {
-      handleRegion('');
-    }
   };
 
   /**
@@ -473,61 +414,6 @@ function SOSButton() {
         </div>
       </div>
     )}
-    {showRoleModal && (
-      <div
-        style={{
-          position: "fixed",
-          left: 0,
-          top: 0,
-          width: "100vw",
-          height: "100vh",
-          background: "rgba(0,0,0,0.25)",
-          zIndex: 2040,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-        onClick={() => setShowRoleModal(false)}
-      >
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: 14,
-            boxShadow: "0 2px 12px #c00",
-            padding: "18px",
-            minWidth: 260,
-            display: "flex",
-            flexDirection: "column",
-            gap: 12,
-            alignItems: "center"
-          }}
-          onClick={e => e.stopPropagation()}
-        >
-          <div style={{ fontWeight: 600, fontSize: 16 }}>¿Eres bomberman o gruaman?</div>
-          <button
-            className="permiso-trabajo-btn"
-            style={{ background: "#1976d2", color: "#fff", minWidth: 160, fontWeight: 600 }}
-            onClick={() => handleRole('bomberman')}
-          >
-            Bomberman
-          </button>
-          <button
-            className="permiso-trabajo-btn"
-            style={{ background: "#c00", color: "#fff", minWidth: 160, fontWeight: 600 }}
-            onClick={() => handleRole('gruaman')}
-          >
-            Gruaman
-          </button>
-          <button
-            className="permiso-trabajo-btn"
-            style={{ background: "#eee", color: "#222", minWidth: 120, fontWeight: 600 }}
-            onClick={() => setShowRoleModal(false)}
-          >
-            Cancelar
-          </button>
-        </div>
-      </div>
-    )}
       {mensaje && (
         <div
           style={{
@@ -610,61 +496,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="/game/world-map"     element={<GameFlow key="map"    step="map"    />} />
             <Route path="/game/level/:worldId" element={<LevelWrapper />} />
 
-            <Route path="/ats-selector"                    element={<AtsSelector />} />
-            <Route path="/ats/operacion-torregrua"         element={<AtsOperacionTorregrua />} />
-            <Route path="/ats/mando-inalam"                element={<AtsMandoInalam />} />
-            <Route path="/ats/montaje-torregrua"           element={<AtsMontajeTorregrua />} />
-            <Route path="/ats/montaje-elevador"            element={<AtsMontajeElevador />} />
-            <Route path="/ats/desmontaje-torregrua"        element={<AtsDesmontajeTorregrua />} />
-            <Route path="/ats/telescopaje"                 element={<AtsTelescopaje />} />
-            <Route path="/ats/mantenimiento"               element={<AtsMantenimiento />} />
-            <Route path="/ats/elevador"                    element={<AtsElevador />} />
-
             <Route path="/" element={<App />} />
             <Route path="/cedula" element={<CedulaIngreso />} />
-            <Route path="/bienvenida" element={<BienvenidaSeleccion usuario={{ nombre: "Invitado", empresa: "GyE" }} />} />
-            <Route path="/eleccion/*" element={<Eleccion />} />
-            <Route path="/eleccionaic/*" element={<EleccionAIC />} />
-            <Route path="/administrador" element={<Administrador />} />
-            <Route path="/planillabombeo" element={<PlanillaBombeo />} />
-            <Route path="/checklist" element={<Checklist />} />
-            <Route path="/inventariosobra/*" element={<InventarioObra />} />
-            <Route path="/herramientas_mantenimiento" element={<HerramientasMantenimiento />} />
-            <Route path="/kit_limpieza" element={<KitLimpieza />} />
+            <Route path="/bienvenida" element={<BienvenidaSeleccion usuario={{ nombre: "Invitado", empresa: "" }} />} />
             <Route path="/permiso_trabajo" element={<PermisoTrabajo />} />
-            <Route path="/chequeo_alturas" element={<ChequeoAlturas />} />
-            <Route path="/chequeo_torregruas" element={<ChequeoTorreGruas />} />
-            <Route path="/chequeo_elevador" element={<ChequeoElevador />} />
-            <Route path="/inspeccion_epcc" element={<InspeccionEPCC />} />
-            <Route path="/inspeccion_izaje" element={<InspeccionIzaje />} />
-            <Route path="/inspeccion_epcc_bomberman" element={<InspeccionEPCCBomberman />} />
-            <Route path="/permiso_trabajo_admin" element={<PermisoTrabajoAdmin />} />
-            <Route path="/chequeo_alturas_admin" element={<ChequeoAlturasAdmin />} />
-            <Route path="/chequeo_torregruas_admin" element={<ChequeoTorreGruasAdmin />} />
-            <Route path="/chequeo_elevador_admin" element={<ChequeoElevadorAdmin />} />
-            <Route path="/inspeccion_EPCC_admins" element={<InspeccionEPCCAdmins />} />
-            <Route path="/inspeccion_izaje_admin" element={<InspeccionIzajeAdmin />} />
-            <Route path="/administrador_bomberman" element={<AdministradorBomberman />} />
-            <Route path="/planilla_bombeo_admin" element={<PlanillaBombeoAdmin />} />
-            <Route path="/inventarios_obra_admin" element={<InventariosObraAdmin />} />
-            <Route path="/checklist_admin" element={<ChecklistAdmin />} />
-            <Route path="/inspeccion_epcc_bomberman_admin" element={<InspeccionEPCCBombermanAdmin />} />
-            <Route path="/herramientas_mantenimiento_admin" element={<HerramientasMantenimientoAdmin />} />
-            <Route path="/kit_limpieza_admin" element={<KitLimpiezaAdmin />} />
-            <Route path="/admin_usuarios" element={<AdminUsuarios />} />
-            <Route path="/admin_usuarios_bomberman" element={<AdminUsuariosBomberman />} />
-            <Route path="/admins_obras" element={<AdminsObras />} />
-            <Route path="/admin_obras_bomberman" element={<AdminObrasBomberman />} />
             <Route path="/hora_ingreso" element={<HoraIngreso />} />
             <Route path="/hora_salida" element={<HoraSalida />} />
-            <Route path="/horas_extra_bomberman" element={<HorasExtraBombermanAdmin />} />
-            <Route path="/horas_extra_gruaman" element={<HorasExtraGruamanAdmin />} />
-            <Route path="/eleccion_lideres/*" element={<EleccionLideres />} />
             <Route path="/registros_diarios_admin" element={<RegistrosDiariosAdmin />} />
-            <Route path="/eleccion_sst/*" element={<EleccionSST />} />
-            <Route path="/eleccion_tecnicos/*" element={<EleccionTecnicos />} />
-            <Route path="/pqr" element={<PQR />} />
-            <Route path="/hallazgos" element={<Hallazgos />} />
 
             {/* ── Nuevo panel admin /admin ── */}
             <Route element={<AdminGuard />}>

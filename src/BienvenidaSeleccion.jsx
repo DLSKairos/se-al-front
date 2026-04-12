@@ -15,7 +15,7 @@ function useIsLandscape() {
   return landscape;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://gruaman-bomberman-back.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 /**
  * Pantalla posterior a la autenticación donde el trabajador selecciona su obra activa.
@@ -153,23 +153,13 @@ function BienvenidaSeleccion({ usuario }) {
             // localStorage not available
           }
         }
-        // Only GyE (empresa_id=1) and AIC/Bomberman (empresa_id=2) use the game flow.
-        // SST, Lideres and any other empresa always go to their classic form screens.
-        const empresasConJuego = ["GyE", "AIC"];
-        const usaJuego = empresasConJuego.includes(usuario.empresa) &&
-                         sessionStorage.getItem('lite_mode') !== 'true';
+        const usaJuego = sessionStorage.getItem('lite_mode') !== 'true';
 
         if (usaJuego) {
-          const character = usuario.empresa === "GyE" ? "gruaman" : "bomberman";
-          localStorage.setItem("selectedCharacter", character);
+          localStorage.setItem("selectedCharacter", "trabajador");
           navigate("/game/rotate-screen");
         } else {
-          const formRoute = usuario.empresa === "GyE"       ? "/eleccion"
-                          : usuario.empresa === "Lideres"  ? "/eleccion_lideres"
-                          : usuario.empresa === "SST"      ? "/eleccion_sst"
-                          : usuario.empresa === "Tecnicos" ? "/eleccion_tecnicos"
-                          : "/eleccionaic";
-          navigate(formRoute);
+          navigate("/");
         }
       } else {
         const distancia = resp.data?.distancia;

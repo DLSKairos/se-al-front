@@ -168,32 +168,6 @@
   }
 }
 
-.empresa-boton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 !important;
-  height: 92px;
-  width: 170px;
-  min-width: 140px;
-  max-width: 170px;
-  border-radius: 23px;
-  box-shadow: none;
-  background: none !important;
-  border: none !important;
-}
-
-.empresa-boton.selected {
-  box-shadow: 0 4px 18px rgba(0, 212, 255, 0.2);
-  border: 3px solid #00D4FF !important;
-  background: rgba(0, 212, 255, 0.08) !important;
-  transition: border 0.2s, box-shadow 0.2s, background 0.2s;
-}
-
-.empresa-boton.selected[data-empresa="AIC"] {
-  border: 3px solid #F5A623 !important;
-  background: rgba(245, 166, 35, 0.08) !important;
-}
 
 .empresa-img {
   height: 80px;

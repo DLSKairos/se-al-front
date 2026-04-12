@@ -20,7 +20,6 @@ function AdminHeader({ onToggle }) {
   const { rol, logout } = useAdminRole();
 
   const rolDisplay = rol ? rol.toUpperCase() : null;
-  const isGruaman = rol === "gruaman";
 
   return (
     <header
@@ -110,13 +109,9 @@ function AdminHeader({ onToggle }) {
               letterSpacing: "0.8px",
               textTransform: "uppercase",
               fontFamily: "'DM Sans', sans-serif",
-              color: isGruaman ? "var(--signal)" : "var(--amber)",
-              background: isGruaman ? "var(--signal-dim)" : "var(--amber-dim)",
-              border: `1px solid ${
-                isGruaman
-                  ? "var(--glass-border)"
-                  : "rgba(245,166,35,0.25)"
-              }`,
+              color: "var(--signal)",
+              background: "var(--signal-dim)",
+              border: "1px solid var(--glass-border)",
               borderRadius: "var(--radius-badge, 4px)",
               padding: "3px 10px",
               lineHeight: "18px",

@@ -8,13 +8,6 @@ import {
   Users,
   Building2,
   MessageSquare,
-  ClipboardList,
-  CheckSquare,
-  Package,
-  ShieldCheck,
-  Wrench,
-  Sparkles,
-  Clock,
   ChevronRight,
 } from "lucide-react";
 import { useAdminRole } from "../hooks/useAdminRole";
@@ -46,23 +39,6 @@ const MAIN_LINKS = [
   { to: "/admin/chat",     label: "Señal IA",     Icon: MessageSquare   },
 ];
 
-const GRUAMAN_LINKS = [
-  { to: "/chequeo_torregruas_admin",  label: "Chequeo Torre Grúa",  Icon: ClipboardList },
-  { to: "/chequeo_elevador_admin",    label: "Chequeo Elevador",    Icon: CheckSquare   },
-  { to: "/inspeccion_EPCC_admins",    label: "Insp. EPCC",          Icon: ShieldCheck   },
-  { to: "/inspeccion_izaje_admin",    label: "Insp. Izaje",         Icon: Sparkles      },
-  { to: "/admin_horas_extra_gruaman", label: "Horas Extra",         Icon: Clock         },
-];
-
-const BOMBERMAN_LINKS = [
-  { to: "/planilla_bombeo_admin",              label: "Planilla Bombeo", Icon: ClipboardList },
-  { to: "/checklist_admin",                    label: "Checklist",       Icon: CheckSquare   },
-  { to: "/inventarios_obra_admin",             label: "Inventarios",     Icon: Package       },
-  { to: "/inspeccion_epcc_bomberman_admin",    label: "Insp. EPCC",      Icon: ShieldCheck   },
-  { to: "/herramientas_mantenimiento_admin",   label: "Herramientas",    Icon: Wrench        },
-  { to: "/kit_limpieza_admin",                 label: "Kit Limpieza",    Icon: Sparkles      },
-  { to: "/admin_horas_extra_bomberman",        label: "Horas Extra",     Icon: Clock         },
-];
 
 /* ─── Sub-componentes ─────────────────────────────────── */
 
@@ -150,13 +126,6 @@ function SidebarLink({ to, label, Icon, collapsed, end }) {
 function AdminSidebar({ collapsed, onToggle }) {
   const { rol } = useAdminRole();
 
-  const formLinks =
-    rol === "gruaman"
-      ? GRUAMAN_LINKS
-      : rol === "bomberman"
-      ? BOMBERMAN_LINKS
-      : [];
-
   return (
     <aside
       style={{
@@ -225,21 +194,6 @@ function AdminSidebar({ collapsed, onToggle }) {
           />
         ))}
 
-        {/* ── Sección Formularios (condicional por rol) ── */}
-        {formLinks.length > 0 && (
-          <>
-            <SectionLabel label="Formularios" collapsed={collapsed} />
-            {formLinks.map(({ to, label, Icon }) => (
-              <SidebarLink
-                key={to}
-                to={to}
-                label={label}
-                Icon={Icon}
-                collapsed={collapsed}
-              />
-            ))}
-          </>
-        )}
       </nav>
 
       {/* ── Indicador de rol al pie ── */}
@@ -258,10 +212,9 @@ function AdminSidebar({ collapsed, onToggle }) {
               fontWeight: 700,
               letterSpacing: "0.8px",
               textTransform: "uppercase",
-              color: rol === "gruaman" ? "var(--signal)" : "var(--amber)",
-              background:
-                rol === "gruaman" ? "var(--signal-dim)" : "var(--amber-dim)",
-              border: `1px solid ${rol === "gruaman" ? "var(--glass-border)" : "rgba(245,166,35,0.25)"}`,
+              color: "var(--signal)",
+              background: "var(--signal-dim)",
+              border: "1px solid var(--glass-border)",
               borderRadius: "var(--radius-badge, 4px)",
               padding: "3px 8px",
             }}
