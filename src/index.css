@@ -1,5 +1,4 @@
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap');
 
@@ -76,23 +75,24 @@ h1 {
   line-height: 1.1;
 }
 
-button {
-  font-family: 'Syne', sans-serif;
-  font-weight: 600;
-  padding: 0.85rem 1.5rem;
-  border: 1px solid rgba(0,212,255,0.3);
-  border-radius: var(--radius-btn);
-  cursor: pointer;
-  background: var(--glass-bg-light);
-  backdrop-filter: var(--glass-blur);
-  color: var(--signal);
-  transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
-  margin-bottom: 5%;
-}
+@layer base {
+  button {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    padding: 0.85rem 1.5rem;
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    background: var(--glass-bg-light);
+    backdrop-filter: var(--glass-blur);
+    color: var(--signal);
+    transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+  }
 
-button:hover {
-  box-shadow: 0 0 16px var(--signal-glow);
-  color: var(--off-white);
+  button:hover {
+    box-shadow: 0 0 16px var(--signal-glow);
+    color: var(--off-white);
+  }
 }
 
 /* ─── Suprimir botones nativos del navegador en inputs ─── */
@@ -113,11 +113,27 @@ input::-webkit-strong-password-auto-fill-button {
   --color-navy:        #0C1624;
   --color-navy-mid:    #111E30;
   --color-navy-light:  #162238;
-  --font-syne: 'Syne', sans-serif;
-  --font-dm:   'DM Sans', sans-serif;
+  --font-syne:    'Syne', sans-serif;
+  --font-dm:      'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-serif:   'Fraunces', Georgia, serif;
   --radius-glass:    18px;
   --radius-glass-md: 12px;
   --radius-badge:    4px;
+
+  /* ─── Alias semánticos (bg-secondary/20, text-muted-foreground, border-border…) ─── */
+  --color-background:         #0C1624;
+  --color-foreground:         #F0F4F8;
+  --color-card:               #111E30;
+  --color-secondary:          #162238;
+  --color-muted-foreground:   rgba(240,244,248,0.45);
+  --color-border:             rgba(0,212,255,0.15);
+  --color-primary:            #00D4FF;
+  --color-primary-foreground: #0C1624;
+  --color-accent:             #F5A623;
+  --color-muted:              #162238;
+  --color-signal-dim:         rgba(0,212,255,0.12);
 }
 
 /* ─── Glassmorphism utilities ─── */
@@ -150,3 +166,246 @@ input::-webkit-strong-password-auto-fill-button {
   50%       { opacity: 0.6; }
 }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translate(-50%, -44%); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+@keyframes typingDot {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%       { opacity: 1;   transform: scale(1.2); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Game system animations ─── */
+@keyframes game-flipOut {
+  from { transform: rotateY(0deg);  opacity: 1; }
+  to   { transform: rotateY(90deg); opacity: 0; }
+}
+@keyframes game-flipIn {
+  from { transform: rotateY(-90deg); opacity: 0; }
+  to   { transform: rotateY(0deg);   opacity: 1; }
+}
+@keyframes game-bounceIn {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.1);             }
+  80%  { transform: scale(0.96);            }
+  100% { transform: scale(1);   opacity: 1; }
+}
+@keyframes game-confettiFall {
+  0%   { transform: translateY(0)     rotate(0deg)   scale(1); opacity: 1; }
+  100% { transform: translateY(230px) rotate(720deg) scale(0.4); opacity: 0; }
+}
+@keyframes game-shakeX {
+  0%, 100% { transform: translateX(0);    }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px);  }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px);  }
+}
+@keyframes game-fadeInScale {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+@keyframes game-cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes game-iris-out {
+  from { clip-path: circle(0% at 50% 50%);    }
+  to   { clip-path: circle(150% at 50% 50%);  }
+}
+@keyframes game-iris-in {
+  from { clip-path: circle(150% at 50% 50%);  }
+  to   { clip-path: circle(0% at 50% 50%);    }
+}
+
+.game-flip-exit  { animation: game-flipOut  350ms ease-in  forwards; }
+.game-flip-enter { animation: game-flipIn   350ms ease-out forwards; }
+.game-bounce-in  { animation: game-bounceIn 400ms ease both; }
+.game-confetti   { animation: game-confettiFall 900ms ease-in both; }
+.game-shake      { animation: game-shakeX   500ms ease both; }
+.game-fade-scale { animation: game-fadeInScale 300ms ease both; }
+.game-cursor     { animation: game-cursorBlink 1s step-end infinite; }
+
+/* ─── Animaciones generales de UI ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.3); }
+  50%       { box-shadow: 0 0 0 8px transparent; }
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ─── CSS triangles (speech bubbles) ─── */
+.speech-triangle-down {
+  width: 0; height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid rgba(22,34,56,0.75);
+}
+.speech-triangle-up {
+  width: 0; height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid rgba(22,34,56,0.9);
+}
+
+/* ─── Background patterns ─── */
+.bg-dots-signal {
+  background-image: radial-gradient(circle, rgba(0,212,255,0.3) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.bg-radial-story {
+  background: radial-gradient(ellipse at 50% 80%, rgba(0,212,255,0.15) 0%, transparent 70%);
+}
+
+/* ─── SVG timer stroke transition ─── */
+.stroke-timer-transition {
+  transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
+}
+
+/* ─── Identidad SEÑAL ─── */
+.senal-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--off-white);
+  letter-spacing: 0.1em;
+}
+.senal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 8px var(--signal-glow);
+  animation: senal-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes senal-pulse {
+  0%, 100% { box-shadow: 0 0 6px var(--signal-glow); transform: scale(1); }
+  50%       { box-shadow: 0 0 14px var(--signal);     transform: scale(1.15); }
+}
+
+/* ─── Componentes de pantalla operario/login ─── */
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  color: var(--signal);
+  margin-bottom: 0.5rem;
+}
+.app-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 16px;
+  border: 1px solid rgba(0,212,255,0.25);
+  border-radius: var(--radius-input);
+  font-size: 16px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--off-white);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.app-input:focus {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-dim);
+}
+.app-input::placeholder { color: var(--muted); }
+.app-boton {
+  width: 100%;
+  padding: 14px;
+  background: var(--signal);
+  color: var(--navy);
+  border: none;
+  border-radius: var(--radius-btn);
+  font-size: 17px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 20px var(--signal-glow);
+  letter-spacing: 0.5px;
+  transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+  backdrop-filter: none;
+  margin-bottom: 0;
+}
+.app-boton:hover {
+  box-shadow: 0 0 32px var(--signal-glow);
+  transform: translateY(-1px);
+  color: var(--navy);
+}
+.app-boton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.app-boton:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  color: var(--navy);
+}
+
+/* ─── Componentes de diseño ampliados ─── */
+
+/* Glass sin card - versión mobile ligera */
+.glass {
+  background: rgba(22,34,56,0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0,212,255,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Modal elevado - para exit modals */
+.glass-elevated {
+  background: rgba(17,30,48,0.75);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 28px;
+  box-shadow: 0 -4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* Botón primario con gradiente y glow */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #00D4FF, #0096b3) !important;
+  box-shadow: 0 0 24px rgba(0,212,255,0.4) !important;
+  color: #0C1624 !important;
+  border: none !important;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.btn-primary-gradient:hover    { box-shadow: 0 0 36px rgba(0,212,255,0.6) !important; }
+.btn-primary-gradient:active   { transform: scale(0.97); }
+.btn-primary-gradient:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* Clases de animación */
+.animate-fade-up   { animation: fadeUp 0.5s ease forwards; }
+.animate-float     { animation: float 4s ease-in-out infinite; }
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
