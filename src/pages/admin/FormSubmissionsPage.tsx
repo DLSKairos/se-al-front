@@ -24,7 +24,7 @@ interface SubmissionsFilters {
 }
 
 interface SubmissionsResponse {
-  items: FormSubmission[]
+  data: FormSubmission[]
   total: number
   page: number
   limit: number
@@ -61,11 +61,11 @@ export default function FormSubmissionsPage() {
   const [isExporting, setIsExporting] = useState(false)
 
   const queryFilters = {
-    search: filters.search,
-    status: filters.status,
-    templateId: filters.templateId,
-    dateFrom: filters.dateFrom,
-    dateTo: filters.dateTo,
+    ...(filters.search     && { search: filters.search }),
+    ...(filters.status     && { status: filters.status }),
+    ...(filters.templateId && { template_id: filters.templateId }),
+    ...(filters.dateFrom   && { from: filters.dateFrom }),
+    ...(filters.dateTo     && { to: filters.dateTo }),
     page: filters.page,
     limit: LIMIT,
   }
@@ -233,7 +233,7 @@ export default function FormSubmissionsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.items.length === 0 ? (
+                  {data?.data.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-16 text-center">
                         <div className="flex flex-col items-center gap-3">
@@ -245,7 +245,7 @@ export default function FormSubmissionsPage() {
                       </td>
                     </tr>
                   ) : (
-                    data?.items.map((item, i) => (
+                    data?.data.map((item, i) => (
                       <tr
                         key={item.id}
                         className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors cursor-pointer ${

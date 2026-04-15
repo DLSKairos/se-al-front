@@ -202,7 +202,7 @@ export default function WorkLocationsPage() {
                       {dept?.name ?? '—'}
                     </td>
                     <td className="py-3 px-4 text-[var(--muted)] font-mono text-xs">
-                      {loc.lat.toFixed(6)}, {loc.lng.toFixed(6)}
+                      {Number(loc.lat).toFixed(6)}, {Number(loc.lng).toFixed(6)}
                     </td>
                     <td className="py-3 px-4">
                       {loc.is_active ? (

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { JWTPayload, UserRole } from '@/types'
 import { registerTokenHelpers } from '@/lib/api'
 
@@ -22,39 +23,51 @@ function decodeJWT(token: string): JWTPayload | null {
   }
 }
 
-export const useAuthStore = create<AuthState>((set, get) => {
-  // Registrar helpers para el interceptor de Axios
-  registerTokenHelpers(
-    () => get().token,
-    () => set({ token: null, user: null, workLocationId: null })
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => {
+      // Registrar helpers para el interceptor de Axios
+      registerTokenHelpers(
+        () => get().token,
+        () => set({ token: null, user: null, workLocationId: null })
+      )
+
+      return {
+        token: null,
+        user: null,
+        workLocationId: null,
+
+        setToken: (token: string) => {
+          const user = decodeJWT(token)
+          set({ token, user })
+        },
+
+        setWorkLocation: (workLocationId: string) => {
+          set({ workLocationId })
+        },
+
+        clear: () => {
+          set({ token: null, user: null, workLocationId: null })
+        },
+
+        isAuthenticated: () => {
+          const { token, user } = get()
+          if (!token || !user) return false
+          return user.exp * 1000 > Date.now()
+        },
+
+        hasRole: (role: UserRole) => {
+          return get().user?.role === role
+        },
+      }
+    },
+    {
+      name: 'senal-auth',
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        workLocationId: state.workLocationId,
+      }),
+    }
   )
-
-  return {
-    token: null,
-    user: null,
-    workLocationId: null,
-
-    setToken: (token: string) => {
-      const user = decodeJWT(token)
-      set({ token, user })
-    },
-
-    setWorkLocation: (workLocationId: string) => {
-      set({ workLocationId })
-    },
-
-    clear: () => {
-      set({ token: null, user: null, workLocationId: null })
-    },
-
-    isAuthenticated: () => {
-      const { token, user } = get()
-      if (!token || !user) return false
-      return user.exp * 1000 > Date.now()
-    },
-
-    hasRole: (role: UserRole) => {
-      return get().user?.role === role
-    },
-  }
-})
+)

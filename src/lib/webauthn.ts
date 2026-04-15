@@ -14,8 +14,11 @@ function base64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
   return view
 }
 
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
+function arrayBufferToBase64Url(buffer: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '')
 }
 
 // ── Error tipado ──────────────────────────────────────────────────────────────
@@ -121,10 +124,10 @@ export async function registerWebAuthn(userId: string): Promise<boolean> {
 
   const attestationResponse = {
     id: credential.id,
-    rawId: arrayBufferToBase64(credential.rawId),
+    rawId: arrayBufferToBase64Url(credential.rawId),
     response: {
-      clientDataJSON: arrayBufferToBase64(attestationResp.clientDataJSON),
-      attestationObject: arrayBufferToBase64(attestationResp.attestationObject),
+      clientDataJSON: arrayBufferToBase64Url(attestationResp.clientDataJSON),
+      attestationObject: arrayBufferToBase64Url(attestationResp.attestationObject),
     },
     type: credential.type,
   }
@@ -151,7 +154,11 @@ export async function authenticateWebAuthn(userId: string): Promise<string> {
       identification_number: userId,
     })
     options = res.data
-  } catch {
+  } catch (e: unknown) {
+    const status = (e as { response?: { status?: number } })?.response?.status
+    if (status === 400) {
+      throw new WebAuthnError('Sin credenciales WebAuthn registradas', 'NO_CREDENTIALS')
+    }
     throw new WebAuthnError(
       'Error de conexión al obtener opciones de autenticación',
       'NETWORK_ERROR',
@@ -217,13 +224,13 @@ export async function authenticateWebAuthn(userId: string): Promise<string> {
 
   const assertionResponse = {
     id: assertion.id,
-    rawId: arrayBufferToBase64(assertion.rawId),
+    rawId: arrayBufferToBase64Url(assertion.rawId),
     response: {
-      clientDataJSON: arrayBufferToBase64(assertionResp.clientDataJSON),
-      authenticatorData: arrayBufferToBase64(assertionResp.authenticatorData),
-      signature: arrayBufferToBase64(assertionResp.signature),
+      clientDataJSON: arrayBufferToBase64Url(assertionResp.clientDataJSON),
+      authenticatorData: arrayBufferToBase64Url(assertionResp.authenticatorData),
+      signature: arrayBufferToBase64Url(assertionResp.signature),
       userHandle: assertionResp.userHandle
-        ? arrayBufferToBase64(assertionResp.userHandle)
+        ? arrayBufferToBase64Url(assertionResp.userHandle)
         : null,
     },
     type: assertion.type,
