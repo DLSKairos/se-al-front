@@ -17,14 +17,21 @@ const OperatorProfilePage = lazy(() => import('@/pages/operator/OperatorProfileP
 
 // ── Páginas admin ─────────────────────────────────────────────────────────────
 
-const WorkLocationsPage   = lazy(() => import('@/pages/admin/WorkLocationsPage'))
-const DepartmentsPage     = lazy(() => import('@/pages/admin/DepartmentsPage'))
-const CategoriesPage      = lazy(() => import('@/pages/admin/CategoriesPage'))
-const AttendanceAdminPage = lazy(() => import('@/pages/admin/AttendanceAdminPage'))
-const AttendanceConfigPage = lazy(() => import('@/pages/admin/AttendanceConfigPage'))
-const OrgSettingsPage     = lazy(() => import('@/pages/admin/OrgSettingsPage'))
-const WebhooksPage        = lazy(() => import('@/pages/admin/WebhooksPage'))
-const PushTestPage        = lazy(() => import('@/pages/admin/PushTestPage'))
+const AdminDashboardPage      = lazy(() => import('@/pages/admin/AdminDashboardPage'))
+const AdminChatPage           = lazy(() => import('@/pages/admin/AdminChatPage'))
+const FormTemplatesListPage   = lazy(() => import('@/pages/admin/FormTemplatesListPage'))
+const FormTemplateBuilderPage = lazy(() => import('@/pages/admin/FormTemplateBuilderPage'))
+const FormSubmissionsPage     = lazy(() => import('@/pages/admin/FormSubmissionsPage'))
+const SubmissionDetailPage    = lazy(() => import('@/pages/admin/SubmissionDetailPage'))
+const UsersPage               = lazy(() => import('@/pages/admin/UsersPage'))
+const WorkLocationsPage       = lazy(() => import('@/pages/admin/WorkLocationsPage'))
+const DepartmentsPage         = lazy(() => import('@/pages/admin/DepartmentsPage'))
+const CategoriesPage          = lazy(() => import('@/pages/admin/CategoriesPage'))
+const AttendanceAdminPage     = lazy(() => import('@/pages/admin/AttendanceAdminPage'))
+const AttendanceConfigPage    = lazy(() => import('@/pages/admin/AttendanceConfigPage'))
+const OrgSettingsPage         = lazy(() => import('@/pages/admin/OrgSettingsPage'))
+const WebhooksPage            = lazy(() => import('@/pages/admin/WebhooksPage'))
+const PushTestPage            = lazy(() => import('@/pages/admin/PushTestPage'))
 
 // ── Páginas super admin ───────────────────────────────────────────────────────
 
@@ -72,14 +79,14 @@ export function AppRouter() {
         {/* ── Administrador ── */}
         <Route element={<RoleGuard allowedRoles={['ADMIN', 'SUPER_ADMIN']} />}>
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Placeholder name="AdminDashboardPage" />} />
-            <Route path="chat" element={<Placeholder name="AdminChatPage" />} />
-            <Route path="formularios" element={<Placeholder name="FormTemplatesListPage" />} />
-            <Route path="formularios/nuevo" element={<Placeholder name="FormTemplateBuilderPage" />} />
-            <Route path="formularios/:templateId/editar" element={<Placeholder name="FormTemplateBuilderPage edit" />} />
-            <Route path="formularios/:templateId/submissions" element={<Placeholder name="FormSubmissionsPage" />} />
-            <Route path="formularios/:templateId/submissions/:submissionId" element={<Placeholder name="SubmissionDetailPage" />} />
-            <Route path="usuarios" element={<Placeholder name="UsersPage" />} />
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="chat" element={<AdminChatPage />} />
+            <Route path="formularios" element={<FormTemplatesListPage />} />
+            <Route path="formularios/nuevo" element={<FormTemplateBuilderPage />} />
+            <Route path="formularios/:templateId/editar" element={<FormTemplateBuilderPage />} />
+            <Route path="formularios/:templateId/submissions" element={<FormSubmissionsPage />} />
+            <Route path="submissions/:id" element={<SubmissionDetailPage />} />
+            <Route path="usuarios" element={<UsersPage />} />
             <Route path="ubicaciones" element={<WorkLocationsPage />} />
             <Route path="departamentos" element={<DepartmentsPage />} />
             <Route path="categorias" element={<CategoriesPage />} />

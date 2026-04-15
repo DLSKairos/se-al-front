@@ -42,7 +42,7 @@ export default function WorkLocationsPage() {
   const { data: locations = [], isLoading, error } = useQuery({
     queryKey: QK.workLocations(true),
     queryFn: () =>
-      api.get<WorkLocation[]>('/work-locations').then((r) => r.data),
+      api.get<WorkLocation[]>('/work-locations/all').then((r) => r.data),
   })
 
   const { data: departments = [] } = useQuery({
