@@ -699,7 +699,7 @@ function Step2Fields({ templateId }: Step2Props) {
           key:      draft.key,
           type:     draft.type,
           required: draft.required,
-          options:  draft.options.length > 0 ? draft.options : null,
+          options:  draft.options.length > 0 ? draft.options : undefined,
           order:    fields.length,
         })
         .then((r) => r.data),
@@ -720,7 +720,7 @@ function Step2Fields({ templateId }: Step2Props) {
           key:      draft.key,
           type:     draft.type,
           required: draft.required,
-          options:  draft.options.length > 0 ? draft.options : null,
+          options:  draft.options.length > 0 ? draft.options : undefined,
         })
         .then((r) => r.data),
     onSuccess: () => {
@@ -745,7 +745,7 @@ function Step2Fields({ templateId }: Step2Props) {
   const reorderFields = useMutation({
     mutationFn: (ordered: Array<{ id: string; order: number }>) =>
       api.post(`/form-templates/${templateId}/fields/reorder`, {
-        order: ordered,
+        items: ordered,
       }),
     onError: () => {
       // Revertir al estado remoto si falla

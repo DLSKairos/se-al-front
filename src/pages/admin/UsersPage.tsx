@@ -53,7 +53,7 @@ interface UserFormData {
   identification_number: string
   job_title: string
   role: 'OPERATOR' | 'ADMIN'
-  work_location_id: string
+  work_location_id: string | undefined
   pin: string
 }
 

@@ -13,16 +13,31 @@ import {
   useToast,
 } from '@/components/ui'
 import { SOSButton } from '@/components/ui/SOSButton'
-import { formatDateTime } from '@/lib/utils'
+
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function calcWorkedTime(entryISO: string): string {
-  const diffMs   = Date.now() - new Date(entryISO).getTime()
-  const minutes  = Math.floor(diffMs / 60000)
-  const hours    = Math.floor(minutes / 60)
-  const mins     = minutes % 60
+function calcWorkedTime(entryTimeISO: string, serviceDateISO: string): string {
+  // Prisma devuelve campos TIME(6) como 1970-01-01T{hora_utc}Z.
+  // Combinamos con service_date para reconstruir el timestamp real de entrada.
+  const msInDay     = 24 * 60 * 60 * 1000
+  const entryTime   = new Date(entryTimeISO).getTime() % msInDay
+  const serviceDate = new Date(serviceDateISO).getTime()
+  const entryMs     = serviceDate + entryTime
+  const diffMs      = Math.max(0, Date.now() - entryMs)
+  const minutes     = Math.floor(diffMs / 60000)
+  const hours       = Math.floor(minutes / 60)
+  const mins        = minutes % 60
   return `${hours}h ${mins}m`
+}
+
+function formatEntryTime(entryTimeISO: string): string {
+  // entry_time de Prisma está anclado a 1970-01-01; extraemos solo la hora.
+  return new Date(entryTimeISO).toLocaleTimeString('es-CO', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/Bogota',
+  })
 }
 
 function formatMinutes(total: number): string {
@@ -207,14 +222,14 @@ export default function AttendancePage() {
                   <div>
                     <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)]">En jornada desde</p>
                     <p className="text-base font-display font-semibold text-[var(--off-white)]">
-                      {formatDateTime(record.entry_time)}
+                      {formatEntryTime(record.entry_time)}
                     </p>
                   </div>
                 </div>
                 <div className="border-t border-white/5 pt-4">
                   <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-0.5">Tiempo transcurrido</p>
                   <p className="text-2xl font-display font-bold text-gradient">
-                    {calcWorkedTime(record.entry_time)}
+                    {calcWorkedTime(record.entry_time, record.service_date)}
                   </p>
                 </div>
               </div>
@@ -252,6 +267,7 @@ export default function AttendancePage() {
                       {new Date(record.entry_time).toLocaleTimeString('es-CO', {
                         hour: '2-digit',
                         minute: '2-digit',
+                        timeZone: 'America/Bogota',
                       })}
                     </p>
                   </div>
@@ -261,6 +277,7 @@ export default function AttendancePage() {
                       {new Date(record.exit_time).toLocaleTimeString('es-CO', {
                         hour: '2-digit',
                         minute: '2-digit',
+                        timeZone: 'America/Bogota',
                       })}
                     </p>
                   </div>

@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useCallback, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Search, Download, ChevronLeft, ChevronRight, FileText } from 'lucide-react'
 import api from '@/lib/api'
@@ -49,16 +49,22 @@ const SELECT_CLASS =
 export default function FormSubmissionsPage() {
   const navigate = useNavigate()
   const toast = useToast()
+  const { templateId: routeTemplateId } = useParams<{ templateId: string }>()
 
   const [filters, setFilters] = useState<SubmissionsFilters>({
     search: '',
     status: '',
-    templateId: '',
+    templateId: routeTemplateId ?? '',
     dateFrom: '',
     dateTo: '',
     page: 1,
   })
   const [isExporting, setIsExporting] = useState(false)
+
+  // Sincronizar cuando el usuario navega entre formularios desde el sidebar
+  useEffect(() => {
+    setFilters((prev) => ({ ...prev, templateId: routeTemplateId ?? '', page: 1 }))
+  }, [routeTemplateId])
 
   const queryFilters = {
     ...(filters.search     && { search: filters.search }),
