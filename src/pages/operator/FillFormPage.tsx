@@ -136,10 +136,9 @@ export default function FillFormPage() {
         const sigDataURL = payload.data[sigField.key] as string
         if (!sigDataURL) continue
         await api.post(`/form-submissions/${submissionId}/signatures`, {
-          signer_name: '',
+          signer_name: sigField.label,
           signer_role: sigField.label,
-          signer_doc: null,
-          signature_data: sigDataURL,
+          signature_url: sigDataURL,
         })
       }
 

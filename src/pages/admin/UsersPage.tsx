@@ -234,7 +234,7 @@ export default function UsersPage() {
         identification_number: form.identification_number,
         job_title: form.job_title,
         role: form.role,
-        work_location_id: form.work_location_id || '',
+        work_location_id: form.work_location_id || undefined,
       }
       if (form.pin) payload.pin = form.pin
       createMutation.mutate(payload)

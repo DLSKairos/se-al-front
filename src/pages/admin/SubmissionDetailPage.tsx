@@ -197,7 +197,8 @@ export default function SubmissionDetailPage() {
   }
 
   const approveMutation = useMutation({
-    mutationFn: () => api.patch(`/form-submissions/${id}/approve`),
+    mutationFn: () =>
+      api.patch(`/form-submissions/${id}/status`, { status: 'APPROVED' }),
     onSuccess: () => {
       toast.success('Submission aprobado correctamente')
       setShowApproveModal(false)
@@ -209,8 +210,8 @@ export default function SubmissionDetailPage() {
   })
 
   const rejectMutation = useMutation({
-    mutationFn: (reason: string) =>
-      api.patch(`/form-submissions/${id}/reject`, reason ? { reason } : {}),
+    mutationFn: (_reason: string) =>
+      api.patch(`/form-submissions/${id}/status`, { status: 'REJECTED' }),
     onSuccess: () => {
       toast.success('Submission rechazado')
       setShowRejectModal(false)
