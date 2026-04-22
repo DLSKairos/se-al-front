@@ -33,6 +33,11 @@ const OrgSettingsPage         = lazy(() => import('@/pages/admin/OrgSettingsPage
 const WebhooksPage            = lazy(() => import('@/pages/admin/WebhooksPage'))
 const PushTestPage            = lazy(() => import('@/pages/admin/PushTestPage'))
 
+// ── Páginas game ──────────────────────────────────────────────────────────────
+
+const WorldMap     = lazy(() => import('@/components/game/WorldMap'))
+const LevelWrapper = lazy(() => import('@/components/game/LevelWrapper'))
+
 // ── Páginas super admin ───────────────────────────────────────────────────────
 
 const OrganizationsPage = lazy(() => import('@/pages/super/OrganizationsPage'))
@@ -69,11 +74,11 @@ export function AppRouter() {
             <Route path="form/:templateId" element={<FillFormPage />} />
             <Route path="asistencia" element={<AttendancePage />} />
             <Route path="perfil" element={<OperatorProfilePage />} />
+            <Route path="game/world-map" element={<WorldMap />} />
           </Route>
           <Route path="/game/rotate-screen" element={<Placeholder name="RotateScreen" />} />
           <Route path="/game/story-intro" element={<Placeholder name="StoryIntro" />} />
-          <Route path="/game/world-map" element={<Placeholder name="WorldMap" />} />
-          <Route path="/game/level/:templateId" element={<Placeholder name="LevelWrapper" />} />
+          <Route path="/game/level/:templateId" element={<LevelWrapper />} />
         </Route>
 
         {/* ── Administrador ── */}

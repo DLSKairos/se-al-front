@@ -1,5 +1,5 @@
 /**
- * YesNoQuestion — bocadillo de diálogo + botones táctiles
+ * YesNoQuestion — bocadillo de diálogo + botones táctiles grandes
  *
  * Props simplificadas para nueva API:
  *   onAnswer  fn  — (value: boolean) => void
@@ -13,6 +13,7 @@ import TypewriterQuestion from './TypewriterQuestion'
 interface YesNoQuestionProps {
   /** Modo nuevo API: callback simple con booleano */
   onAnswer: (value: boolean) => void
+  typingDone?: boolean
   /** Modo legacy QuestionWrapper: objeto pregunta */
   question?: {
     id: string
@@ -42,8 +43,9 @@ const OPTION_COLORS: Record<string, string> = {
   na:  'border-slate-400 text-slate-300 hover:bg-slate-500/20 aria-pressed:bg-slate-500/30',
 }
 
-function YesNoQuestion({ question, onAnswer, onAnswerLegacy }: YesNoQuestionProps) {
-  const [typingDone, setTypingDone] = useState(!question) // si no hay pregunta, ya listo
+function YesNoQuestion({ question, onAnswer, onAnswerLegacy, typingDone: propTypingDone }: YesNoQuestionProps) {
+  const [internalTypingDone, setInternalTypingDone] = useState(!question)
+  const typingDone = (propTypingDone !== undefined && !question) ? propTypingDone : internalTypingDone
   const [selected,   setSelected]   = useState<string | null>(null)
   const [showObs,    setShowObs]    = useState(false)
   const [obsText,    setObsText]    = useState('')
@@ -95,7 +97,7 @@ function YesNoQuestion({ question, onAnswer, onAnswerLegacy }: YesNoQuestionProp
           <div className="glass-card-md px-4 py-3">
             <TypewriterQuestion
               text={question.question}
-              onDone={() => setTypingDone(true)}
+              onDone={() => setInternalTypingDone(true)}
             />
           </div>
           <div className="w-0 h-0 mx-auto speech-triangle-down" aria-hidden="true" />
@@ -115,8 +117,8 @@ function YesNoQuestion({ question, onAnswer, onAnswerLegacy }: YesNoQuestionProp
             <button
               key={opt.value}
               className={[
-                'flex flex-col items-center gap-1 min-w-[80px] px-5 py-3',
-                'rounded-2xl border-2 font-["Syne"] font-bold text-sm',
+                'flex flex-col items-center gap-2 flex-1 px-4 py-5',
+                'rounded-2xl border-2 font-sub font-bold text-base',
                 'transition-all duration-150 active:scale-95',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
                 colorCls,
@@ -127,7 +129,7 @@ function YesNoQuestion({ question, onAnswer, onAnswerLegacy }: YesNoQuestionProp
               aria-label={opt.label}
               aria-pressed={isChosen}
             >
-              <span className="text-xl">{opt.icon}</span>
+              <span className="text-3xl">{opt.icon}</span>
               <span>{opt.label}</span>
             </button>
           )

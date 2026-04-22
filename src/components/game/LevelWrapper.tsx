@@ -20,6 +20,7 @@ import MicroCelebration from './questions/MicroCelebration'
 import YesNoQuestion from './questions/YesNoQuestion'
 import MultiSelectQuestion from './questions/MultiSelectQuestion'
 import TextInputQuestion from './questions/TextInputQuestion'
+import TypewriterQuestion from './questions/TypewriterQuestion'
 import { FormField, FormContext } from '@/types'
 
 // ─── Spinner & Error inline (evitar dependencia externa que no existe aún) ────
@@ -64,6 +65,7 @@ export default function LevelWrapper() {
   const [submitError,       setSubmitError]       = useState<string | null>(null)
   const [missionDone,       setMissionDone]       = useState(false)
   const [revealing,         setRevealing]         = useState(true)
+  const [typingDone,        setTypingDone]        = useState(false)
 
   const { data: context, isLoading, error } = useQuery({
     queryKey: QK.templates.context(templateId!),
@@ -84,6 +86,9 @@ export default function LevelWrapper() {
       () => {}, // GPS no disponible — continuar igual
     )
   }, [context])
+
+  // Resetear typewriter al cambiar de pregunta
+  useEffect(() => { setTypingDone(false) }, [currentFieldIndex])
 
   // Campos visibles (excluir GEOLOCATION y SIGNATURE del flujo de preguntas)
   const visibleFields = useMemo(
@@ -186,29 +191,33 @@ export default function LevelWrapper() {
 
   return (
     <div
-      className="fixed inset-0 bg-[var(--navy)] flex flex-col"
+      className="fixed inset-0 bg-cosmos flex flex-col"
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
       {/* Barra de progreso */}
-      <div className="h-1.5 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden shrink-0">
+      <div className="h-1.5 shrink-0 overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
         <div
-          className="h-full bg-[var(--signal)] transition-[width] duration-500"
-          style={{ width: `${progressPct}%` }}
+          className="h-full rounded-full transition-[width] duration-500"
+          style={{
+            width: `${progressPct}%`,
+            background: 'linear-gradient(to right, var(--amber), var(--terracotta))',
+          }}
         />
       </div>
 
       {/* Header */}
       <header className="flex items-center gap-3 px-4 py-3 shrink-0">
         <div className="flex flex-col min-w-0 flex-1">
-          <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
+          <span className="font-sub text-[10px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--amber)' }}>
             MISIÓN
           </span>
-          <span className="font-display font-extrabold text-lg text-[var(--off-white)] truncate">
+          <span className="font-display font-extrabold text-lg truncate" style={{ color: 'var(--cream)' }}>
             {context.template.name}
           </span>
         </div>
         <button
-          className="shrink-0 w-8 h-8 rounded-full bg-[rgba(255,255,255,0.05)] grid place-items-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-bold text-sm border-0"
+          className="card-glass shrink-0 w-8 h-8 rounded-full grid place-items-center font-bold text-sm border-0 cursor-pointer transition-colors"
+          style={{ color: 'rgba(250,244,232,0.7)' }}
           onClick={handleExit}
           aria-label="Salir de la misión"
         >
@@ -251,35 +260,47 @@ export default function LevelWrapper() {
         {/* Pregunta activa */}
         {!showCelebration && !submitting && !missionDone && !submitError && currentField && questionType && (
           <>
-            <p className="text-[10px] text-[var(--muted)] text-right mb-2 font-dm">
-              {currentFieldIndex + 1} / {visibleFields.length}
-            </p>
-
-            {/* Número decorativo */}
-            <div className="font-display font-extrabold text-[64px] text-[rgba(0,212,255,0.08)] leading-none mb-2">
-              {String(currentFieldIndex + 1).padStart(2, '0')}
+            {/* Etiqueta contextual: nombre de misión · pregunta N de M */}
+            <div className="flex items-center gap-2 mb-4">
+              <span className="font-sub text-[10px] uppercase tracking-widest text-[var(--amber)]">
+                {context.template.name}
+              </span>
+              <span className="text-[rgba(255,255,255,0.2)] text-xs">·</span>
+              <span className="font-sub text-[10px] uppercase tracking-widest text-[rgba(250,244,232,0.45)]">
+                Pregunta {currentFieldIndex + 1} de {visibleFields.length}
+              </span>
             </div>
 
-            <h2 className="font-dm text-lg font-medium text-[var(--off-white)] leading-relaxed mb-8 max-w-sm">
-              {currentField.label}
-            </h2>
+            <TypewriterQuestion
+              text={currentField.label}
+              speed={35}
+              onDone={() => setTypingDone(true)}
+            />
+
+            {/* Espaciado entre pregunta y opciones */}
+            <div className="mb-8" />
 
             {questionType === 'yesno' && (
               <YesNoQuestion
+                key={currentFieldIndex}
+                typingDone={typingDone}
                 onAnswer={(v) => handleAnswer(currentField.key, v ? 'true' : 'false')}
               />
             )}
 
             {questionType === 'multiselect' && currentField.options && (
               <MultiSelectQuestion
+                key={currentFieldIndex}
                 options={currentField.options}
                 multiple={currentField.type === 'MULTISELECT'}
+                typingDone={typingDone}
                 onAnswer={(v) => handleAnswer(currentField.key, v)}
               />
             )}
 
             {(questionType === 'text' || questionType === 'number' || questionType === 'date') && (
               <TextInputQuestion
+                key={currentFieldIndex}
                 type={
                   questionType === 'number'
                     ? 'number'
@@ -288,6 +309,7 @@ export default function LevelWrapper() {
                     : 'text'
                 }
                 required={currentField.required}
+                typingDone={typingDone}
                 onAnswer={(v) => handleAnswer(currentField.key, v)}
               />
             )}

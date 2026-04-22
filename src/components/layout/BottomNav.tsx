@@ -16,7 +16,10 @@ const TABS: Tab[] = [
 ]
 
 const HIDDEN_ROUTES = ['/login', '/location-select']
-const HIDDEN_PREFIXES = ['/admin', '/game', '/super', '/form']
+const HIDDEN_PREFIXES = [
+  '/admin', '/super', '/form',
+  '/game/level', '/game/rotate-screen', '/game/story-intro',
+]
 
 export function BottomNav() {
   const location = useLocation()
@@ -42,7 +45,10 @@ export function BottomNav() {
     >
       <div className="flex items-center justify-around px-2 h-14">
         {TABS.map((tab) => {
-          const isActive = tab.path !== null && pathname === tab.path
+          const isActive =
+            tab.path !== null &&
+            (pathname === tab.path ||
+              (tab.path === '/' && pathname === '/game/world-map'))
           const isDisabled = tab.path === null
 
           const Icon = tab.icon

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ClipboardList, Clock, ChevronRight, LogIn } from 'lucide-react'
 import api from '@/lib/api'
@@ -153,10 +153,14 @@ function TemplateCard({ template }: TemplateCardProps) {
 
 export default function OperatorHomePage() {
   const { user } = useAuthStore()
+  const navigate = useNavigate()
   const firstName = user?.jobTitle ?? 'Operario'
 
+  const isLiteMode = sessionStorage.getItem('lite_mode') === 'true'
   const introAlreadyShown = !!localStorage.getItem(introShownKey())
-  const [showIntro, setShowIntro] = useState(!introAlreadyShown)
+
+  // Todos los hooks antes de cualquier return condicional (reglas de hooks)
+  const [showIntro, setShowIntro] = useState(!isLiteMode && !introAlreadyShown)
 
   const {
     data: templates = [],
@@ -179,8 +183,18 @@ export default function OperatorHomePage() {
   const handleIntroComplete = () => {
     localStorage.setItem(introShownKey(), '1')
     setShowIntro(false)
+    // Re-leer en el momento del callback (puede haber cambiado si el usuario activó lite mode)
+    const liteModeNow = sessionStorage.getItem('lite_mode') === 'true'
+    if (!liteModeNow) navigate('/game/world-map', { replace: true })
+    // Si liteModeNow=true: setShowIntro(false) hace que caiga al dashboard normal
   }
 
+  // Game mode + intro ya vista hoy → redirect directo al WorldMap
+  if (!isLiteMode && introAlreadyShown) {
+    return <Navigate to="/game/world-map" replace />
+  }
+
+  // Game mode + primer acceso del día → mostrar intro
   if (showIntro) {
     return (
       <StoryIntro
@@ -190,6 +204,8 @@ export default function OperatorHomePage() {
       />
     )
   }
+
+  // Modo lite: renderizar dashboard normal
 
   // Calcular progreso de formularios (placeholder — no hay dato de completados por template)
   const totalCount = templates.length

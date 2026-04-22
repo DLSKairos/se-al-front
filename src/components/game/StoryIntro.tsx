@@ -8,6 +8,9 @@
  */
 import { useState, useEffect, useRef } from 'react'
 
+interface NetworkInformation { effectiveType?: '4g' | '3g' | '2g' | 'slow-2g' }
+declare global { interface Navigator { connection?: NetworkInformation } }
+
 const TYPEWRITER_SPEED = 50
 const DIALOG_PAUSE     = 1600
 
@@ -38,6 +41,7 @@ function StoryIntro({
   const [displayedText, setDisplayedText] = useState('')
   const [isTyping,      setIsTyping]      = useState(true)
   const [imgError,      setImgError]      = useState(false)
+  const [showNetBanner, setShowNetBanner] = useState(false)
 
   const onCompleteRef   = useRef(onComplete)
   const typeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -45,12 +49,25 @@ function StoryIntro({
 
   useEffect(() => { onCompleteRef.current = onComplete }, [onComplete])
 
+  useEffect(() => {
+    const type = navigator.connection?.effectiveType
+    if (type && type !== '4g') setShowNetBanner(true)
+  }, [])
+
   const clearAll = () => {
     if (typeIntervalRef.current) clearInterval(typeIntervalRef.current)
     if (autoTimerRef.current)   clearTimeout(autoTimerRef.current)
   }
 
   const handleSkip = () => {
+    clearAll()
+    onCompleteRef.current?.()
+  }
+
+  const handleIgnoreNetBanner = () => setShowNetBanner(false)
+
+  const handleActivateLiteMode = () => {
+    sessionStorage.setItem('lite_mode', 'true')
     clearAll()
     onCompleteRef.current?.()
   }
@@ -161,6 +178,31 @@ function StoryIntro({
           />
         ))}
       </div>
+
+      {showNetBanner && (
+        <div className="absolute bottom-0 left-0 right-0 z-[8100] px-4 py-3 bg-[rgba(245,166,35,0.12)] border-t border-[rgba(245,166,35,0.25)] flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <span className="text-amber-400 text-sm shrink-0">⚡</span>
+            <p className="text-xs text-amber-300 font-['DM_Sans'] flex-1">
+              Modo lite — la app te sugiere activarlo
+            </p>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button
+              className="text-xs font-semibold text-[var(--muted)] hover:text-[var(--off-white)] transition-colors px-3 py-1.5 font-['DM_Sans']"
+              onClick={handleIgnoreNetBanner}
+            >
+              Ignorar
+            </button>
+            <button
+              className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors px-3 py-1.5 border border-amber-500/30 rounded-lg font-['DM_Sans']"
+              onClick={handleActivateLiteMode}
+            >
+              Activar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

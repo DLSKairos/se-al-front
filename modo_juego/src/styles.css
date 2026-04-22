@@ -1,0 +1,414 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* SEÑAL — Game Mode Design System
+ * Inspired by Duolingo + Mario Bros, wrapped in a cosmic constellation metaphor.
+ * Brand identity:
+ *   Azul Noche  #141B2D  (primario / espacio)
+ *   Naranja     #C4500A  (acento / acción)
+ *   Cream       #FAF4E8  (neutral)
+ *   Amber       #F4A923  (secundario / estrellas)
+ * Fonts: Fraunces (heading), Syne (subheading), DM Sans (body)
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+@theme inline {
+  --font-heading: "Fraunces", ui-serif, Georgia, serif;
+  --font-subheading: "Syne", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  /* Game-specific tokens */
+  --color-night: var(--night);
+  --color-night-deep: var(--night-deep);
+  --color-cream: var(--cream);
+  --color-amber: var(--amber);
+  --color-terracotta: var(--terracotta);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-star: var(--star);
+  --color-nebula: var(--nebula);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Gradients & shadows */
+  --gradient-cosmos: radial-gradient(
+      ellipse at top,
+      oklch(0.28 0.08 270) 0%,
+      oklch(0.18 0.06 265) 40%,
+      oklch(0.12 0.04 260) 100%
+    );
+  --gradient-amber: linear-gradient(135deg, var(--amber), var(--terracotta));
+  --gradient-star: radial-gradient(circle, var(--star) 0%, transparent 70%);
+  --shadow-glow-amber: 0 0 24px oklch(from var(--amber) l c h / 0.5),
+    0 0 60px oklch(from var(--amber) l c h / 0.25);
+  --shadow-glow-terracotta: 0 0 24px oklch(from var(--terracotta) l c h / 0.6);
+  --shadow-planet: 0 12px 40px oklch(0 0 0 / 0.4),
+    inset -8px -12px 24px oklch(0 0 0 / 0.35),
+    inset 6px 8px 16px oklch(1 0 0 / 0.15);
+}
+
+:root {
+  --radius: 0.875rem;
+
+  /* Brand */
+  --night: oklch(0.21 0.05 265); /* #141B2D */
+  --night-deep: oklch(0.14 0.04 265);
+  --cream: oklch(0.96 0.02 85); /* #FAF4E8 */
+  --amber: oklch(0.78 0.15 70); /* #F4A923 */
+  --terracotta: oklch(0.55 0.15 45); /* #C4500A */
+
+  /* Semantic — light mode (rarely used; game lives on dark cosmos) */
+  --background: var(--cream);
+  --foreground: var(--night);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--night);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--night);
+  --primary: var(--night);
+  --primary-foreground: var(--cream);
+  --secondary: var(--amber);
+  --secondary-foreground: var(--night);
+  --muted: oklch(0.92 0.01 85);
+  --muted-foreground: oklch(0.45 0.03 265);
+  --accent: var(--terracotta);
+  --accent-foreground: var(--cream);
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: var(--cream);
+  --border: oklch(0.88 0.02 85);
+  --input: oklch(0.88 0.02 85);
+  --ring: var(--amber);
+
+  --success: oklch(0.7 0.18 145);
+  --danger: oklch(0.62 0.24 25);
+  --star: oklch(0.95 0.1 90);
+  --nebula: oklch(0.55 0.18 320);
+
+  --chart-1: var(--amber);
+  --chart-2: var(--terracotta);
+  --chart-3: var(--nebula);
+  --chart-4: var(--success);
+  --chart-5: oklch(0.6 0.15 220);
+
+  --sidebar: var(--night);
+  --sidebar-foreground: var(--cream);
+  --sidebar-primary: var(--amber);
+  --sidebar-primary-foreground: var(--night);
+  --sidebar-accent: oklch(0.28 0.06 265);
+  --sidebar-accent-foreground: var(--cream);
+  --sidebar-border: oklch(0.28 0.06 265);
+  --sidebar-ring: var(--amber);
+}
+
+.dark {
+  --background: var(--night-deep);
+  --foreground: var(--cream);
+  --card: oklch(0.24 0.05 265);
+  --card-foreground: var(--cream);
+  --popover: oklch(0.24 0.05 265);
+  --popover-foreground: var(--cream);
+  --primary: var(--amber);
+  --primary-foreground: var(--night);
+  --secondary: oklch(0.3 0.05 265);
+  --secondary-foreground: var(--cream);
+  --muted: oklch(0.28 0.04 265);
+  --muted-foreground: oklch(0.7 0.03 85);
+  --accent: var(--terracotta);
+  --accent-foreground: var(--cream);
+  --destructive: oklch(0.65 0.23 25);
+  --destructive-foreground: var(--cream);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--amber);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html,
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+  }
+  .font-sub {
+    font-family: var(--font-subheading);
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ───── Cosmic background ───── */
+.bg-cosmos {
+  background: var(--gradient-cosmos);
+  position: relative;
+  overflow: hidden;
+}
+.bg-cosmos::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, oklch(1 0 0 / 0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 78% 18%, oklch(1 0 0 / 0.6) 50%, transparent 100%),
+    radial-gradient(2px 2px at 42% 65%, oklch(1 0 0 / 0.9) 50%, transparent 100%),
+    radial-gradient(1px 1px at 88% 78%, oklch(1 0 0 / 0.7) 50%, transparent 100%),
+    radial-gradient(1px 1px at 25% 85%, oklch(1 0 0 / 0.5) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 35%, oklch(1 0 0 / 0.8) 50%, transparent 100%),
+    radial-gradient(1px 1px at 8% 55%, oklch(1 0 0 / 0.6) 50%, transparent 100%),
+    radial-gradient(1px 1px at 95% 45%, oklch(1 0 0 / 0.7) 50%, transparent 100%);
+  background-size: 100% 100%;
+  animation: twinkle 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes twinkle {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* ───── Game animations ───── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(2deg); }
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-4deg); }
+  75% { transform: rotate(4deg); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px oklch(from var(--amber) l c h / 0.4); }
+  50% { box-shadow: 0 0 40px oklch(from var(--amber) l c h / 0.8); }
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+@keyframes shooting-star {
+  0% { transform: translate(0, 0) rotate(-25deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate(400px, 200px) rotate(-25deg); opacity: 0; }
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+@keyframes xp-burst {
+  0% { transform: scale(0) translateY(0); opacity: 0; }
+  20% { transform: scale(1.2) translateY(-10px); opacity: 1; }
+  100% { transform: scale(1) translateY(-60px); opacity: 0; }
+}
+@keyframes bounce-in {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes slide-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes constellation-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
+.animate-pop { animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-wiggle { animation: wiggle 0.5s ease-in-out; }
+.animate-shake { animation: shake 0.4s ease-in-out; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-bounce-in { animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-slide-up { animation: slide-up 0.5s ease-out both; }
+.animate-xp-burst { animation: xp-burst 1s ease-out forwards; }
+
+/* ───── Game UI primitives ───── */
+.btn-3d {
+  position: relative;
+  border-radius: 1rem;
+  font-family: var(--font-subheading);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.875rem 1.5rem;
+  background: var(--amber);
+  color: var(--night);
+  box-shadow: 0 6px 0 var(--terracotta), 0 8px 16px oklch(0 0 0 / 0.3);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+  border: none;
+}
+.btn-3d:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--terracotta), 0 12px 20px oklch(0 0 0 / 0.35); }
+.btn-3d:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--terracotta), 0 2px 4px oklch(0 0 0 / 0.3); }
+.btn-3d.btn-3d-primary {
+  background: var(--terracotta);
+  color: var(--cream);
+  box-shadow: 0 6px 0 oklch(0.4 0.13 40), 0 8px 16px oklch(0 0 0 / 0.4);
+}
+.btn-3d.btn-3d-primary:active { box-shadow: 0 2px 0 oklch(0.4 0.13 40), 0 2px 4px oklch(0 0 0 / 0.3); }
+.btn-3d.btn-3d-ghost {
+  background: oklch(1 0 0 / 0.08);
+  color: var(--cream);
+  box-shadow: 0 6px 0 oklch(1 0 0 / 0.06), inset 0 0 0 2px oklch(1 0 0 / 0.15);
+}
+.btn-3d.btn-3d-success {
+  background: var(--success);
+  color: var(--night);
+  box-shadow: 0 6px 0 oklch(0.5 0.15 145), 0 8px 16px oklch(0 0 0 / 0.3);
+}
+.btn-3d.btn-3d-success:active { box-shadow: 0 2px 0 oklch(0.5 0.15 145); }
+.btn-3d:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.planet {
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, var(--amber), var(--terracotta) 70%, oklch(0.3 0.1 40));
+  box-shadow: var(--shadow-planet), 0 0 30px oklch(from var(--amber) l c h / 0.4);
+  position: relative;
+}
+.planet-locked {
+  background: radial-gradient(circle at 30% 30%, oklch(0.45 0.02 265), oklch(0.25 0.02 265) 70%, oklch(0.15 0.02 265));
+  box-shadow: var(--shadow-planet);
+  opacity: 0.55;
+}
+.planet-current {
+  animation: pulse-glow 2s ease-in-out infinite, float 3s ease-in-out infinite;
+}
+.planet-done {
+  background: radial-gradient(circle at 30% 30%, var(--success), oklch(0.45 0.18 145) 70%, oklch(0.3 0.12 145));
+}
+
+.star-icon { color: var(--star); filter: drop-shadow(0 0 6px var(--star)); }
+
+.card-glass {
+  background: oklch(1 0 0 / 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(1 0 0 / 0.1);
+  border-radius: 1.25rem;
+}
+
+.text-cosmos-heading {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--cream), var(--amber));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hide scrollbar but allow scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* ───── Universe Map ───── */
+@keyframes orbit-ring {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes orbit-ring-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(6px, -8px); }
+  50% { transform: translate(-4px, -4px); }
+  75% { transform: translate(-6px, 6px); }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes nebula-shift {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.4; }
+  50% { transform: scale(1.15) rotate(180deg); opacity: 0.6; }
+}
+
+.animate-drift { animation: drift 8s ease-in-out infinite; }
+.animate-pulse-ring { animation: pulse-ring 2.5s ease-out infinite; }
+
+.orbit-ring {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px dashed oklch(1 0 0 / 0.12);
+  pointer-events: none;
+}
+
+.nebula {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  pointer-events: none;
+  animation: nebula-shift 20s ease-in-out infinite;
+}
+
+.constellation-line {
+  stroke-dasharray: 4 6;
+  animation: constellation-draw 2s ease-out forwards;
+}

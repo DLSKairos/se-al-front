@@ -40,7 +40,7 @@ function TypewriterQuestion({ text = '', speed = 50, onDone }: TypewriterQuestio
   }, [text, speed])
 
   return (
-    <p className="text-[var(--off-white)] text-base leading-relaxed font-['DM_Sans'] m-0">
+    <p className="font-display font-extrabold text-[28px] leading-tight text-[var(--cream)] m-0">
       {displayedText}
       {isTyping && (
         <span

@@ -142,6 +142,77 @@ export async function registerWebAuthn(userId: string): Promise<boolean> {
 }
 
 /**
+ * Registra biometría de primer uso usando identification_number (sin JWT).
+ * Retorna el access_token tras el registro exitoso, dejando al usuario autenticado.
+ */
+export async function registerWebAuthnPublic(identificationNumber: string): Promise<string> {
+  // 1. Obtener opciones de registro
+  let options: RegisterBeginResponse
+  try {
+    const res = await api.post<RegisterBeginResponse>(
+      '/auth/webauthn/register-init/begin',
+      { identification_number: identificationNumber },
+    )
+    options = res.data
+  } catch (e: unknown) {
+    throw new WebAuthnError('Error al iniciar registro biométrico', 'NETWORK_ERROR')
+  }
+
+  if (!options.challenge || !options.user?.id) {
+    throw new WebAuthnError('Opciones de registro inválidas', 'PARSE_ERROR')
+  }
+
+  // 2. Decodificar buffers
+  const publicKeyOptions: PublicKeyCredentialCreationOptions = {
+    ...(options as unknown as PublicKeyCredentialCreationOptions),
+    challenge: base64ToUint8Array(options.challenge),
+    user: {
+      ...(options.user as unknown as PublicKeyCredentialUserEntity),
+      id: base64ToUint8Array(options.user.id),
+    },
+    excludeCredentials: [],
+  }
+
+  // 3. Invocar autenticador
+  let credential: PublicKeyCredential | null
+  try {
+    credential = (await navigator.credentials.create({
+      publicKey: publicKeyOptions,
+    })) as PublicKeyCredential | null
+  } catch (e) {
+    const err = e as DOMException
+    if (err.name === 'NotAllowedError') {
+      throw new WebAuthnError('Cancelaste el registro biométrico', 'USER_CANCELLED')
+    }
+    throw new WebAuthnError('Error durante el registro biométrico', 'UNKNOWN')
+  }
+
+  if (!credential) {
+    throw new WebAuthnError('No se recibió credencial del autenticador', 'NO_RESPONSE')
+  }
+
+  const attestationResp = credential.response as AuthenticatorAttestationResponse
+
+  const attestationResponse = {
+    id: credential.id,
+    rawId: arrayBufferToBase64Url(credential.rawId),
+    response: {
+      clientDataJSON: arrayBufferToBase64Url(attestationResp.clientDataJSON),
+      attestationObject: arrayBufferToBase64Url(attestationResp.attestationObject),
+    },
+    type: credential.type,
+  }
+
+  // 4. Verificar con backend y obtener token
+  const finishRes = await api.post<{ access_token: string }>(
+    '/auth/webauthn/register-init/finish',
+    { identification_number: identificationNumber, attestationResponse },
+  )
+
+  return finishRes.data.access_token
+}
+
+/**
  * Autentica al usuario usando su credencial WebAuthn registrada.
  * Retorna el access_token si la autenticación fue exitosa.
  * Lanza WebAuthnError con código tipado en cada ruta de fallo.

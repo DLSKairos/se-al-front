@@ -1,10 +1,11 @@
 /**
- * TextInputQuestion — pregunta con campo de texto libre, número o fecha
+ * TextInputQuestion — campo de texto grande con botón "Comprobar" full-width
  *
  * Props nueva API:
  *   type       'text' | 'number' | 'date' | 'datetime-local'
  *   required   boolean
  *   placeholder string
+ *   typingDone  boolean — controlado por LevelWrapper
  *   onAnswer   (value: string) => void
  *
  * Props legacy QuestionWrapper:
@@ -19,6 +20,7 @@ interface TextInputQuestionProps {
   type?: 'text' | 'number' | 'date' | 'datetime-local'
   required?: boolean
   placeholder?: string
+  typingDone?: boolean
   onAnswer: (value: string) => void
 
   /** Modo legacy QuestionWrapper */
@@ -38,13 +40,15 @@ function TextInputQuestion({
   type: propType = 'text',
   required = false,
   placeholder: propPlaceholder,
+  typingDone: propTypingDone,
   onAnswer,
   question,
   onAnswerLegacy,
 }: TextInputQuestionProps) {
-  const [typingDone, setTypingDone] = useState(!question)
-  const [value,      setValue]      = useState('')
-  const [submitted,  setSubmitted]  = useState(false)
+  const [internalTypingDone, setInternalTypingDone] = useState(!question)
+  const typingDone = (propTypingDone !== undefined && !question) ? propTypingDone : internalTypingDone
+  const [value,     setValue]     = useState('')
+  const [submitted, setSubmitted] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -77,6 +81,8 @@ function TextInputQuestion({
     if (e.key === 'Enter') handleSubmit()
   }
 
+  const canSubmit = !required || !!value.trim()
+
   return (
     <div className="flex flex-col items-center gap-4 w-full">
       {question?.icon && (
@@ -88,7 +94,7 @@ function TextInputQuestion({
           <div className="glass-card-md px-4 py-3">
             <TypewriterQuestion
               text={question.question}
-              onDone={() => setTypingDone(true)}
+              onDone={() => setInternalTypingDone(true)}
             />
           </div>
           <div className="w-0 h-0 mx-auto speech-triangle-down" aria-hidden="true" />
@@ -97,20 +103,20 @@ function TextInputQuestion({
 
       <div
         className={[
-          'flex gap-2 w-full max-w-sm transition-all duration-300',
-          typingDone ? 'opacity-100 game-bounce-in' : 'opacity-0 pointer-events-none',
+          'flex flex-col gap-3 w-full transition-all duration-300',
+          typingDone ? 'opacity-100' : 'opacity-0 pointer-events-none',
         ].join(' ')}
       >
         <input
           ref={inputRef}
           className={[
-            'flex-1 px-4 py-3 rounded-xl border font-["DM_Sans"] text-sm',
-            'bg-[var(--navy-light)] text-[var(--off-white)]',
-            'placeholder:text-[var(--muted)] outline-none',
+            'w-full px-5 py-4 rounded-2xl border-2 font-dm text-base',
+            'bg-[rgba(255,255,255,0.05)] text-[var(--cream)]',
+            'placeholder:text-[rgba(250,244,232,0.3)] outline-none',
             'transition-colors',
             submitted
               ? 'border-white/10 opacity-60'
-              : 'border-white/20 focus:border-[var(--signal)]',
+              : 'border-white/15 focus:border-[var(--signal)] focus:bg-[rgba(0,212,255,0.04)]',
           ].join(' ')}
           type={resolvedType}
           value={value}
@@ -123,18 +129,22 @@ function TextInputQuestion({
           aria-label={question?.question ?? 'Respuesta'}
           required={required}
         />
+
         <button
           className={[
-            'w-12 h-12 rounded-xl font-bold text-lg transition-all duration-200',
+            'w-full py-4 rounded-2xl font-sub font-bold text-base tracking-wide uppercase',
+            'transition-all duration-200 active:scale-[0.98]',
             submitted
-              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-              : 'bg-[var(--signal)] text-[var(--navy)] hover:opacity-90 active:scale-95',
+              ? 'bg-green-500/20 text-green-400 border-2 border-green-500/30'
+              : !canSubmit
+              ? 'bg-white/10 text-[var(--muted)] cursor-not-allowed'
+              : 'bg-[var(--terracotta)] text-[var(--cream)] hover:opacity-90',
           ].join(' ')}
           onClick={handleSubmit}
           disabled={submitted}
-          aria-label="Confirmar"
+          aria-label="Confirmar respuesta"
         >
-          {submitted ? '✓' : '→'}
+          {submitted ? '✓ Guardado' : 'Comprobar'}
         </button>
       </div>
     </div>

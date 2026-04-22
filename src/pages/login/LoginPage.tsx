@@ -8,7 +8,7 @@ import { useToast } from '@/components/ui/Toast'
 import { SplashScreen } from '@/components/ui'
 import {
   authenticateWebAuthn,
-  registerWebAuthn,
+  registerWebAuthnPublic,
   checkWebAuthnSupport,
   WebAuthnError,
 } from '@/lib/webauthn'
@@ -25,7 +25,7 @@ interface TokenResponse {
   access_token: string
 }
 
-type Step = 'splash' | 'cedula' | 'loading' | 'webauthn-offer' | 'pin' | 'pin-create'
+type Step = 'splash' | 'cedula' | 'loading' | 'webauthn-register' | 'pin' | 'pin-create'
 type CreatePhase = 'new' | 'confirm'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -104,28 +104,16 @@ export default function LoginPage() {
   const [newDigits,     setNewDigits]     = useState<string[]>([])
   const [confirmDigits, setConfirmDigits] = useState<string[]>([])
   const [createPhase,   setCreatePhase]   = useState<CreatePhase>('new')
+  const [registeringBiometric, setRegisteringBiometric] = useState(false)
+  const [biometricFailed,      setBiometricFailed]      = useState(false)
 
-  // Refs para evitar problemas de closure en callbacks async
-  const doRegisterPasskey = useRef(false)
-  const pinStatusRef      = useRef<PinStatusResponse | null>(null)
+  const pinStatusRef = useRef<PinStatusResponse | null>(null)
 
   // ── Login con token ──────────────────────────────────────────────────────────
 
-  async function handleToken(access_token: string) {
+  function handleToken(access_token: string) {
     setToken(access_token)
     const user = useAuthStore.getState().user
-
-    if (doRegisterPasskey.current && user?.sub) {
-      doRegisterPasskey.current = false
-      try {
-        setStep('loading')
-        await registerWebAuthn(user.sub)
-        toast.success('¡Biométrico activado! La próxima vez ingresa sin PIN.')
-      } catch {
-        // Canceló o falló el registro — ya está autenticado, solo navegar
-      }
-    }
-
     if (user?.role) redirectByRole(user.role, navigate)
   }
 
@@ -172,7 +160,13 @@ export default function LoginPage() {
       return
     }
 
-    // 2. Intentar autenticación WebAuthn si el dispositivo lo soporta
+    // 2. Si ya tiene PIN → ir directo al PIN (no intentar biometría)
+    if (status.pinConfigured) {
+      setStep('pin')
+      return
+    }
+
+    // 3. Sin PIN: intentar WebAuthn si el dispositivo lo soporta
     const webAuthnAvailable = await checkWebAuthnSupport()
 
     if (webAuthnAvailable) {
@@ -182,38 +176,32 @@ export default function LoginPage() {
         return
       } catch (err) {
         if (err instanceof WebAuthnError && err.code === 'NO_CREDENTIALS') {
-          // Sin passkey registrada — ofrecer registro antes del PIN
-          setStep('webauthn-offer')
+          // Sin credencial registrada → mostrar pantalla de registro biométrico
+          setBiometricFailed(false)
+          setStep('webauthn-register')
           return
         }
-        // Canceló o error desconocido — continuar con PIN
+        // Canceló u otro error → crear PIN
       }
     }
 
-    // 3. Ir directo al PIN
-    goToPin(status)
+    // 4. WebAuthn no disponible o cancelado → crear PIN
+    setStep('pin-create')
+    setCreatePhase('new')
   }
 
-  function goToPin(status?: PinStatusResponse | null) {
-    const s = status ?? pinStatusRef.current
-    if (s?.pinConfigured) {
-      setStep('pin')
-    } else {
-      setStep('pin-create')
-      setCreatePhase('new')
+  // ── Registro biométrico ───────────────────────────────────────────────────────
+
+  async function handleWebAuthnRegister() {
+    setRegisteringBiometric(true)
+    try {
+      const token = await registerWebAuthnPublic(cedula.trim())
+      setRegisteringBiometric(false)
+      handleToken(token)
+    } catch {
+      setRegisteringBiometric(false)
+      setBiometricFailed(true)
     }
-  }
-
-  // ── Oferta WebAuthn ───────────────────────────────────────────────────────────
-
-  function handleAcceptWebAuthn() {
-    doRegisterPasskey.current = true
-    goToPin()
-  }
-
-  function handleSkipWebAuthn() {
-    doRegisterPasskey.current = false
-    goToPin()
   }
 
   // ── PIN existente ─────────────────────────────────────────────────────────────
@@ -353,41 +341,52 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* ── Oferta WebAuthn ── */}
-        {step === 'webauthn-offer' && (
+        {/* ── Registro biométrico ── */}
+        {step === 'webauthn-register' && (
           <div className="flex flex-col gap-5">
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.15)] flex items-center justify-center">
                 <Fingerprint className="w-8 h-8 text-[var(--signal)]" />
               </div>
               <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-                Llave de acceso
+                Acceso biométrico
               </p>
               <h2 className="font-display font-bold text-xl text-[var(--off-white)]">
-                Activa tu biométrico
+                {biometricFailed ? 'No se pudo activar' : 'Registra tu biométrico'}
               </h2>
               <p className="text-sm text-[var(--muted)] font-dm mt-2 leading-relaxed">
-                Tu dispositivo soporta huella o Face ID. Configúralo ahora para ingresar sin PIN la próxima vez.
+                {biometricFailed
+                  ? 'No fue posible registrar el biométrico. Crea un PIN para ingresar de forma segura.'
+                  : 'Tu dispositivo soporta huella o Face ID. Actívalo para ingresar de forma rápida y segura.'}
               </p>
             </div>
 
+            {!biometricFailed && (
+              <button
+                type="button"
+                onClick={handleWebAuthnRegister}
+                disabled={registeringBiometric}
+                className="btn-primary-gradient w-full py-4 rounded-[14px]"
+              >
+                {registeringBiometric ? 'Activando…' : 'Activar biométrico'}
+              </button>
+            )}
+
             <button
               type="button"
-              onClick={handleAcceptWebAuthn}
-              className="btn-primary-gradient w-full py-4 rounded-[14px]"
+              onClick={() => { setStep('pin-create'); setCreatePhase('new') }}
+              className={
+                biometricFailed
+                  ? 'btn-primary-gradient w-full py-4 rounded-[14px]'
+                  : 'text-sm text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0'
+              }
             >
-              Sí, configurar ahora
+              {biometricFailed ? 'Crear PIN de acceso' : 'Continuar con PIN'}
             </button>
+
             <button
               type="button"
-              onClick={handleSkipWebAuthn}
-              className="text-sm text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
-            >
-              No, continuar con PIN
-            </button>
-            <button
-              type="button"
-              onClick={() => { setStep('cedula'); doRegisterPasskey.current = false }}
+              onClick={() => { setStep('cedula'); setBiometricFailed(false) }}
               className="text-xs text-center text-[var(--muted)]/60 hover:text-[var(--muted)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
             >
               Cambiar cédula
@@ -403,15 +402,8 @@ export default function LoginPage() {
                 PIN de acceso
               </p>
               <h2 className="font-display font-bold text-xl text-[var(--off-white)]">
-                {doRegisterPasskey.current
-                  ? 'Confirma tu identidad'
-                  : 'Ingresa tu PIN'}
+                Ingresa tu PIN
               </h2>
-              {doRegisterPasskey.current && (
-                <p className="text-xs text-[var(--muted)] font-dm mt-1">
-                  Luego activaremos tu biométrico
-                </p>
-              )}
             </div>
             <PinDots count={pinDigits.length} />
             <NumPad
@@ -429,7 +421,7 @@ export default function LoginPage() {
             </button>
             <button
               type="button"
-              onClick={() => { setStep('cedula'); setPinDigits([]); doRegisterPasskey.current = false }}
+              onClick={() => { setStep('cedula'); setPinDigits([]) }}
               className="text-xs text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
             >
               Cambiar cédula
@@ -485,7 +477,7 @@ export default function LoginPage() {
             )}
             <button
               type="button"
-              onClick={() => { setStep('cedula'); setNewDigits([]); setConfirmDigits([]); doRegisterPasskey.current = false }}
+              onClick={() => { setStep('cedula'); setNewDigits([]); setConfirmDigits([]) }}
               className="text-xs text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
             >
               Cambiar cédula
