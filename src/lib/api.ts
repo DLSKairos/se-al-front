@@ -1,4 +1,13 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import type {
+  AIExtractResult,
+  AIGenerateResult,
+  AIAssistResult,
+  EditorSection,
+  EditorField,
+  FormBlueprint,
+  FormTemplate,
+} from '@/types'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
@@ -54,3 +63,34 @@ function getToken() { return _getToken() }
 function clearToken() { _clearToken() }
 
 export default api
+
+// ── Form AI ────────────────────────────────────────────────────────────────────
+
+export const formAiApi = {
+  extractFromFile: (formData: FormData) =>
+    api.post<AIExtractResult>('/form-ai/extract-from-file', formData, {
+      headers: { 'Content-Type': undefined },
+    }),
+  generateFromDescription: (dto: {
+    description: string
+    columns: 1 | 2 | 3
+    observationsPerSection: boolean
+  }) => api.post<AIGenerateResult>('/form-ai/generate-from-description', dto),
+  assist: (dto: { message: string; currentSections: EditorSection[] }) =>
+    api.post<AIAssistResult>('/form-ai/assist', dto),
+}
+
+// ── Blueprints ─────────────────────────────────────────────────────────────────
+
+export const blueprintsApi = {
+  list: (filters?: { category?: string; search?: string }) =>
+    api.get<FormBlueprint[]>('/form-blueprints', { params: filters }),
+  create: (dto: {
+    name: string
+    description?: string
+    category: string
+    fields: EditorField[]
+  }) => api.post<FormBlueprint>('/form-blueprints', dto),
+  use: (id: string) =>
+    api.post<FormTemplate>(`/form-blueprints/${id}/use`),
+}

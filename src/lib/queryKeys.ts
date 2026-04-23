@@ -25,4 +25,9 @@ export const QK = {
   notifications: (templateId: string) => ['notifications', templateId] as const,
   webhooks:  () => ['webhooks'] as const,
   orgs:      () => ['organizations'] as const,
+  blueprints: {
+    list: (filters?: { category?: string; search?: string }) =>
+      ['blueprints', 'list', filters] as const,
+    detail: (id: string) => ['blueprints', id] as const,
+  },
 }

@@ -21,6 +21,8 @@ const AdminDashboardPage      = lazy(() => import('@/pages/admin/AdminDashboardP
 const AdminChatPage           = lazy(() => import('@/pages/admin/AdminChatPage'))
 const FormTemplatesListPage   = lazy(() => import('@/pages/admin/FormTemplatesListPage'))
 const FormTemplateBuilderPage = lazy(() => import('@/pages/admin/FormTemplateBuilderPage'))
+const FormCreationPathPage    = lazy(() => import('@/pages/admin/FormCreationPathPage'))
+const FormEditorPage          = lazy(() => import('@/pages/admin/FormEditorPage'))
 const FormSubmissionsPage     = lazy(() => import('@/pages/admin/FormSubmissionsPage'))
 const SubmissionDetailPage    = lazy(() => import('@/pages/admin/SubmissionDetailPage'))
 const UsersPage               = lazy(() => import('@/pages/admin/UsersPage'))
@@ -83,12 +85,15 @@ export function AppRouter() {
 
         {/* ── Administrador ── */}
         <Route element={<RoleGuard allowedRoles={['ADMIN', 'SUPER_ADMIN']} />}>
+          {/* Editor de formularios — full-screen, fuera del AdminLayout */}
+          <Route path="/admin/formularios/editor" element={<FormEditorPage />} />
+          <Route path="/admin/formularios/:templateId/editar" element={<FormEditorPage />} />
+
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboardPage />} />
             <Route path="chat" element={<AdminChatPage />} />
             <Route path="formularios" element={<FormTemplatesListPage />} />
-            <Route path="formularios/nuevo" element={<FormTemplateBuilderPage />} />
-            <Route path="formularios/:templateId/editar" element={<FormTemplateBuilderPage />} />
+            <Route path="formularios/nuevo" element={<FormCreationPathPage />} />
             <Route path="formularios/:templateId/submissions" element={<FormSubmissionsPage />} />
             <Route path="submissions/:id" element={<SubmissionDetailPage />} />
             <Route path="usuarios" element={<UsersPage />} />

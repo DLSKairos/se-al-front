@@ -246,3 +246,72 @@ export interface ApiError {
   timestamp: string
   path: string
 }
+
+// ─── EDITOR DE FORMULARIOS ────────────────────────────────
+
+export interface EditorField {
+  id: string
+  label: string
+  key: string
+  type: FieldType
+  required: boolean
+  options?: string[]
+  placeholder?: string
+  helpText?: string
+  defaultValue?: string
+  section?: string
+}
+
+export interface EditorSection {
+  id: string
+  name: string
+  hasObservations: boolean
+  fields: EditorField[]
+}
+
+export interface EditorState {
+  templateId?: string
+  name: string
+  categoryId: string
+  columns: 1 | 2 | 3
+  sections: EditorSection[]
+  sourceFileUrl?: string
+  blueprintId?: string
+  isDirty: boolean
+  status: 'DRAFT' | 'ACTIVE'
+}
+
+// ─── BLUEPRINTS ───────────────────────────────────────────
+
+export interface FormBlueprint {
+  id: string
+  name: string
+  description: string | null
+  category: string
+  is_global: boolean
+  org_id: string | null
+  fields: EditorField[]
+  created_at: string
+}
+
+// ─── RESPUESTAS DE IA ─────────────────────────────────────
+
+export interface AIExtractResult {
+  fields: EditorField[]
+  source_filename: string
+  source_file_url: string
+  aiError?: boolean
+}
+
+export interface AIGenerateResult {
+  name: string
+  sections: EditorSection[]
+  aiError?: boolean
+}
+
+export interface AIAssistResult {
+  action: 'update_sections' | 'add_field' | 'set_columns' | 'none'
+  payload: any
+  message?: string
+  aiError?: boolean
+}
