@@ -11,6 +11,7 @@ export function NumberField({ field, value, onChange, disabled }: NumberFieldPro
   return (
     <input
       id={`field-${field.id}`}
+      data-testid={`field-${field.key}`}
       type="number"
       value={value}
       onChange={(e) => {

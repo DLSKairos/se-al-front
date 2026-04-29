@@ -11,6 +11,7 @@ export function TextField({ field, value, onChange, disabled }: TextFieldProps) 
   return (
     <input
       id={`field-${field.id}`}
+      data-testid={`field-${field.key}`}
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}

@@ -22,7 +22,7 @@ export function DynamicForm({ fields, values, onChange, disabled }: DynamicFormP
     .sort((a, b) => a.order - b.order)
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-testid="dynamic-form" className="flex flex-col gap-6">
       {sortedFields.map((field) => (
         <div key={field.id} className="flex flex-col gap-1.5">
           <label

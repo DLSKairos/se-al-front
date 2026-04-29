@@ -11,6 +11,7 @@ export function BooleanField({ field, value, onChange, disabled }: BooleanFieldP
   return (
     <div
       id={`field-${field.id}`}
+      data-testid={`field-${field.key}`}
       className="flex gap-3"
       role="group"
       aria-label={field.label}

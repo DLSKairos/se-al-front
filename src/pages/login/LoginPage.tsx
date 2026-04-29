@@ -292,7 +292,7 @@ export default function LoginPage() {
 
         {/* ── Cédula ── */}
         {step === 'cedula' && (
-          <form onSubmit={handleContinuar} className="flex flex-col gap-5">
+          <form data-testid="login-form" onSubmit={handleContinuar} className="flex flex-col gap-5">
             <div>
               <label
                 htmlFor="cedula-input"
@@ -314,6 +314,7 @@ export default function LoginPage() {
               />
             </div>
             <button
+              data-testid="login-submit"
               type="submit"
               disabled={!cedula.trim()}
               className="btn-primary-gradient w-full py-4 rounded-[14px]"
@@ -405,6 +406,11 @@ export default function LoginPage() {
                 Ingresa tu PIN
               </h2>
             </div>
+            {verifyPin.isError && (
+              <p data-testid="login-error" className="text-sm text-red-400 text-center font-dm">
+                PIN incorrecto
+              </p>
+            )}
             <PinDots count={pinDigits.length} />
             <NumPad
               onDigit={handlePinDigit}

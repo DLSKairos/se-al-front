@@ -69,7 +69,7 @@ export function SignatureField({ field, value, onChange, disabled }: SignatureFi
   }
 
   return (
-    <div className="flex flex-col gap-2" id={`field-${field.id}`}>
+    <div className="flex flex-col gap-2" id={`field-${field.id}`} data-testid={`field-${field.key}`}>
       <div
         className={`relative rounded-[var(--radius-input)] border overflow-hidden ${
           disabled ? 'opacity-50' : 'border-[var(--signal-dim)] hover:border-[var(--signal)]'

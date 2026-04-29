@@ -66,6 +66,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           return (
             <div
               key={toast.id}
+              data-testid="toast-message"
               className={`glass flex items-center gap-3 px-4 py-3 rounded-[14px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] pointer-events-auto animate-[slideUp_0.2s_ease] ${toastClasses[toast.type]}`}
             >
               <Icon className={`w-4 h-4 shrink-0 ${iconClasses[toast.type]}`} />

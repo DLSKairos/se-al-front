@@ -29,11 +29,11 @@ export function LoadingSpinner({
 
   if (fullscreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[var(--navy)]/80 backdrop-blur-sm z-50">
+      <div data-testid="loading-spinner" className="fixed inset-0 flex items-center justify-center bg-[var(--navy)]/80 backdrop-blur-sm z-50">
         {spinner}
       </div>
     )
   }
 
-  return <div className="flex items-center justify-center p-8">{spinner}</div>
+  return <div data-testid="loading-spinner" className="flex items-center justify-center p-8">{spinner}</div>
 }

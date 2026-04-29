@@ -11,6 +11,7 @@ export function DateField({ field, value, onChange, disabled }: DateFieldProps) 
   return (
     <input
       id={`field-${field.id}`}
+      data-testid={`field-${field.key}`}
       type="date"
       value={value}
       onChange={(e) => onChange(e.target.value)}

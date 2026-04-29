@@ -19,7 +19,7 @@ export function MultiSelectField({ field, value, onChange, disabled }: MultiSele
   }
 
   return (
-    <fieldset className="flex flex-col gap-2" id={`field-${field.id}`}>
+    <fieldset className="flex flex-col gap-2" id={`field-${field.id}`} data-testid={`field-${field.key}`}>
       <legend className="sr-only">{field.label}</legend>
       {options.map((opt) => {
         const checked = value.includes(opt.value)

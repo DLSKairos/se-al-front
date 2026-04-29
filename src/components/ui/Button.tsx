@@ -8,6 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size
   loading?: boolean
   children: ReactNode
+  testId?: string
 }
 
 const variantClasses: Record<Variant, string> = {
@@ -36,10 +37,12 @@ export function Button({
   className = '',
   disabled,
   style,
+  testId = 'button',
   ...props
 }: ButtonProps) {
   return (
     <button
+      data-testid={testId}
       className={`inline-flex items-center justify-center gap-2 font-['DM_Sans'] transition-all duration-150 cursor-pointer disabled:cursor-not-allowed ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       disabled={disabled || loading}
       style={variant === 'primary' ? { ...primaryStyle, ...style } : style}

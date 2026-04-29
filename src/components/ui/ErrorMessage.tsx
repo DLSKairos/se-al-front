@@ -13,7 +13,7 @@ export function ErrorMessage({
   onRetry,
 }: ErrorMessageProps) {
   return (
-    <div className="flex flex-col items-center gap-4 p-8 text-center">
+    <div data-testid="error-message" className="flex flex-col items-center gap-4 p-8 text-center">
       <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
         <AlertCircle className="w-6 h-6 text-red-400" />
       </div>

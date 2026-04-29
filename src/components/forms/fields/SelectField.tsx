@@ -15,6 +15,7 @@ export function SelectField({ field, value, onChange, disabled }: SelectFieldPro
     <div className="relative">
       <select
         id={`field-${field.id}`}
+        data-testid={`field-${field.key}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}

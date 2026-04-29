@@ -29,8 +29,9 @@ export function Modal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-[fadeIn_0.15s_ease]" />
+        <Dialog.Overlay data-testid="modal-overlay" className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-[fadeIn_0.15s_ease]" />
         <Dialog.Content
+          data-testid="modal-content"
           className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full ${sizeClasses[size]} glass-card p-6 animate-[slideUp_0.2s_ease] max-h-[90vh] overflow-y-auto focus:outline-none`}
         >
           <div className="flex items-start justify-between gap-4 mb-5">
@@ -46,6 +47,7 @@ export function Modal({
             </div>
             <Dialog.Close asChild>
               <button
+                data-testid="modal-close"
                 className="text-[var(--muted)] hover:text-[var(--off-white)] transition-colors p-1 rounded-md hover:bg-[var(--signal-dim)] shrink-0"
                 aria-label="Cerrar"
               >

@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -52,5 +53,17 @@ export default defineConfig({
     https: getHttpsConfig(),
     host: 'localhost',
     port: 4000,
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    css: false,
+    exclude: ['node_modules/**', 'e2e/**'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: ['src/test/**', 'src/main.tsx', 'src/router/**', 'src/config/**'],
+    },
   },
 })

@@ -53,6 +53,7 @@ export function ConfirmModal({
                 variant="secondary"
                 onClick={() => onOpenChange(false)}
                 disabled={loading}
+                testId="confirm-modal-cancel"
               >
                 {cancelLabel}
               </Button>
@@ -60,6 +61,7 @@ export function ConfirmModal({
                 variant={variant === 'danger' ? 'danger' : 'primary'}
                 loading={loading}
                 onClick={onConfirm}
+                testId="confirm-modal-confirm"
               >
                 {confirmLabel}
               </Button>

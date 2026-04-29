@@ -29,7 +29,7 @@ export function PhotoField({ field, value, onChange, disabled }: PhotoFieldProps
   }
 
   return (
-    <div className="flex flex-col gap-2" id={`field-${field.id}`}>
+    <div className="flex flex-col gap-2" id={`field-${field.id}`} data-testid={`field-${field.key}`}>
       <input
         ref={inputRef}
         id={`input-${field.id}`}
