@@ -113,7 +113,7 @@ export default function LocationSelectPage() {
         <div className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
           Ubicación
         </div>
-        <h1 className="font-display font-extrabold text-2xl text-[var(--off-white)]">
+        <h1 className="font-display font-extrabold text-xl sm:text-2xl leading-tight wrap-break-word text-(--off-white)">
           Selecciona tu obra
         </h1>
         <p className="text-sm text-[var(--muted)] mt-1 font-dm">

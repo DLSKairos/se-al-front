@@ -48,6 +48,8 @@ export const useAuthStore = create<AuthState>()(
 
         clear: () => {
           set({ token: null, user: null, workLocationId: null })
+          sessionStorage.removeItem('lite_mode')
+          sessionStorage.removeItem('lite_banner_dismissed')
         },
 
         isAuthenticated: () => {

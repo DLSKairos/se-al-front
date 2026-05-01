@@ -6,6 +6,7 @@ import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/components/ui/Toast'
 import { SplashScreen } from '@/components/ui'
+import { LiteModeBanner } from '@/components/ui/LiteModeBanner'
 import {
   authenticateWebAuthn,
   registerWebAuthnPublic,
@@ -99,6 +100,7 @@ export default function LoginPage() {
   const toast    = useToast()
 
   const [step,          setStep]          = useState<Step>('splash')
+  const [showLiteBanner, setShowLiteBanner] = useState(false)
   const [cedula,        setCedula]        = useState('')
   const [pinDigits,     setPinDigits]     = useState<string[]>([])
   const [newDigits,     setNewDigits]     = useState<string[]>([])
@@ -256,7 +258,7 @@ export default function LoginPage() {
   return (
     <div className="fixed inset-0 bg-[var(--navy)] flex flex-col items-center justify-center px-6 overflow-auto">
 
-      <SplashScreen onDone={() => setStep('cedula')} />
+      <SplashScreen onDone={() => { setStep('cedula'); setShowLiteBanner(true) }} />
 
       {/* Grid overlay decorativo */}
       <div
@@ -492,6 +494,16 @@ export default function LoginPage() {
         )}
 
       </div>
+
+      {showLiteBanner && (
+        <LiteModeBanner
+          onIgnore={() => setShowLiteBanner(false)}
+          onActivate={() => {
+            sessionStorage.setItem('lite_mode', 'true')
+            setShowLiteBanner(false)
+          }}
+        />
+      )}
     </div>
   )
 }

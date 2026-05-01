@@ -183,10 +183,8 @@ export default function OperatorHomePage() {
   const handleIntroComplete = () => {
     localStorage.setItem(introShownKey(), '1')
     setShowIntro(false)
-    // Re-leer en el momento del callback (puede haber cambiado si el usuario activó lite mode)
     const liteModeNow = sessionStorage.getItem('lite_mode') === 'true'
     if (!liteModeNow) navigate('/game/world-map', { replace: true })
-    // Si liteModeNow=true: setShowIntro(false) hace que caiga al dashboard normal
   }
 
   // Game mode + intro ya vista hoy → redirect directo al WorldMap
@@ -214,7 +212,7 @@ export default function OperatorHomePage() {
 
   return (
     <div
-      className="flex flex-col min-h-screen bg-[var(--navy)] pb-24"
+      className="flex flex-col min-h-screen w-full overflow-x-hidden bg-(--navy) pb-24"
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
       {/* Header */}
@@ -222,7 +220,7 @@ export default function OperatorHomePage() {
         <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
           {new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
-        <h1 className="font-display font-extrabold text-2xl text-[var(--off-white)]">
+        <h1 className="font-display font-extrabold text-xl sm:text-2xl text-(--off-white) leading-tight wrap-break-word">
           Hola, <span className="text-gradient">{firstName}</span>
         </h1>
         <p className="text-sm text-[var(--muted)] font-dm mt-1">
@@ -290,6 +288,7 @@ export default function OperatorHomePage() {
       </div>
 
       <SOSButton />
+
     </div>
   )
 }
