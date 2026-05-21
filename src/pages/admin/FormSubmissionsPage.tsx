@@ -127,7 +127,7 @@ export default function FormSubmissionsPage() {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
-            Submissions
+            Envíos
           </h1>
           <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
             Gestiona y revisa todos los formularios enviados

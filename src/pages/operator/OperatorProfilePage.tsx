@@ -24,7 +24,7 @@ export default function OperatorProfilePage() {
   const navigate    = useNavigate()
   const toast       = useToast()
   const queryClient = useQueryClient()
-  const { user }    = useAuthStore()
+  const { user, clear } = useAuthStore()
 
   const userId = user?.sub ?? ''
 
@@ -187,10 +187,10 @@ export default function OperatorProfilePage() {
             <div className="glass rounded-[14px] p-6 text-center">
               <Fingerprint className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" aria-hidden="true" />
               <p className="text-sm text-[var(--muted)] font-dm">
-                No tienes biometria registrada.
+                No tienes biometría registrada.
               </p>
               <p className="text-xs text-[var(--muted)] font-dm mt-1">
-                Agrega tu huella o Face ID para ingresar mas rapido.
+                Agrega tu huella o Face ID para ingresar más rápido.
               </p>
             </div>
           )}
@@ -228,7 +228,7 @@ export default function OperatorProfilePage() {
         {/* Botón de logout */}
         <button
           type="button"
-          onClick={() => navigate('/login')}
+          onClick={() => { clear(); navigate('/login') }}
           className="w-full mt-6 py-4 rounded-[14px] border border-[rgba(239,68,68,0.2)] text-red-400 font-display text-[13px] font-bold tracking-[0.1em] uppercase active:scale-[0.97] transition-all flex items-center justify-center gap-2 bg-transparent"
         >
           <LogOut className="w-4 h-4" aria-hidden="true" />
@@ -241,7 +241,7 @@ export default function OperatorProfilePage() {
         open={!!credToDelete}
         onOpenChange={(open) => { if (!open) setCredToDelete(null) }}
         title="Eliminar credencial"
-        description="Esta accion eliminara la biometria de este dispositivo. Podras registrarla de nuevo cuando quieras."
+        description="Esta acción eliminará la biometría de este dispositivo. Podrás registrarla de nuevo cuando quieras."
         confirmLabel="Eliminar"
         cancelLabel="Cancelar"
         variant="danger"

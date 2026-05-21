@@ -94,3 +94,10 @@ export const blueprintsApi = {
   use: (id: string) =>
     api.post<FormTemplate>(`/form-blueprints/${id}/use`),
 }
+
+// ── Admin AI Chat ────────────────────────────────────────────────────────────
+
+export const adminAiApi = {
+  chat: (dto: { message: string; history: Array<{ role: string; content: string }> }) =>
+    api.post<{ response: string }>('/form-ai/admin-chat', dto),
+}

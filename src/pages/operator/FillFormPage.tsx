@@ -150,7 +150,7 @@ export default function FillFormPage() {
       navigate('/')
     },
     onError: () => {
-      toast.error('Ocurrio un error al enviar el formulario. Intenta de nuevo.')
+      toast.error('Ocurrió un error al enviar el formulario. Intenta de nuevo.')
     },
   })
 
@@ -198,7 +198,7 @@ export default function FillFormPage() {
       <div className="min-h-screen bg-[var(--navy)] flex items-center justify-center p-4">
         <ErrorMessage
           title="Error al cargar el formulario"
-          message="No se pudo obtener el formulario. Verifica tu conexion e intenta de nuevo."
+          message="No se pudo obtener el formulario. Verifica tu conexión e intenta de nuevo."
         />
       </div>
     )

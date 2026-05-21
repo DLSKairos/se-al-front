@@ -163,7 +163,7 @@ export function BlueprintLibraryModal({ isOpen, onClose }: BlueprintLibraryModal
 
       {/* Grid de blueprints */}
       {!isLoading && !isError && blueprints && blueprints.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pr-1">
           {blueprints.map((blueprint) => (
             <BlueprintCard
               key={blueprint.id}

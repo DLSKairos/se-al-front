@@ -19,7 +19,7 @@ const variantClasses: Record<Variant, string> = {
 }
 
 const sizeClasses: Record<Size, string> = {
-  sm: 'px-3 py-1.5 text-xs rounded-[var(--radius-btn)]',
+  sm: 'px-3 py-2 text-xs rounded-[var(--radius-btn)]',
   md: 'px-4 py-2 text-sm rounded-[var(--radius-btn)]',
   lg: 'px-6 py-2.5 text-base rounded-[var(--radius-btn)]',
 }

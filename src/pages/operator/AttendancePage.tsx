@@ -116,7 +116,7 @@ export default function AttendancePage() {
       >
         <ErrorMessage
           title="Error al cargar asistencia"
-          message="No se pudo obtener el registro del dia."
+          message="No se pudo obtener el registro del día."
         />
       </div>
     )

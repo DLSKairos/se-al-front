@@ -15,6 +15,7 @@ const DEFAULT_STATE: EditorState = {
   sections: [DEFAULT_SECTION()],
   isDirty: false,
   status: 'DRAFT',
+  targetJobTitles: [],
 }
 
 interface FormEditorStore {
@@ -36,6 +37,7 @@ interface FormEditorStore {
   reorderFieldsInSection: (sectionId: string, fromIndex: number, toIndex: number) => void
   applySectionsFromAI: (sections: EditorSection[]) => void
   markDirty: () => void
+  setTargetJobTitles: (titles: string[]) => void
 }
 
 export const useFormEditorStore = create<FormEditorStore>((set, get) => ({
@@ -184,6 +186,9 @@ export const useFormEditorStore = create<FormEditorStore>((set, get) => ({
     })),
 
   markDirty: () => set((s) => ({ state: { ...s.state, isDirty: true } })),
+
+  setTargetJobTitles: (targetJobTitles) =>
+    set((s) => ({ state: { ...s.state, targetJobTitles, isDirty: true } })),
 }))
 
 // Permite acceder al store fuera de componentes React

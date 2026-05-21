@@ -61,6 +61,7 @@ export function BottomNav() {
                 aria-disabled="true"
                 role="button"
                 tabIndex={-1}
+                title="Próximamente"
               >
                 <Icon className="w-5 h-5 text-[var(--muted)]" />
                 <span

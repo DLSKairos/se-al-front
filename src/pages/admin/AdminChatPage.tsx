@@ -1,18 +1,16 @@
 import { useState, useRef, useEffect, KeyboardEvent } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
 import { Send, Bot, User, Zap, Radio } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useAuthStore } from '@/stores/authStore'
-import { QK } from '@/lib/queryKeys'
-import { DashboardStats } from '@/types'
+import { adminAiApi } from '@/lib/api'
 
 // ── Preguntas rápidas predefinidas ─────────────────────────────────────────
 
 const QUICK_QUERIES = [
-  '¿Cuántos submissions pendientes hay?',
+  '¿Cuántos envíos pendientes hay?',
   '¿Cuántos usuarios activos tiene la organización?',
   'Dame un resumen del panel',
-  '¿Cuántos submissions fueron rechazados?',
+  '¿Cuántos envíos fueron rechazados?',
   '¿Cuál es la tasa de aprobación?',
 ]
 
@@ -21,65 +19,6 @@ const QUICK_QUERIES = [
 interface Message {
   role: 'user' | 'assistant'
   content: string
-}
-
-// ── Lógica de respuesta (cliente, sin llamada al backend) ──────────────────
-
-function generarRespuesta(pregunta: string, stats: DashboardStats | undefined): string {
-  if (!stats) {
-    return 'No tengo datos disponibles en este momento. Asegúrate de haber cargado el dashboard primero.'
-  }
-
-  const q = pregunta.toLowerCase()
-  const {
-    total_users:       totalUsers       = 0,
-    active_users:      activeUsers      = 0,
-    total_submissions: totalSubmissions = 0,
-    by_status,
-  } = stats
-
-  const aprobados  = by_status?.APPROVED  ?? 0
-  const pendientes = by_status?.SUBMITTED ?? 0
-  const rechazados = by_status?.REJECTED  ?? 0
-
-  const tasaAprobacion =
-    totalSubmissions > 0
-      ? ((aprobados / totalSubmissions) * 100).toFixed(1)
-      : '0'
-
-  if (q.includes('pendiente')) {
-    return `Hay **${pendientes}** submissions en estado pendiente de un total de ${totalSubmissions} registrados.`
-  }
-
-  if (q.includes('usuario') && q.includes('activo')) {
-    return `La organización tiene **${activeUsers}** usuarios activos de un total de ${totalUsers} usuarios registrados.`
-  }
-
-  if (q.includes('resumen') || q.includes('panel')) {
-    return `### Resumen del Panel\n\n**Usuarios:** ${totalUsers} registrados, ${activeUsers} activos.\n\n**Submissions:** ${totalSubmissions} en total.\n- Aprobados: ${aprobados}\n- Pendientes: ${pendientes}\n- Rechazados: ${rechazados}\n\n**Tasa de aprobación:** ${tasaAprobacion}%`
-  }
-
-  if (q.includes('rechazado')) {
-    return `Se han rechazado **${rechazados}** submissions de un total de ${totalSubmissions}.`
-  }
-
-  if (q.includes('aprobación') || q.includes('aprobacion') || q.includes('tasa')) {
-    return `La tasa de aprobación actual es del **${tasaAprobacion}%** (${aprobados} aprobados de ${totalSubmissions} submissions).`
-  }
-
-  if (q.includes('aprobado')) {
-    return `Se han aprobado **${aprobados}** submissions de un total de ${totalSubmissions}.`
-  }
-
-  if (q.includes('usuario')) {
-    return `La organización cuenta con **${totalUsers}** usuarios registrados, de los cuales ${activeUsers} están activos.`
-  }
-
-  if (q.includes('submission') || q.includes('formulario')) {
-    return `Hay **${totalSubmissions}** submissions registrados: ${aprobados} aprobados, ${pendientes} pendientes y ${rechazados} rechazados.`
-  }
-
-  return `Basándome en los datos del dashboard:\n\n- **${totalUsers}** usuarios (${activeUsers} activos)\n- **${totalSubmissions}** submissions en total\n- Aprobados: ${aprobados} | Pendientes: ${pendientes} | Rechazados: ${rechazados}\n- Tasa de aprobación: ${tasaAprobacion}%\n\n¿Quieres saber algo más específico?`
 }
 
 // ── Burbujas de chat ───────────────────────────────────────────────────────
@@ -144,12 +83,11 @@ function TypingIndicator() {
 
 const INITIAL_MESSAGE: Message = {
   role:    'assistant',
-  content: 'Hola! Soy el asistente de Señal. Puedo responderte preguntas sobre los datos del panel: usuarios, submissions, estados y estadísticas. ¿En qué te puedo ayudar?',
+  content: 'Hola! Soy SEÑALIA, tu asistente inteligente de SEÑAL. Tengo acceso a los datos reales de tu organización: usuarios, envíos, formularios y estadísticas. ¿En qué te puedo ayudar?',
 }
 
 export default function AdminChatPage() {
-  const user        = useAuthStore((s) => s.user)
-  const queryClient = useQueryClient()
+  const user = useAuthStore((s) => s.user)
 
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE])
   const [input, setInput]       = useState('')
@@ -158,7 +96,6 @@ export default function AdminChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef  = useRef<HTMLTextAreaElement>(null)
 
-  // Auto-scroll al último mensaje
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
@@ -167,23 +104,27 @@ export default function AdminChatPage() {
     const trimmed = texto.trim()
     if (!trimmed || loading) return
 
-    setMessages((prev) => [...prev, { role: 'user', content: trimmed }])
+    const userMsg: Message = { role: 'user', content: trimmed }
+    setMessages((prev) => [...prev, userMsg])
     setInput('')
     setLoading(true)
 
-    // Simular latencia de procesamiento
-    await new Promise((r) => setTimeout(r, 600 + Math.random() * 400))
+    try {
+      const history = messages
+        .filter((_, i) => i > 0)
+        .map((m) => ({ role: m.role, content: m.content }))
 
-    // Intentar obtener stats de la caché de React Query
-    const stats = queryClient.getQueryData<DashboardStats>(
-      QK.submissions.stats({}),
-    )
-    const respuesta = generarRespuesta(trimmed, stats)
-
-    setMessages((prev) => [...prev, { role: 'assistant', content: respuesta }])
-    setLoading(false)
-
-    setTimeout(() => inputRef.current?.focus(), 50)
+      const { data } = await adminAiApi.chat({ message: trimmed, history })
+      setMessages((prev) => [...prev, { role: 'assistant', content: data.response }])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Lo siento, ocurrió un error al procesar tu pregunta. Intenta de nuevo.' },
+      ])
+    } finally {
+      setLoading(false)
+      setTimeout(() => inputRef.current?.focus(), 50)
+    }
   }
 
   function handleSubmit(e: React.FormEvent) {

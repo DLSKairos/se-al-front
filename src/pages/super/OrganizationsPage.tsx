@@ -78,39 +78,41 @@ export default function OrganizationsPage() {
       {/* Tabla */}
       {orgs.length > 0 && (
         <div className="glass-card rounded-2xl overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/5">
-                <th className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
-                  <span className="flex items-center gap-2">
-                    <Building2 className="w-3.5 h-3.5" />
-                    Nombre
-                  </span>
-                </th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
-                  <span className="flex items-center gap-2">
-                    <Hash className="w-3.5 h-3.5" />
-                    ID
-                  </span>
-                </th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
-                  <span className="flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5" />
-                    Creada
-                  </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {orgs.map((org) => (
-                <OrgRow
-                  key={org.id}
-                  org={org}
-                  onClick={() => navigate(`/super/organizaciones/${org.id}`)}
-                />
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/5">
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                    <span className="flex items-center gap-2">
+                      <Building2 className="w-3.5 h-3.5" />
+                      Nombre
+                    </span>
+                  </th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                    <span className="flex items-center gap-2">
+                      <Hash className="w-3.5 h-3.5" />
+                      ID
+                    </span>
+                  </th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                    <span className="flex items-center gap-2">
+                      <Calendar className="w-3.5 h-3.5" />
+                      Creada
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {orgs.map((org) => (
+                  <OrgRow
+                    key={org.id}
+                    org={org}
+                    onClick={() => navigate(`/super/organizaciones/${org.id}`)}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

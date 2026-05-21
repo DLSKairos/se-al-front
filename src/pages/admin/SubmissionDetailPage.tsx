@@ -200,12 +200,12 @@ export default function SubmissionDetailPage() {
     mutationFn: () =>
       api.patch(`/form-submissions/${id}/status`, { status: 'APPROVED' }),
     onSuccess: () => {
-      toast.success('Submission aprobado correctamente')
+      toast.success('Envío aprobado correctamente')
       setShowApproveModal(false)
       invalidateQueries()
     },
     onError: () => {
-      toast.error('Error al aprobar el submission')
+      toast.error('Error al aprobar el envío')
     },
   })
 
@@ -213,13 +213,13 @@ export default function SubmissionDetailPage() {
     mutationFn: (_reason: string) =>
       api.patch(`/form-submissions/${id}/status`, { status: 'REJECTED' }),
     onSuccess: () => {
-      toast.success('Submission rechazado')
+      toast.success('Envío rechazado')
       setShowRejectModal(false)
       setRejectReason('')
       invalidateQueries()
     },
     onError: () => {
-      toast.error('Error al rechazar el submission')
+      toast.error('Error al rechazar el envío')
     },
   })
 
@@ -227,7 +227,7 @@ export default function SubmissionDetailPage() {
   if (error || !submission)
     return (
       <ErrorMessage
-        message="Error al cargar el submission"
+        message="Error al cargar el envío"
         onRetry={() => refetch()}
       />
     )
@@ -245,7 +245,7 @@ export default function SubmissionDetailPage() {
             variant="ghost"
             size="sm"
             onClick={() => navigate('/admin/submissions')}
-            aria-label="Volver a submissions"
+            aria-label="Volver a envíos"
           >
             <ArrowLeft className="w-4 h-4" />
             Volver
@@ -253,7 +253,7 @@ export default function SubmissionDetailPage() {
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
-                {submission.template?.name ?? 'Submission'}
+                {submission.template?.name ?? 'Envío'}
               </h1>
               <SubmissionStatusBadge status={submission.status} />
             </div>
@@ -290,7 +290,7 @@ export default function SubmissionDetailPage() {
       {/* Información de contexto */}
       <div className="glass-card p-5">
         <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
-          Información del submission
+          Información del envío
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <InfoRow
@@ -335,7 +335,7 @@ export default function SubmissionDetailPage() {
             {submission.values!.map((fieldValue) => (
               <div key={fieldValue.id} className="py-4 first:pt-0 last:pb-0">
                 <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-1.5 uppercase tracking-wide">
-                  {fieldValue.field_id}
+                  {fieldValue.field_id.replace(/[_-]/g, ' ')}
                 </p>
                 <FieldValueDisplay fieldValue={fieldValue} />
               </div>
@@ -385,7 +385,7 @@ export default function SubmissionDetailPage() {
       {!hasValues && Object.keys(submission.data).length === 0 && !hasSignatures && (
         <div className="glass-card p-10 text-center">
           <p className="text-[var(--muted)] text-sm font-['DM_Sans']">
-            Este submission no contiene datos adicionales
+            Este envío no contiene datos adicionales
           </p>
         </div>
       )}
@@ -394,8 +394,8 @@ export default function SubmissionDetailPage() {
       <ConfirmModal
         open={showApproveModal}
         onOpenChange={setShowApproveModal}
-        title="Aprobar submission"
-        description="Al aprobar este submission se notificará al usuario y quedará registrado. Esta acción no se puede deshacer."
+        title="Aprobar envío"
+        description="Al aprobar este envío se notificará al usuario y quedará registrado. Esta acción no se puede deshacer."
         confirmLabel="Aprobar"
         variant="warning"
         loading={approveMutation.isPending}
@@ -409,7 +409,7 @@ export default function SubmissionDetailPage() {
           setShowRejectModal(open)
           if (!open) setRejectReason('')
         }}
-        title="Rechazar submission"
+        title="Rechazar envío"
         description="Opcionalmente puedes indicar el motivo del rechazo."
         size="md"
       >

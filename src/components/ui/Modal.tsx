@@ -48,7 +48,7 @@ export function Modal({
             <Dialog.Close asChild>
               <button
                 data-testid="modal-close"
-                className="text-[var(--muted)] hover:text-[var(--off-white)] transition-colors p-1 rounded-md hover:bg-[var(--signal-dim)] shrink-0"
+                className="text-[var(--muted)] hover:text-[var(--off-white)] transition-colors p-2 rounded-md hover:bg-[var(--signal-dim)] shrink-0"
                 aria-label="Cerrar"
               >
                 <X className="w-4 h-4" />

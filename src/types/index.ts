@@ -279,6 +279,7 @@ export interface EditorState {
   blueprintId?: string
   isDirty: boolean
   status: 'DRAFT' | 'ACTIVE'
+  targetJobTitles: string[]
 }
 
 // ─── BLUEPRINTS ───────────────────────────────────────────

@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Save, BookMarked } from 'lucide-react'
+import { X, Save, BookMarked, X as XIcon } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useFormEditorStore } from '@/stores/formEditorStore'
 import { QK } from '@/lib/queryKeys'
 import api from '@/lib/api'
 import { toSnakeCase } from '@/utils/fieldType.utils'
+import { useToast } from '@/components/ui'
 
 interface SaveFormDrawerProps {
   isOpen: boolean
@@ -16,6 +17,7 @@ interface SaveFormDrawerProps {
 export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const toast = useToast()
   const { state } = useFormEditorStore()
 
   const [name, setName] = useState(state.name || '')
@@ -23,6 +25,8 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
   const [status, setStatus] = useState<'DRAFT' | 'ACTIVE'>(state.status || 'DRAFT')
   const [saveAsBlueprint, setSaveAsBlueprint] = useState(false)
   const [blueprintName, setBlueprintName] = useState('')
+  const [jobTitles, setJobTitles] = useState<string[]>(state.targetJobTitles ?? [])
+  const [jobTitleInput, setJobTitleInput] = useState('')
 
   const { data: categories = [] } = useQuery({
     queryKey: QK.categories(),
@@ -34,10 +38,21 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
       templateId
         ? api.patch(`/form-templates/${templateId}`, body).then((r) => r.data)
         : api.post('/form-templates', body).then((r) => r.data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      const savedId = (data as any).id || templateId
+      if (savedId && status === 'ACTIVE') {
+        try {
+          await api.patch(`/form-templates/${savedId}/status`, { status: 'ACTIVE' })
+        } catch {
+          // ignorar si falla — el formulario ya se guardó
+        }
+      }
       queryClient.invalidateQueries({ queryKey: QK.templates.admin() })
       if (templateId) queryClient.invalidateQueries({ queryKey: QK.templates.detail(templateId) })
       navigate('/admin/formularios')
+    },
+    onError: () => {
+      toast.error('Error al guardar el formulario. Intenta de nuevo.')
     },
   })
 
@@ -62,10 +77,22 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
       columns: state.columns,
       sections,
       fields,
+      target_job_titles: jobTitles,
       ...(state.sourceFileUrl ? { source_file_url: state.sourceFileUrl } : {}),
       save_as_blueprint: saveAsBlueprint,
       blueprint_name: saveAsBlueprint ? blueprintName : undefined,
     }
+  }
+
+  function addJobTitle() {
+    const t = jobTitleInput.trim()
+    if (!t || jobTitles.includes(t)) return
+    setJobTitles((prev) => [...prev, t])
+    setJobTitleInput('')
+  }
+
+  function removeJobTitle(title: string) {
+    setJobTitles((prev) => prev.filter((j) => j !== title))
   }
 
   if (!isOpen) return null
@@ -73,7 +100,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 z-10">
+      <div className="relative w-full max-w-md bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 z-10 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold text-[var(--off-white)] font-['Syne']">
@@ -137,6 +164,49 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Cargos habilitados */}
+          <div>
+            <label className="block text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1">
+              Cargos habilitados{' '}
+              <span className="text-[var(--muted)] normal-case tracking-normal font-normal">(vacío = todos)</span>
+            </label>
+            <div className="flex gap-2">
+              <input
+                value={jobTitleInput}
+                onChange={(e) => setJobTitleInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addJobTitle() } }}
+                placeholder="Ej: Operador de grúas"
+                className="flex-1 bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
+              />
+              <button
+                type="button"
+                onClick={addJobTitle}
+                className="px-3 py-2 rounded-lg text-xs font-medium bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[var(--signal)] hover:bg-[rgba(0,212,255,0.2)] transition-all"
+              >
+                Agregar
+              </button>
+            </div>
+            {jobTitles.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {jobTitles.map((title) => (
+                  <span
+                    key={title}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[var(--signal)] text-xs"
+                  >
+                    {title}
+                    <button
+                      type="button"
+                      onClick={() => removeJobTitle(title)}
+                      className="text-[var(--signal)] hover:text-white transition-colors"
+                    >
+                      <XIcon size={10} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Guardar como template */}

@@ -244,11 +244,11 @@ export default function WebhooksPage() {
               {webhooks.map((wh, i) => (
                 <tr
                   key={wh.id}
-                  className={`border-b border-white/5 hover:bg-[var(--signal-dim)] transition-colors ${
+                  className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
                     i % 2 === 1 ? 'bg-white/[0.02]' : ''
                   }`}
                 >
-                  <td className="py-3 px-4 text-[var(--off-white)] font-mono text-xs max-w-xs truncate">
+                  <td className="py-3 px-4 text-[var(--off-white)] font-mono text-xs max-w-xs truncate" title={wh.url}>
                     {wh.url}
                   </td>
                   <td className="py-3 px-4">

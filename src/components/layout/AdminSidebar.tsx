@@ -116,7 +116,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
                 t.status === 'ACTIVE' ? 'bg-emerald-400' : 'bg-amber-400'
               }`}
             />
-            {!collapsed && <span className="truncate text-xs">{t.name}</span>}
+            {!collapsed && <span className="truncate text-xs" title={t.name}>{t.name}</span>}
           </NavLink>
         ))}
 
@@ -133,7 +133,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
         {/* Seccion Configuracion */}
         {!collapsed && (
           <p className="text-[10px] font-semibold text-[var(--muted)] uppercase tracking-widest px-3 pt-4 pb-1">
-            Configuracion
+            Configuración
           </p>
         )}
 
@@ -142,7 +142,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
             { to: '/admin/usuarios',     icon: Users,    label: 'Usuarios'      },
             { to: '/admin/ubicaciones',  icon: MapPin,   label: 'Ubicaciones'   },
             { to: '/admin/departamentos',icon: Building2,label: 'Departamentos' },
-            { to: '/admin/categorias',   icon: Tags,     label: 'Categorias'    },
+            { to: '/admin/categorias',   icon: Tags,     label: 'Categorías'    },
             { to: '/admin/asistencia',   icon: Clock,    label: 'Asistencia'    },
           ] as const
         ).map(({ to, icon: Icon, label }) => (
@@ -166,7 +166,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
 
         {(
           [
-            { to: '/admin/configuracion',                         icon: Settings, label: 'Organizacion' },
+            { to: '/admin/configuracion',                         icon: Settings, label: 'Organización' },
             { to: '/admin/configuracion/webhooks',                icon: Webhook,  label: 'Webhooks'     },
             { to: '/admin/configuracion/notificaciones-push',     icon: Bell,     label: 'Push'         },
           ] as const
@@ -193,10 +193,10 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
         <button
           onClick={handleLogout}
           className={`${linkBase} w-full text-red-400 hover:text-red-300 hover:bg-red-500/10`}
-          title={collapsed ? 'Cerrar sesion' : undefined}
+          title={collapsed ? 'Cerrar sesión' : undefined}
         >
           <LogOut className="w-4 h-4 shrink-0" />
-          {!collapsed && <span>Cerrar sesion</span>}
+          {!collapsed && <span>Cerrar sesión</span>}
         </button>
       </div>
     </aside>

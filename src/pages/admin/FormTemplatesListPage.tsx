@@ -137,7 +137,7 @@ export default function FormTemplatesListPage() {
                       {t.name}
                     </p>
                     {t.description && (
-                      <p className="text-xs text-[var(--muted)] mt-0.5 line-clamp-1">
+                      <p className="text-xs text-[var(--muted)] mt-0.5 line-clamp-1" title={t.description}>
                         {t.description}
                       </p>
                     )}
@@ -203,7 +203,7 @@ export default function FormTemplatesListPage() {
                             }
                           >
                             <Eye className="w-3 h-3" />
-                            Submissions
+                            Ver envíos
                           </Button>
                           <Button
                             size="sm"

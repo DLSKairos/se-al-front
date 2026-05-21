@@ -154,7 +154,7 @@ function TemplateCard({ template }: TemplateCardProps) {
 export default function OperatorHomePage() {
   const { user } = useAuthStore()
   const navigate = useNavigate()
-  const firstName = user?.jobTitle ?? 'Operario'
+  const firstName = 'Operario'
 
   const isLiteMode = sessionStorage.getItem('lite_mode') === 'true'
   const introAlreadyShown = !!localStorage.getItem(introShownKey())
@@ -205,11 +205,6 @@ export default function OperatorHomePage() {
 
   // Modo lite: renderizar dashboard normal
 
-  // Calcular progreso de formularios (placeholder — no hay dato de completados por template)
-  const totalCount = templates.length
-  const completedCount = 0
-  const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
-
   return (
     <div
       className="flex flex-col min-h-screen w-full overflow-x-hidden bg-(--navy) pb-24"
@@ -227,22 +222,6 @@ export default function OperatorHomePage() {
           Que tengas una jornada segura
         </p>
       </div>
-
-      {/* Progress bar de formularios */}
-      {!loadingTemplates && totalCount > 0 && (
-        <div className="px-6 mb-6">
-          <div className="flex justify-between text-[10px] text-[var(--muted)] mb-1.5 font-semibold tracking-[0.1em] uppercase">
-            <span>{completedCount} de {totalCount} completados</span>
-            <span>{pct}%</span>
-          </div>
-          <div className="h-1.5 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[var(--signal)] rounded-full transition-all duration-500"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-        </div>
-      )}
 
       <div className="flex flex-col gap-5 px-6">
         {/* Asistencia */}

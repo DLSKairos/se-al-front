@@ -101,7 +101,7 @@ export default function AdminDashboardPage() {
       {/* StatCards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title="Total submissions"
+          title="Formularios enviados"
           value={stats.total_submissions}
           icon={FileText}
           variant="signal"

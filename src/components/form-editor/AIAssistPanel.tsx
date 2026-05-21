@@ -140,15 +140,25 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.aside
-          key="ai-panel"
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '100%', opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="w-80 shrink-0 flex flex-col bg-[var(--navy-mid)] border-l border-[rgba(0,212,255,0.15)] overflow-hidden"
-          aria-label="Panel de asistente IA"
-        >
+        <>
+          <motion.div
+            key="ai-panel-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 z-30 md:hidden"
+            onClick={onClose}
+            aria-hidden="true"
+          />
+          <motion.aside
+            key="ai-panel"
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '100%', opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed inset-x-0 bottom-0 z-40 max-h-[60vh] flex flex-col bg-(--navy-mid) border-t border-border rounded-t-2xl overflow-hidden md:static md:inset-auto md:max-h-none md:w-80 md:shrink-0 md:rounded-none md:border-t-0 md:border-l md:z-auto"
+            aria-label="Panel de asistente IA"
+          >
           {/* Header */}
           <div className="flex items-center gap-2 px-4 py-3 border-b border-[rgba(0,212,255,0.12)]">
             <Sparkles size={16} className="text-[var(--signal)]" />
@@ -211,7 +221,8 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
               Enter para enviar · Shift+Enter nueva línea
             </p>
           </div>
-        </motion.aside>
+          </motion.aside>
+        </>
       )}
     </AnimatePresence>
   )

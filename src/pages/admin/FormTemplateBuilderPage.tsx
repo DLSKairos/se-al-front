@@ -86,7 +86,7 @@ const STEPS = [
 const INPUT_CLASS =
   'bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all w-full'
 
-const LABEL_CLASS = 'text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1.5 font-dm block'
+const LABEL_CLASS = 'text-xs font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1.5 font-dm block'
 
 // ── Tipos locales ──────────────────────────────────────────────────────────
 
@@ -488,7 +488,7 @@ function Step1Config({ templateId, onSaved }: Step1Props) {
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: QK.templates.admin() })
-      toast.success(templateId ? 'Template actualizado' : 'Template creado')
+      toast.success(templateId ? 'Formulario actualizado' : 'Formulario creado')
       onSaved(data.id)
     },
     onError: () =>

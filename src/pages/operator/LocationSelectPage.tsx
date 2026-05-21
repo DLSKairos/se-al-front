@@ -151,7 +151,7 @@ export default function LocationSelectPage() {
                       <div className="text-[10px] font-semibold tracking-[0.1em] uppercase px-2.5 py-0.5 rounded inline-block mb-1.5 bg-[var(--signal-dim)] text-[var(--signal)] border border-[rgba(0,212,255,0.25)]">
                         {isSelected ? 'Seleccionada' : 'Disponible'}
                       </div>
-                      <p className="font-display font-bold text-base text-[var(--off-white)] truncate">
+                      <p className="font-display font-bold text-base text-[var(--off-white)] truncate" title={loc.name}>
                         {loc.name}
                       </p>
                       <p className="text-xs text-[var(--muted)] font-dm truncate mt-0.5">

@@ -22,8 +22,8 @@ export function SOSButton() {
       <Modal
         open={open}
         onOpenChange={setOpen}
-        title="Linea de emergencias"
-        description="Comunicate de inmediato si hay una situacion de riesgo."
+        title="Línea de emergencias"
+        description="Comunícate de inmediato si hay una situación de riesgo."
         size="sm"
       >
         <div className="flex flex-col items-center gap-6 py-4">
@@ -32,7 +32,7 @@ export function SOSButton() {
           </div>
           <div className="text-center">
             <p className="text-[var(--muted)] text-sm font-['DM_Sans'] mb-1">
-              Numero de emergencia
+              Número de emergencia
             </p>
             <p className="text-[var(--off-white)] text-4xl font-['Syne'] font-bold tracking-widest">
               {EMERGENCY_NUMBER}

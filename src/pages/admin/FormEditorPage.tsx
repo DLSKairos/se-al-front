@@ -10,6 +10,7 @@ import { EditorCanvas } from '@/components/form-editor/EditorCanvas'
 import { AIAssistPanel } from '@/components/form-editor/AIAssistPanel'
 import { NotificationsDrawer } from '@/components/form-editor/NotificationsDrawer'
 import { SaveFormDrawer } from '@/components/form-editor/SaveFormDrawer'
+import { ConfirmModal } from '@/components/ui'
 
 export default function FormEditorPage() {
   const navigate = useNavigate()
@@ -21,6 +22,7 @@ export default function FormEditorPage() {
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [saveOpen, setSaveOpen] = useState(false)
+  const [confirmBackOpen, setConfirmBackOpen] = useState(false)
 
   // Cargar template existente si hay :id en la URL
   const { data: existingTemplate } = useQuery({
@@ -98,14 +100,15 @@ export default function FormEditorPage() {
         columns: tpl.columns ?? 1,
         sections,
         status: tpl.status === 'ACTIVE' ? 'ACTIVE' : 'DRAFT',
+        targetJobTitles: tpl.target_job_titles ?? [],
       })
     }
   }, [existingTemplate, location.state])
 
   function handleBack() {
     if (state.isDirty) {
-      const ok = window.confirm('¿Salir sin guardar? Los cambios se perderán.')
-      if (!ok) return
+      setConfirmBackOpen(true)
+      return
     }
     navigate('/admin/formularios')
   }
@@ -230,6 +233,16 @@ export default function FormEditorPage() {
         isOpen={saveOpen}
         onClose={() => setSaveOpen(false)}
         templateId={templateId}
+      />
+      <ConfirmModal
+        open={confirmBackOpen}
+        onOpenChange={setConfirmBackOpen}
+        title="Salir sin guardar"
+        description="Tienes cambios sin guardar. Si sales ahora, se perderán."
+        confirmLabel="Salir"
+        cancelLabel="Quedarse"
+        variant="warning"
+        onConfirm={() => navigate('/admin/formularios')}
       />
     </div>
   )
