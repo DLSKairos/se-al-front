@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Pencil, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Plus, Pencil, ToggleLeft, ToggleRight, MapPin } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { WorkLocation, Department } from '@/types'
@@ -13,6 +13,79 @@ import {
   ErrorMessage,
   useToast,
 } from '@/components/ui'
+import { LocationPicker, type LatLng } from '@/components/ui/LocationPicker'
+
+// ── Geocoding inverso ─────────────────────────────────────────────────────────
+
+interface NominatimAddress {
+  road?: string
+  pedestrian?: string
+  neighbourhood?: string
+  suburb?: string
+  city?: string
+  town?: string
+  village?: string
+  municipality?: string
+  county?: string
+  state?: string
+}
+
+interface NominatimReverseResult {
+  display_name: string
+  address: NominatimAddress
+}
+
+function parseAddress(result: NominatimReverseResult) {
+  const a = result.address
+  const street = a.road ?? a.pedestrian ?? a.neighbourhood ?? a.suburb ?? ''
+  const city =
+    a.city ?? a.town ?? a.village ?? a.municipality ?? a.county ?? a.state ?? ''
+  return { street, city }
+}
+
+function ReverseGeocodeCell({ lat, lng, index }: { lat: number; lng: number; index: number }) {
+  const { data, isLoading } = useQuery<NominatimReverseResult>({
+    queryKey: ['reverse-geocode', lat, lng],
+    queryFn: async () => {
+      // Escalonamos las peticiones para no superar 1 req/seg de Nominatim
+      await new Promise((r) => setTimeout(r, index * 350))
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`,
+        { headers: { 'Accept-Language': 'es' } },
+      )
+      return res.json()
+    },
+    staleTime: Infinity,
+    gcTime: Infinity,
+    retry: 1,
+  })
+
+  if (isLoading || !data) {
+    return (
+      <span className="inline-block w-24 h-3 rounded bg-white/10 animate-pulse" />
+    )
+  }
+
+  const { street, city } = parseAddress(data)
+
+  return (
+    <div className="flex flex-col gap-0.5">
+      {street && (
+        <span className="text-sm text-[var(--off-white)] font-dm leading-tight">{street}</span>
+      )}
+      {city && (
+        <span className="text-xs text-[var(--signal)] font-dm font-medium">{city}</span>
+      )}
+      {!street && !city && (
+        <span className="text-xs text-[var(--muted)] font-mono">
+          {lat.toFixed(5)}, {lng.toFixed(5)}
+        </span>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 interface WorkLocationForm {
   name: string
@@ -123,12 +196,8 @@ export default function WorkLocationsPage() {
       toast.error('El nombre es obligatorio')
       return
     }
-    if (isNaN(lat)) {
-      toast.error('La latitud debe ser un número válido')
-      return
-    }
-    if (isNaN(lng)) {
-      toast.error('La longitud debe ser un número válido')
+    if (isNaN(lat) || isNaN(lng)) {
+      toast.error('Debes seleccionar la ubicación en el mapa')
       return
     }
     const payload = {
@@ -172,7 +241,7 @@ export default function WorkLocationsPage() {
           <table className="w-full text-sm font-['DM_Sans']">
             <thead>
               <tr className="border-b border-white/5">
-                {['Nombre', 'Contratista', 'Departamento', 'Coordenadas', 'Estado', 'Acciones'].map((h) => (
+                {['Nombre', 'Contratista', 'Departamento', 'Dirección', 'Estado', 'Acciones'].map((h) => (
                   <th
                     key={h}
                     className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-4 px-4"
@@ -201,8 +270,12 @@ export default function WorkLocationsPage() {
                     <td className="py-3 px-4 text-[var(--muted)]">
                       {dept?.name ?? '—'}
                     </td>
-                    <td className="py-3 px-4 text-[var(--muted)] font-mono text-xs">
-                      {Number(loc.lat).toFixed(6)}, {Number(loc.lng).toFixed(6)}
+                    <td className="py-3 px-4">
+                      <ReverseGeocodeCell
+                        lat={Number(loc.lat)}
+                        lng={Number(loc.lng)}
+                        index={i}
+                      />
                     </td>
                     <td className="py-3 px-4">
                       {loc.is_active ? (
@@ -260,7 +333,7 @@ export default function WorkLocationsPage() {
         open={modalOpen}
         onOpenChange={(open) => { if (!open) closeModal() }}
         title={editing ? 'Editar obra' : 'Nueva obra'}
-        size="lg"
+        size="xl"
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -289,35 +362,8 @@ export default function WorkLocationsPage() {
                 className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
               />
             </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
-                Latitud <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="number"
-                step="0.000001"
-                value={form.lat}
-                onChange={(e) => setForm((f) => ({ ...f, lat: e.target.value }))}
-                placeholder="4.710989"
-                required
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
-                Longitud <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="number"
-                step="0.000001"
-                value={form.lng}
-                onChange={(e) => setForm((f) => ({ ...f, lng: e.target.value }))}
-                placeholder="-74.072092"
-                required
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
-              />
-            </div>
           </div>
+
           <div className="flex flex-col gap-1.5">
             <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
               Departamento (opcional)
@@ -335,6 +381,23 @@ export default function WorkLocationsPage() {
               ))}
             </select>
           </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+              Ubicación <span className="text-red-400">*</span>
+            </label>
+            <LocationPicker
+              value={form.lat && form.lng ? { lat: parseFloat(form.lat), lng: parseFloat(form.lng) } : null}
+              onChange={(coords: LatLng) =>
+                setForm((f) => ({
+                  ...f,
+                  lat: String(coords.lat),
+                  lng: String(coords.lng),
+                }))
+              }
+            />
+          </div>
+
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="secondary" type="button" onClick={closeModal} disabled={isSaving}>
               Cancelar

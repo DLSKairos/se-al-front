@@ -9,9 +9,9 @@ interface Tab {
 
 const TABS: Tab[] = [
   { label: 'Inicio',   icon: Map,      path: '/' },
-  { label: 'Permisos', icon: FileText, path: null },
+  { label: 'Permisos', icon: FileText, path: '/permisos' },
   { label: 'Horas',    icon: Clock,    path: '/asistencia' },
-  { label: 'Alertas',  icon: Bell,     path: null },
+  { label: 'Alertas',  icon: Bell,     path: '/alertas' },
   { label: 'Perfil',   icon: User,     path: '/perfil' },
 ]
 
@@ -63,9 +63,9 @@ export function BottomNav() {
                 tabIndex={-1}
                 title="Próximamente"
               >
-                <Icon className="w-5 h-5 text-[var(--muted)]" />
+                <Icon className="w-5 h-5 text-(--muted)" />
                 <span
-                  className="text-[10px] font-['DM_Sans'] leading-none text-[var(--muted)]"
+                  className="text-[10px] font-['DM_Sans'] leading-none text-(--muted)"
                 >
                   {tab.label}
                 </span>
@@ -82,7 +82,7 @@ export function BottomNav() {
                 'flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-colors',
                 isActive
                   ? ''
-                  : 'hover:text-[var(--off-white)]',
+                  : 'hover:text-(--off-white)',
               ].join(' ')}
               aria-current={isActive ? 'page' : undefined}
             >
@@ -94,14 +94,14 @@ export function BottomNav() {
                 className={[
                   'text-[10px] font-["DM_Sans"] leading-none',
                   isActive
-                    ? 'text-[var(--signal)] font-semibold'
-                    : 'text-[var(--muted)]',
+                    ? 'text-(--signal) font-semibold'
+                    : 'text-(--muted)',
                 ].join(' ')}
               >
                 {tab.label}
               </span>
               {isActive ? (
-                <div className="w-1 h-1 rounded-full bg-[var(--signal)] mx-auto mt-1" />
+                <div className="w-1 h-1 rounded-full bg-(--signal) mx-auto mt-1" />
               ) : (
                 <div className="w-1 h-1" />
               )}

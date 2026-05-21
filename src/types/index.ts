@@ -4,6 +4,7 @@ export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'OPERATOR'
 export interface JWTPayload {
   sub: string
   orgId: string
+  orgName: string
   role: UserRole
   jobTitle: string
   iat: number
@@ -139,6 +140,7 @@ export interface FormSubmissionValue {
   value_date: string | null
   value_json: unknown | null
   value_file: string | null
+  field?: { id: string; label: string; field_type: string }
 }
 
 export interface FormSignature {

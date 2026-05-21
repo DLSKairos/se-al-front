@@ -335,7 +335,7 @@ export default function SubmissionDetailPage() {
             {submission.values!.map((fieldValue) => (
               <div key={fieldValue.id} className="py-4 first:pt-0 last:pb-0">
                 <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-1.5 uppercase tracking-wide">
-                  {fieldValue.field_id.replace(/[_-]/g, ' ')}
+                  {fieldValue.field?.label ?? fieldValue.field_id}
                 </p>
                 <FieldValueDisplay fieldValue={fieldValue} />
               </div>

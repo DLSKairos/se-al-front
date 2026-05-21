@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Fingerprint, Trash2, Plus, Shield, Building2, LogOut } from 'lucide-react'
+import { ArrowLeft, Fingerprint, Trash2, Plus, Building2, LogOut } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -132,24 +132,13 @@ export default function OperatorProfilePage() {
           </p>
           <div className="flex flex-col gap-2">
             <div className="glass p-4 flex items-center gap-3 rounded-[14px]">
-              <Shield className="w-4 h-4 text-[var(--muted)] shrink-0" aria-hidden="true" />
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)]">
-                  ID de usuario
-                </p>
-                <p className="text-sm text-[var(--off-white)] font-dm truncate">
-                  {user?.sub ?? '—'}
-                </p>
-              </div>
-            </div>
-            <div className="glass p-4 flex items-center gap-3 rounded-[14px]">
               <Building2 className="w-4 h-4 text-[var(--muted)] shrink-0" aria-hidden="true" />
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)]">
                   Organización
                 </p>
                 <p className="text-sm text-[var(--off-white)] font-dm truncate">
-                  {user?.orgId ?? '—'}
+                  {user?.orgName ?? '—'}
                 </p>
               </div>
             </div>

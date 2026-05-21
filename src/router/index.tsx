@@ -14,6 +14,8 @@ const OperatorHomePage    = lazy(() => import('@/pages/operator/OperatorHomePage
 const FillFormPage        = lazy(() => import('@/pages/operator/FillFormPage'))
 const AttendancePage      = lazy(() => import('@/pages/operator/AttendancePage'))
 const OperatorProfilePage = lazy(() => import('@/pages/operator/OperatorProfilePage'))
+const PermisosPage        = lazy(() => import('@/pages/operator/PermisosPage'))
+const AlertasPage         = lazy(() => import('@/pages/operator/AlertasPage'))
 
 // ── Páginas admin ─────────────────────────────────────────────────────────────
 
@@ -76,6 +78,8 @@ export function AppRouter() {
             <Route path="form/:templateId" element={<FillFormPage />} />
             <Route path="asistencia" element={<AttendancePage />} />
             <Route path="perfil" element={<OperatorProfilePage />} />
+            <Route path="permisos" element={<PermisosPage />} />
+            <Route path="alertas" element={<AlertasPage />} />
             <Route path="game/world-map" element={<WorldMap />} />
           </Route>
           <Route path="/game/rotate-screen" element={<Placeholder name="RotateScreen" />} />

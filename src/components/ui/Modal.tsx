@@ -1,5 +1,4 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { X } from 'lucide-react'
 import { ReactNode } from 'react'
 
 interface ModalProps {
@@ -34,26 +33,15 @@ export function Modal({
           data-testid="modal-content"
           className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full ${sizeClasses[size]} glass-card p-6 animate-[slideUp_0.2s_ease] max-h-[90vh] overflow-y-auto focus:outline-none`}
         >
-          <div className="flex items-start justify-between gap-4 mb-5">
-            <div>
-              <Dialog.Title className="font-['Syne'] font-semibold text-[var(--off-white)] text-lg">
-                {title}
-              </Dialog.Title>
-              {description && (
-                <Dialog.Description className="text-sm text-[var(--muted)] mt-1 font-['DM_Sans']">
-                  {description}
-                </Dialog.Description>
-              )}
-            </div>
-            <Dialog.Close asChild>
-              <button
-                data-testid="modal-close"
-                className="text-[var(--muted)] hover:text-[var(--off-white)] transition-colors p-2 rounded-md hover:bg-[var(--signal-dim)] shrink-0"
-                aria-label="Cerrar"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </Dialog.Close>
+          <div className="mb-5">
+            <Dialog.Title className="font-['Syne'] font-semibold text-[var(--off-white)] text-lg">
+              {title}
+            </Dialog.Title>
+            {description && (
+              <Dialog.Description className="text-sm text-[var(--muted)] mt-1 font-['DM_Sans']">
+                {description}
+              </Dialog.Description>
+            )}
           </div>
           {children}
         </Dialog.Content>

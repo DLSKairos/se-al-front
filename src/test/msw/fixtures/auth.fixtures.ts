@@ -13,6 +13,7 @@ export const jwtPayloads: Record<UserRole, JWTPayload> = {
   OPERATOR: {
     sub: 'user-operator-001',
     orgId: 'org-test-001',
+    orgName: 'Kairos Demo',
     role: 'OPERATOR',
     jobTitle: 'Operador de campo',
     iat: Math.floor(Date.now() / 1000),
@@ -21,6 +22,7 @@ export const jwtPayloads: Record<UserRole, JWTPayload> = {
   ADMIN: {
     sub: 'user-admin-001',
     orgId: 'org-test-001',
+    orgName: 'Kairos Demo',
     role: 'ADMIN',
     jobTitle: 'Administrador',
     iat: Math.floor(Date.now() / 1000),
@@ -29,6 +31,7 @@ export const jwtPayloads: Record<UserRole, JWTPayload> = {
   SUPER_ADMIN: {
     sub: 'user-super-001',
     orgId: 'org-test-001',
+    orgName: 'Kairos Demo',
     role: 'SUPER_ADMIN',
     jobTitle: 'Super Administrador',
     iat: Math.floor(Date.now() / 1000),
