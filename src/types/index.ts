@@ -104,6 +104,7 @@ export interface FormField {
   type: FieldType
   required: boolean
   default_value: string | null
+  help_text: string | null
   options: Array<{ label: string; value: string }> | null
   validations: Record<string, unknown> | null
   revalidation_frequency: Frequency

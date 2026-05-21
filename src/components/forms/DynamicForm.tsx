@@ -36,6 +36,11 @@ export function DynamicForm({ fields, values, onChange, disabled }: DynamicFormP
               </span>
             )}
           </label>
+          {field.help_text && (
+            <p className="text-xs text-[var(--muted)] font-['DM_Sans'] -mt-0.5">
+              {field.help_text}
+            </p>
+          )}
 
           <FieldRenderer
             field={field}

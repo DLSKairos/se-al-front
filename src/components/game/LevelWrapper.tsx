@@ -215,14 +215,6 @@ export default function LevelWrapper() {
             {context.template.name}
           </span>
         </div>
-        <button
-          className="card-glass shrink-0 w-8 h-8 rounded-full grid place-items-center font-bold text-sm border-0 cursor-pointer transition-colors"
-          style={{ color: 'rgba(250,244,232,0.7)' }}
-          onClick={handleExit}
-          aria-label="Salir de la misión"
-        >
-          ✕
-        </button>
       </header>
 
       {/* Contenido principal */}
@@ -271,8 +263,13 @@ export default function LevelWrapper() {
               </span>
             </div>
 
+            {currentField.help_text && (
+              <p className="text-xs font-semibold tracking-[0.15em] uppercase mb-2" style={{ color: 'var(--amber)', opacity: 0.8 }}>
+                {currentField.label}
+              </p>
+            )}
             <TypewriterQuestion
-              text={currentField.label}
+              text={currentField.help_text ?? currentField.label}
               speed={35}
               onDone={() => setTypingDone(true)}
             />

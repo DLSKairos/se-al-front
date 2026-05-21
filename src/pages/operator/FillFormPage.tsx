@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Send, Lock } from 'lucide-react'
+import { Send, Lock } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -225,25 +225,15 @@ export default function FillFormPage() {
               {template.name}
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0 ml-3">
-            {is_readonly && (
-              <div
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30"
-                title="Solo lectura"
-              >
-                <Lock className="w-3 h-3 text-amber-400" aria-hidden="true" />
-                <span className="text-xs text-amber-400 font-dm">Solo lectura</span>
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className="w-8 h-8 rounded-full bg-[rgba(255,255,255,0.05)] grid place-items-center"
-              aria-label="Volver al inicio"
+          {is_readonly && (
+            <div
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 shrink-0 ml-3"
+              title="Solo lectura"
             >
-              <ArrowLeft className="w-4 h-4 text-[var(--muted)]" aria-hidden="true" />
-            </button>
-          </div>
+              <Lock className="w-3 h-3 text-amber-400" aria-hidden="true" />
+              <span className="text-xs text-amber-400 font-dm">Solo lectura</span>
+            </div>
+          )}
         </div>
       </div>
 
