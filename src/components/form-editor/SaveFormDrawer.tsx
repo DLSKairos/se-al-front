@@ -40,7 +40,8 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
         : api.post('/form-templates', body).then((r) => r.data),
     onSuccess: async (data) => {
       const savedId = (data as any).id || templateId
-      if (savedId && status === 'ACTIVE') {
+      // Solo publicar si el template estaba en DRAFT — ACTIVE→ACTIVE es inválido en el backend
+      if (savedId && status === 'ACTIVE' && state.status !== 'ACTIVE') {
         try {
           await api.patch(`/form-templates/${savedId}/status`, { status: 'ACTIVE' })
         } catch {
