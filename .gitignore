@@ -27,3 +27,6 @@ DOCUMENTACION TECNICA FRONTEND.md
 # Local SSL certs
 localhost.pem
 localhost-key.pem
+
+# Claude Code context
+CLAUDE.md
