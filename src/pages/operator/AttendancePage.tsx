@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, LogIn, LogOut, Clock, Coffee } from 'lucide-react'
+import { LogIn, LogOut, Clock, Coffee } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { AttendanceRecord } from '@/types'
@@ -131,14 +131,6 @@ export default function AttendancePage() {
     >
       {/* Header */}
       <div className="flex items-center px-6 pt-4 pb-2 shrink-0">
-        <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="w-9 h-9 flex items-center justify-center rounded-[10px] bg-white/5 hover:bg-white/10 transition-colors text-[var(--muted)] hover:text-[var(--off-white)] mr-3"
-          aria-label="Volver al inicio"
-        >
-          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-        </button>
         <div>
           <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
             Registro

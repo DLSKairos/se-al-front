@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Fingerprint, Trash2, Plus, Building2, LogOut } from 'lucide-react'
+import { Fingerprint, Trash2, Plus, Building2, LogOut } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -90,14 +90,6 @@ export default function OperatorProfilePage() {
     >
       {/* Header */}
       <div className="flex items-center gap-3 px-6 pt-4 pb-2">
-        <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="w-9 h-9 flex items-center justify-center rounded-[10px] bg-white/5 hover:bg-white/10 transition-colors text-[var(--muted)] hover:text-[var(--off-white)]"
-          aria-label="Volver al inicio"
-        >
-          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-        </button>
         <div className="flex-1">
           <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
             Cuenta

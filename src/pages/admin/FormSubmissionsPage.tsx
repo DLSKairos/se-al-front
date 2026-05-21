@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Search, Download, ChevronLeft, ChevronRight, FileText } from 'lucide-react'
+import { Search, Download, ChevronLeft, ChevronRight, FileText, Eye, Edit2 } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import {
@@ -9,10 +9,25 @@ import {
   LoadingSpinner,
   ErrorMessage,
   SubmissionStatusBadge,
+  Modal,
   useToast,
 } from '@/components/ui'
-import { FormSubmission, FormTemplate, SubmissionStatus } from '@/types'
+import { FormSubmission, FormTemplate, FormField, SubmissionStatus } from '@/types'
 import { formatDateTime, downloadFile } from '@/lib/utils'
+
+const FIELD_TYPE_LABELS: Record<string, string> = {
+  TEXT: 'Texto',
+  NUMBER: 'Número',
+  DATE: 'Fecha',
+  DATETIME: 'Fecha/hora',
+  SELECT: 'Selección',
+  MULTISELECT: 'Multi-selección',
+  BOOLEAN: 'Sí/No',
+  SIGNATURE: 'Firma',
+  PHOTO: 'Foto',
+  GEOLOCATION: 'Ubicación',
+  FILE: 'Archivo',
+}
 
 interface SubmissionsFilters {
   search: string
@@ -60,6 +75,7 @@ export default function FormSubmissionsPage() {
     page: 1,
   })
   const [isExporting, setIsExporting] = useState(false)
+  const [templateModalOpen, setTemplateModalOpen] = useState(false)
 
   // Sincronizar cuando el usuario navega entre formularios desde el sidebar
   useEffect(() => {
@@ -88,6 +104,13 @@ export default function FormSubmissionsPage() {
     queryKey: QK.templates.admin(),
     queryFn: () =>
       api.get<FormTemplate[]>('/form-templates/admin').then((r) => r.data),
+  })
+
+  const { data: currentTemplate } = useQuery({
+    queryKey: QK.templates.detail(routeTemplateId!),
+    queryFn: () =>
+      api.get<FormTemplate & { fields: FormField[] }>(`/form-templates/${routeTemplateId}`).then((r) => r.data),
+    enabled: !!routeTemplateId,
   })
 
   const updateFilter = useCallback(
@@ -133,15 +156,26 @@ export default function FormSubmissionsPage() {
             Gestiona y revisa todos los formularios enviados
           </p>
         </div>
-        <Button
-          variant="secondary"
-          onClick={handleExport}
-          loading={isExporting}
-          disabled={isExporting}
-        >
-          <Download className="w-4 h-4" />
-          Exportar Excel
-        </Button>
+        <div className="flex items-center gap-2">
+          {routeTemplateId && (
+            <Button
+              variant="ghost"
+              onClick={() => setTemplateModalOpen(true)}
+            >
+              <Eye className="w-4 h-4" />
+              Ver formulario
+            </Button>
+          )}
+          <Button
+            variant="secondary"
+            onClick={handleExport}
+            loading={isExporting}
+            disabled={isExporting}
+          >
+            <Download className="w-4 h-4" />
+            Exportar Excel
+          </Button>
+        </div>
       </div>
 
       {/* Filtros */}
@@ -335,6 +369,62 @@ export default function FormSubmissionsPage() {
           </>
         )}
       </div>
+
+      <Modal
+        open={templateModalOpen}
+        onOpenChange={setTemplateModalOpen}
+        title={currentTemplate?.name ?? 'Formulario'}
+        description="Campos y configuración del formulario"
+        size="md"
+      >
+        <div className="flex flex-col gap-4">
+          {currentTemplate?.fields && currentTemplate.fields.length > 0 ? (
+            <div className="flex flex-col gap-1">
+              {currentTemplate.fields
+                .sort((a, b) => a.order - b.order)
+                .map((field, i) => (
+                  <div
+                    key={field.id}
+                    className="flex flex-col gap-0.5 px-3 py-2.5 rounded-lg hover:bg-[rgba(0,212,255,0.04)] transition-colors border border-transparent hover:border-[rgba(0,212,255,0.08)]"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-[var(--muted)] font-dm w-5 shrink-0 text-right">{i + 1}</span>
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${field.required ? 'bg-[var(--signal)]' : 'bg-transparent'}`} title={field.required ? 'Requerido' : 'Opcional'} />
+                      <p className="text-sm text-[var(--off-white)] font-dm font-medium flex-1 min-w-0">
+                        {field.label}
+                      </p>
+                      <span className="text-[9px] font-bold tracking-[0.08em] uppercase px-2 py-0.5 rounded bg-[rgba(255,255,255,0.06)] text-[var(--muted)] border border-white/10 shrink-0">
+                        {FIELD_TYPE_LABELS[field.type] ?? field.type}
+                      </span>
+                    </div>
+                    {(field as any).help_text && (
+                      <p className="text-xs text-[var(--muted)] font-dm pl-9">
+                        {(field as any).help_text}
+                      </p>
+                    )}
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--muted)] font-dm text-center py-4">
+              Sin campos definidos
+            </p>
+          )}
+
+          <div className="flex justify-end pt-2 border-t border-white/5">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setTemplateModalOpen(false)
+                navigate(`/admin/formularios/${routeTemplateId}/editar`)
+              }}
+            >
+              <Edit2 className="w-4 h-4" />
+              Editar formulario
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

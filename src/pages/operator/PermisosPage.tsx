@@ -34,7 +34,7 @@ export default function PermisosPage() {
         <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
           Formularios
         </p>
-        <h1 className="font-display font-extrabold text-base text-[var(--off-white)]">
+        <h1 className="font-display font-bold text-sm text-[var(--off-white)]">
           Permisos disponibles
         </h1>
       </div>

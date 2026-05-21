@@ -85,11 +85,16 @@ export interface FieldRowProps {
 export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: FieldRowProps) {
   const { updateField, removeField, addField } = useFormEditorStore()
   const [label, setLabel] = useState(field.label)
+  const [helpText, setHelpText] = useState(field.helpText ?? '')
 
   // Sincronizar si el campo cambia externamente (p.ej. AI)
   useEffect(() => {
     setLabel(field.label)
   }, [field.label])
+
+  useEffect(() => {
+    setHelpText(field.helpText ?? '')
+  }, [field.helpText])
 
   function commitLabel() {
     const trimmed = label.trim()
@@ -99,6 +104,10 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
     }
     const newKey = toSnakeCase(trimmed)
     updateField(sectionId, field.id, { label: trimmed, key: newKey })
+  }
+
+  function commitHelpText() {
+    updateField(sectionId, field.id, { helpText: helpText.trim() || undefined })
   }
 
   function handleLabelKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -129,58 +138,75 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
 
   return (
     <div
-      className={`flex items-center gap-2 group px-3 py-2 rounded-lg border transition-all ${
+      className={`flex flex-col group px-3 py-2 rounded-lg border transition-all ${
         isDragging
           ? 'opacity-50 border-[rgba(0,212,255,0.3)] bg-[rgba(0,212,255,0.04)]'
           : 'border-transparent hover:border-[rgba(0,212,255,0.10)] hover:bg-[rgba(0,212,255,0.04)]'
       }`}
     >
-      {/* Drag handle */}
-      <button
-        {...dragHandleProps}
-        className="text-[var(--muted)] group-hover:text-[var(--signal)] cursor-grab active:cursor-grabbing shrink-0 transition-colors"
-        aria-label="Reordenar campo"
-        tabIndex={0}
-      >
-        <GripVertical size={16} />
-      </button>
+      {/* Fila principal */}
+      <div className="flex items-center gap-2">
+        {/* Drag handle */}
+        <button
+          {...dragHandleProps}
+          className="text-[var(--muted)] group-hover:text-[var(--signal)] cursor-grab active:cursor-grabbing shrink-0 transition-colors"
+          aria-label="Reordenar campo"
+          tabIndex={0}
+        >
+          <GripVertical size={16} />
+        </button>
 
-      {/* Required indicator */}
-      <button
-        onClick={handleToggleRequired}
-        title={field.required ? 'Requerido (click para hacer opcional)' : 'Opcional (click para hacer requerido)'}
-        className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors cursor-pointer ${
-          field.required ? 'bg-[var(--signal)]' : 'bg-[var(--muted)]'
-        }`}
-        aria-label={field.required ? 'Campo requerido' : 'Campo opcional'}
-      />
+        {/* Required indicator */}
+        <button
+          onClick={handleToggleRequired}
+          title={field.required ? 'Requerido (click para hacer opcional)' : 'Opcional (click para hacer requerido)'}
+          className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors cursor-pointer ${
+            field.required ? 'bg-[var(--signal)]' : 'bg-[var(--muted)]'
+          }`}
+          aria-label={field.required ? 'Campo requerido' : 'Campo opcional'}
+        />
 
-      {/* Label editable */}
-      <input
-        type="text"
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
-        onBlur={commitLabel}
-        onKeyDown={handleLabelKeyDown}
-        className="bg-transparent border-none outline-none text-sm text-[var(--off-white)] flex-1 min-w-0 font-['DM_Sans'] placeholder:text-[var(--muted)]"
-        placeholder="Etiqueta del campo"
-        aria-label="Nombre del campo"
-      />
+        {/* Label editable */}
+        <input
+          type="text"
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          onBlur={commitLabel}
+          onKeyDown={handleLabelKeyDown}
+          className="bg-transparent border-none outline-none text-sm text-[var(--off-white)] flex-1 min-w-0 font-['DM_Sans'] placeholder:text-[var(--muted)]"
+          placeholder="Etiqueta del campo"
+          aria-label="Nombre del campo"
+        />
 
-      {/* Tipo selector */}
-      <FieldTypePopover currentType={field.type} onChange={handleTypeChange}>
-        <div className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--signal)] px-2 py-1 rounded transition-colors cursor-pointer shrink-0">
-          <DynamicIcon name={FIELD_TYPE_ICON_NAMES[field.type]} size={12} />
-          <span className="hidden sm:inline">{FIELD_TYPE_LABELS[field.type]}</span>
-        </div>
-      </FieldTypePopover>
+        {/* Tipo selector */}
+        <FieldTypePopover currentType={field.type} onChange={handleTypeChange}>
+          <div className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--signal)] px-2 py-1 rounded transition-colors cursor-pointer shrink-0">
+            <DynamicIcon name={FIELD_TYPE_ICON_NAMES[field.type]} size={12} />
+            <span className="hidden sm:inline">{FIELD_TYPE_LABELS[field.type]}</span>
+          </div>
+        </FieldTypePopover>
 
-      {/* Menu de opciones */}
-      <OptionsMenu
-        onAdvanced={() => {/* TODO: abrir configuración avanzada */}}
-        onDuplicate={handleDuplicate}
-        onDelete={() => removeField(sectionId, field.id)}
-      />
+        {/* Menu de opciones */}
+        <OptionsMenu
+          onAdvanced={() => {/* TODO: abrir configuración avanzada */}}
+          onDuplicate={handleDuplicate}
+          onDelete={() => removeField(sectionId, field.id)}
+        />
+      </div>
+
+      {/* Fila de descripción / pregunta */}
+      <div className="pl-[52px] pr-1">
+        <input
+          type="text"
+          value={helpText}
+          onChange={(e) => setHelpText(e.target.value)}
+          onBlur={commitHelpText}
+          onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+          className="bg-transparent border-none outline-none text-xs text-[var(--muted)] w-full font-['DM_Sans'] placeholder:text-[var(--muted)]/50 focus:text-[var(--off-white)] transition-colors"
+          placeholder="Descripción o pregunta para el operario (opcional)"
+          aria-label="Descripción del campo"
+        />
+      </div>
     </div>
   )
 }

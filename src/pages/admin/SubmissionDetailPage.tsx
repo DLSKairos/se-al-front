@@ -107,6 +107,17 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
   }
 
   if (fieldValue.value_text !== null) {
+    if (fieldValue.value_text.startsWith('data:image/')) {
+      return (
+        <div className="bg-white rounded-lg p-3 inline-block">
+          <img
+            src={fieldValue.value_text}
+            alt="Firma"
+            className="max-h-28 object-contain"
+          />
+        </div>
+      )
+    }
     return (
       <span className="text-sm text-[var(--off-white)] whitespace-pre-wrap">
         {fieldValue.value_text}
@@ -332,14 +343,20 @@ export default function SubmissionDetailPage() {
             Respuestas del formulario
           </h2>
           <div className="flex flex-col divide-y divide-white/5">
-            {submission.values!.map((fieldValue) => (
-              <div key={fieldValue.id} className="py-4 first:pt-0 last:pb-0">
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-1.5 uppercase tracking-wide">
-                  {fieldValue.field?.label ?? fieldValue.field_id}
-                </p>
-                <FieldValueDisplay fieldValue={fieldValue} />
-              </div>
-            ))}
+            {submission.values!
+              .filter((fv) => {
+                if (fv.field?.field_type === 'SIGNATURE') return false
+                if (fv.value_text?.startsWith('data:image/')) return false
+                return true
+              })
+              .map((fieldValue) => (
+                <div key={fieldValue.id} className="py-4 first:pt-0 last:pb-0">
+                  <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-1.5 uppercase tracking-wide">
+                    {fieldValue.field?.label ?? fieldValue.field_id}
+                  </p>
+                  <FieldValueDisplay fieldValue={fieldValue} />
+                </div>
+              ))}
           </div>
         </div>
       )}

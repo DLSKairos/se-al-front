@@ -195,6 +195,16 @@ export default function FormTemplatesListPage() {
                         <>
                           <Button
                             size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              navigate(`/admin/formularios/${t.id}/editar`)
+                            }
+                          >
+                            <Edit2 className="w-3 h-3" />
+                            Editar
+                          </Button>
+                          <Button
+                            size="sm"
                             variant="secondary"
                             onClick={() =>
                               navigate(
@@ -217,14 +227,26 @@ export default function FormTemplatesListPage() {
                       )}
 
                       {t.status === 'ARCHIVED' && (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => openConfirm('activate', t)}
-                        >
-                          <RotateCcw className="w-3 h-3" />
-                          Reactivar
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              navigate(`/admin/formularios/${t.id}/editar`)
+                            }
+                          >
+                            <Edit2 className="w-3 h-3" />
+                            Ver campos
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => openConfirm('activate', t)}
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            Reactivar
+                          </Button>
+                        </>
                       )}
                     </div>
                   </td>
