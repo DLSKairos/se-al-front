@@ -22,6 +22,7 @@ import MultiSelectQuestion from './questions/MultiSelectQuestion'
 import TextInputQuestion from './questions/TextInputQuestion'
 import TypewriterQuestion from './questions/TypewriterQuestion'
 import { FormField, FormContext } from '@/types'
+import { SignatureField } from '@/components/forms/fields/SignatureField'
 
 // ─── Spinner & Error inline (evitar dependencia externa que no existe aún) ────
 function LoadingScreen({ label }: { label?: string }) {
@@ -66,6 +67,8 @@ export default function LevelWrapper() {
   const [missionDone,       setMissionDone]       = useState(false)
   const [revealing,         setRevealing]         = useState(true)
   const [typingDone,        setTypingDone]        = useState(false)
+  const [showSignatureStep, setShowSignatureStep] = useState(false)
+  const [signatureAnswers,  setSignatureAnswers]  = useState<Record<string, string>>({})
 
   const { data: context, isLoading, error } = useQuery({
     queryKey: QK.templates.context(templateId!),
@@ -99,6 +102,14 @@ export default function LevelWrapper() {
     [context],
   )
 
+  const signatureFields = useMemo(
+    () =>
+      context?.template.fields
+        .filter((f) => f.type === 'SIGNATURE')
+        .sort((a, b) => a.order - b.order) ?? [],
+    [context],
+  )
+
   const currentField = visibleFields[currentFieldIndex]
   const isLastField  = currentFieldIndex === visibleFields.length - 1
   const progressPct  = visibleFields.length > 0
@@ -114,26 +125,42 @@ export default function LevelWrapper() {
     setShowCelebration(false)
 
     if (isLastField) {
-      await handleSubmit(newAnswers)
+      if (signatureFields.length > 0) {
+        setShowSignatureStep(true)
+      } else {
+        await handleSubmit(newAnswers)
+      }
     } else {
       setCurrentFieldIndex((i) => i + 1)
     }
   }
 
-  const handleSubmit = async (finalAnswers: Record<string, unknown>) => {
+  const handleSubmit = async (finalAnswers: Record<string, unknown>, sigs: Record<string, string> = {}) => {
     if (!templateId || submitting) return
     setSubmitting(true)
     setSubmitError(null)
 
     try {
-      await api.post('/form-submissions', {
+      const submissionRes = await api.post<{ id: string }>('/form-submissions', {
         template_id:      templateId,
         work_location_id: workLocationId ?? null,
-        values:           finalAnswers,
+        data:             { ...finalAnswers, ...sigs },
         ...(geoLocation
           ? { geo_lat: geoLocation.lat, geo_lng: geoLocation.lng }
           : {}),
       })
+
+      const submissionId = submissionRes.data.id
+
+      for (const sigField of signatureFields) {
+        const dataURL = sigs[sigField.key]
+        if (!dataURL) continue
+        await api.post(`/form-submissions/${submissionId}/signatures`, {
+          signer_name:   sigField.label,
+          signer_role:   sigField.label,
+          signature_url: dataURL,
+        })
+      }
 
       if (user) {
         markWorldComplete(user.sub, workLocationId ?? '0', templateId)
@@ -242,15 +269,49 @@ export default function LevelWrapper() {
             <p className="text-sm text-red-400 font-['DM_Sans']">{submitError}</p>
             <button
               className="btn-primary-gradient rounded-[14px] px-6 py-2.5 font-bold font-['Syne'] text-sm"
-              onClick={() => handleSubmit(answers)}
+              onClick={() => handleSubmit(answers, signatureAnswers)}
             >
               Reintentar
             </button>
           </div>
         )}
 
+        {/* Paso de firma */}
+        {showSignatureStep && !submitting && !missionDone && !submitError && (
+          <div className="flex flex-col gap-6 pt-4">
+            <div>
+              <p className="font-sub text-[10px] uppercase tracking-widest text-[var(--amber)] mb-1">
+                Último paso
+              </p>
+              <h2 className="font-display font-extrabold text-xl" style={{ color: 'var(--cream)' }}>
+                Se requiere tu firma
+              </h2>
+            </div>
+            {signatureFields.map((sigField) => (
+              <div key={sigField.id} className="flex flex-col gap-2">
+                <p className="text-sm font-semibold text-[var(--off-white)] font-['DM_Sans']">
+                  {sigField.label}
+                </p>
+                <SignatureField
+                  field={sigField}
+                  value={signatureAnswers[sigField.key] ?? ''}
+                  onChange={(dataURL) =>
+                    setSignatureAnswers((prev) => ({ ...prev, [sigField.key]: dataURL }))
+                  }
+                />
+              </div>
+            ))}
+            <button
+              className="btn-primary-gradient rounded-[14px] px-6 py-3 font-bold font-['Syne'] text-sm w-full"
+              onClick={() => handleSubmit(answers, signatureAnswers)}
+            >
+              Confirmar y guardar
+            </button>
+          </div>
+        )}
+
         {/* Pregunta activa */}
-        {!showCelebration && !submitting && !missionDone && !submitError && currentField && questionType && (
+        {!showSignatureStep && !showCelebration && !submitting && !missionDone && !submitError && currentField && questionType && (
           <>
             {/* Etiqueta contextual: nombre de misión · pregunta N de M */}
             <div className="flex items-center gap-2 mb-4">
