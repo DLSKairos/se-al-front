@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useDownload } from '@/hooks/useDownload'
 import {
   ArrowLeft,
   MapPin,
@@ -191,6 +192,7 @@ export default function SubmissionDetailPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
 
+  const { download, downloading } = useDownload()
   const [showApproveModal, setShowApproveModal] = useState(false)
   const [showRejectModal, setShowRejectModal] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
@@ -278,24 +280,35 @@ export default function SubmissionDetailPage() {
           </div>
         </div>
 
-        {canAct && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="danger"
-              onClick={() => setShowRejectModal(true)}
-            >
-              <XCircle className="w-4 h-4" />
-              Rechazar
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => setShowApproveModal(true)}
-            >
-              <CheckCircle className="w-4 h-4" />
-              Aprobar
-            </Button>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={downloading}
+            onClick={() => download(`/form-exports/${id}/pdf`, `formulario-${id}.pdf`)}
+          >
+            <Download className="w-4 h-4" />
+            {downloading ? 'Descargando...' : 'Descargar PDF'}
+          </Button>
+          {canAct && (
+            <>
+              <Button
+                variant="danger"
+                onClick={() => setShowRejectModal(true)}
+              >
+                <XCircle className="w-4 h-4" />
+                Rechazar
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => setShowApproveModal(true)}
+              >
+                <CheckCircle className="w-4 h-4" />
+                Aprobar
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Información de contexto */}

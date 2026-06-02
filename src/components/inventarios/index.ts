@@ -1,0 +1,6 @@
+export * from './StepperInventario'
+export * from './ExtractorFactura'
+export * from './TablaItems'
+export * from './GaleriaFotos'
+export * from './CabeceraActaForm'
+export * from './FirmasActa'

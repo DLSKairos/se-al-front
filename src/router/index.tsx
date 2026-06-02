@@ -14,8 +14,11 @@ const OperatorHomePage    = lazy(() => import('@/pages/operator/OperatorHomePage
 const FillFormPage        = lazy(() => import('@/pages/operator/FillFormPage'))
 const AttendancePage      = lazy(() => import('@/pages/operator/AttendancePage'))
 const OperatorProfilePage = lazy(() => import('@/pages/operator/OperatorProfilePage'))
-const PermisosPage        = lazy(() => import('@/pages/operator/PermisosPage'))
-const AlertasPage         = lazy(() => import('@/pages/operator/AlertasPage'))
+const PermisosPage           = lazy(() => import('@/pages/operator/PermisosPage'))
+const AlertasPage            = lazy(() => import('@/pages/operator/AlertasPage'))
+const InventariosListPage    = lazy(() => import('@/pages/operator/InventariosListPage'))
+const NuevaActaPage          = lazy(() => import('@/pages/operator/NuevaActaPage'))
+const InventarioDetailPage   = lazy(() => import('@/pages/operator/InventarioDetailPage'))
 
 // ── Páginas admin ─────────────────────────────────────────────────────────────
 
@@ -80,6 +83,9 @@ export function AppRouter() {
             <Route path="perfil" element={<OperatorProfilePage />} />
             <Route path="permisos" element={<PermisosPage />} />
             <Route path="alertas" element={<AlertasPage />} />
+            <Route path="inventarios" element={<InventariosListPage />} />
+            <Route path="inventarios/nueva" element={<NuevaActaPage />} />
+            <Route path="inventarios/:id" element={<InventarioDetailPage />} />
             <Route path="game/world-map" element={<WorldMap />} />
           </Route>
           <Route path="/game/rotate-screen" element={<Placeholder name="RotateScreen" />} />

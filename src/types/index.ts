@@ -319,3 +319,93 @@ export interface AIAssistResult {
   message?: string
   aiError?: boolean
 }
+
+// ─── INVENTARIOS ──────────────────────────────────────────
+
+export interface InventarioAccesorio {
+  id: string
+  item_id: string
+  parte_no: string | null
+  pais: string | null
+  descripcion: string | null
+  marca: string | null
+  modelo: string | null
+}
+
+export interface InventarioFoto {
+  id: string
+  session_id: string
+  item_id: string | null
+  tipo: 'inicio_carga' | 'fin_carga' | 'item'
+  url: string
+  created_at: string
+}
+
+export interface InventarioItem {
+  id: string
+  session_id: string
+  numero: number
+  parte_no: string | null
+  pais: string | null
+  descripcion: string | null
+  marca: string | null
+  modelo: string | null
+  serial: string | null
+  cantidad: number | null
+  extraido_por_ia: boolean
+  tipo_novedad: string | null
+  accesorios: InventarioAccesorio[]
+  fotos: InventarioFoto[]
+}
+
+export interface InventarioSession {
+  id: string
+  org_id: string
+  tipo_formulario: string
+  estado: 'borrador' | 'completado' | 'firmado' | 'cerrado'
+  agencia_aduanas: string | null
+  codigo_agencia: string | null
+  representante_legal: string | null
+  mandato: string | null
+  deposito: string | null
+  direccion_deposito: string | null
+  documento_transporte: string | null
+  manifiesto: string | null
+  fecha_manifiesto: string | null
+  transportadora: string | null
+  consignatario: string | null
+  no_bultos: number | null
+  peso: number | null
+  precintos_retira: string | null
+  precintos_coloca: string | null
+  observaciones: string | null
+  firmado_deposito_nombre: string | null
+  firmado_agencia_nombre: string | null
+  firmado_deposito_url: string | null
+  firmado_agencia_url: string | null
+  firmado_deposito_at: string | null
+  firmado_agencia_at: string | null
+  created_at: string
+  updated_at: string
+  items?: InventarioItem[]
+  fotos?: InventarioFoto[]
+  _count?: { items: number; fotos: number }
+}
+
+export interface DatosFacturaExtraida {
+  numero_factura: string | null
+  fecha_factura: string | null
+  proveedor: string | null
+  consignatario: string | null
+  incoterm: string | null
+  moneda: string | null
+  items: Array<{
+    descripcion: string
+    codigo_arancelario: string | null
+    cantidad: number | null
+    peso_kg: number | null
+    pais_origen: string | null
+  }>
+  total_factura: number | null
+  observaciones: string | null
+}

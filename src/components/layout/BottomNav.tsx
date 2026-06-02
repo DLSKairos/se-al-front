@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Map, FileText, Clock, Bell, User, type LucideIcon } from 'lucide-react'
+import { Map, FileText, Clock, Bell, User, Package, type LucideIcon } from 'lucide-react'
 
 interface Tab {
   label: string
@@ -8,11 +8,11 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
-  { label: 'Inicio',   icon: Map,      path: '/' },
-  { label: 'Permisos', icon: FileText, path: '/permisos' },
-  { label: 'Horas',    icon: Clock,    path: '/asistencia' },
-  { label: 'Alertas',  icon: Bell,     path: '/alertas' },
-  { label: 'Perfil',   icon: User,     path: '/perfil' },
+  { label: 'Inicio',      icon: Map,      path: '/' },
+  { label: 'Permisos',    icon: FileText, path: '/permisos' },
+  { label: 'Inventarios', icon: Package,  path: '/inventarios' },
+  { label: 'Horas',       icon: Clock,    path: '/asistencia' },
+  { label: 'Perfil',      icon: User,     path: '/perfil' },
 ]
 
 const HIDDEN_ROUTES = ['/login', '/location-select']
@@ -48,7 +48,8 @@ export function BottomNav() {
           const isActive =
             tab.path !== null &&
             (pathname === tab.path ||
-              (tab.path === '/' && pathname === '/game/world-map'))
+              (tab.path === '/' && pathname === '/game/world-map') ||
+              (tab.path !== '/' && pathname.startsWith(tab.path)))
           const isDisabled = tab.path === null
 
           const Icon = tab.icon

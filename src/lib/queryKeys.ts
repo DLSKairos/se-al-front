@@ -30,4 +30,9 @@ export const QK = {
       ['blueprints', 'list', filters] as const,
     detail: (id: string) => ['blueprints', id] as const,
   },
+  inventarios: {
+    all: ['inventarios'] as const,
+    sesiones: () => [...QK.inventarios.all, 'sesiones'] as const,
+    sesion: (id: string) => [...QK.inventarios.all, 'sesion', id] as const,
+  },
 }
