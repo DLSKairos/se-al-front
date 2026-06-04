@@ -31,7 +31,7 @@ function buildInitialValues(fields: FormField[]): Record<string, unknown> {
       acc[field.key] = field.default_value
     } else if (field.type === 'BOOLEAN') {
       acc[field.key] = undefined
-    } else if (field.type === 'MULTISELECT') {
+    } else if (field.type === 'MULTISELECT' || field.type === 'PHOTO') {
       acc[field.key] = []
     } else if (field.type === 'NUMBER') {
       acc[field.key] = ''
@@ -171,11 +171,23 @@ export default function FillFormPage() {
     setIsSubmitting(true)
     const signatureFields = ctx.template.fields.filter((f) => f.type === 'SIGNATURE')
 
-    // Serializar datos (excluir File objects — enviar solo metadatos o dataURL)
+    // Serializar datos
     const serializedData: Record<string, unknown> = {}
     for (const [key, val] of Object.entries(values)) {
-      if (val instanceof File) {
-        // TODO: implementar upload de archivos a storage en siguiente iteracion
+      if (Array.isArray(val) && val.length > 0 && val[0] instanceof File) {
+        // Fotos: convertir a data URLs para persistir hasta que haya upload real
+        const dataUrls = await Promise.all(
+          (val as File[]).map(
+            (f) =>
+              new Promise<string>((res) => {
+                const reader = new FileReader()
+                reader.onloadend = () => res(reader.result as string)
+                reader.readAsDataURL(f)
+              }),
+          ),
+        )
+        serializedData[key] = dataUrls
+      } else if (val instanceof File) {
         serializedData[key] = null
       } else {
         serializedData[key] = val

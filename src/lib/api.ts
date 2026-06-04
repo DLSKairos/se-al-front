@@ -153,7 +153,7 @@ export const inventariosApi = {
   extraerFactura: (file: File) => {
     const form = new FormData()
     form.append('imagen', file)
-    return api.post<{ success: boolean; data: DatosFacturaExtraida | null; error?: string }>(
+    return api.post<DatosFacturaExtraida | null>(
       '/inventarios/extraer-factura',
       form,
       { headers: { 'Content-Type': undefined } },

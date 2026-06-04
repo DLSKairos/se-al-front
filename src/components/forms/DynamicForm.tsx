@@ -142,7 +142,7 @@ function FieldRenderer({ field, values, onChange, disabled }: FieldRendererProps
       return (
         <PhotoField
           field={field}
-          value={(rawValue as File | null) ?? null}
+          value={(rawValue as File[]) ?? []}
           onChange={(v) => onChange(field.key, v)}
           disabled={disabled}
         />

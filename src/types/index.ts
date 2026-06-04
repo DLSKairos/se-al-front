@@ -396,16 +396,22 @@ export interface DatosFacturaExtraida {
   numero_factura: string | null
   fecha_factura: string | null
   proveedor: string | null
-  consignatario: string | null
-  incoterm: string | null
+  nit_proveedor: string | null
+  cliente: string | null
+  documento_cliente: string | null
+  ciudad: string | null
   moneda: string | null
+  forma_pago: string | null
   items: Array<{
+    codigo: string | null
     descripcion: string
-    codigo_arancelario: string | null
     cantidad: number | null
-    peso_kg: number | null
-    pais_origen: string | null
+    unidad: string | null
+    valor_unitario: number | null
+    valor_total: number | null
   }>
+  subtotal: number | null
+  total_iva: number | null
   total_factura: number | null
   observaciones: string | null
 }

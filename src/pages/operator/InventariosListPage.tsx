@@ -118,14 +118,14 @@ export default function InventariosListPage() {
         <button
           type="button"
           onClick={() => navigate('/inventarios/nueva')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-btn)] font-['Syne'] font-semibold text-[var(--navy)] text-sm shrink-0 transition-all active:scale-[0.97]"
+          className="flex items-center gap-1.5 px-3 py-2.5 rounded-[var(--radius-btn)] font-['Syne'] font-semibold text-[var(--navy)] text-sm shrink-0 transition-all active:scale-[0.97] whitespace-nowrap"
           style={{
             background: 'linear-gradient(135deg, #00D4FF, #0096b3)',
-            boxShadow: '0 0 20px rgba(0,212,255,0.3)',
+            boxShadow: '0 0 16px rgba(0,212,255,0.3)',
           }}
         >
-          <Plus className="w-4 h-4" aria-hidden="true" />
-          Nueva Acta
+          <Plus className="w-4 h-4 shrink-0" aria-hidden="true" />
+          <span>Nueva Acta</span>
         </button>
       </div>
 

@@ -60,8 +60,8 @@ function itemVacioDesdeFactura(
   return {
     id: generarIdLocal(),
     numero,
-    parte_no: datos.codigo_arancelario ?? '',
-    pais: datos.pais_origen ?? '',
+    parte_no: datos.codigo ?? '',
+    pais: '',
     descripcion: datos.descripcion,
     marca: '',
     modelo: '',
@@ -169,11 +169,11 @@ export default function NuevaActaPage() {
   const handleExtraccionCompleta = useCallback(
     (datos: DatosFacturaExtraidaComp) => {
       setDatosFactura(datos)
-      if (datos.items.length > 0) {
-        setItems(datos.items.map((item, idx) => itemVacioDesdeFactura(item, idx + 1)))
+      if ((datos.items ?? []).length > 0) {
+        setItems((datos.items ?? []).map((item, idx) => itemVacioDesdeFactura(item, idx + 1)))
       }
-      if (datos.consignatario) {
-        setCabecera((prev) => ({ ...prev, consignatario: datos.consignatario! }))
+      if (datos.cliente) {
+        setCabecera((prev) => ({ ...prev, consignatario: datos.cliente! }))
       }
       setPasosCompletados((prev) => new Set(prev).add(1))
       setPasoActual(2)
@@ -184,8 +184,7 @@ export default function NuevaActaPage() {
   const handleProcesarConIA = useCallback(async (file: File) => {
     try {
       const res = await inventariosApi.extraerFactura(file)
-      if (res.data?.success && res.data.data) return res.data.data
-      return null
+      return res.data ?? null
     } catch {
       return null
     }

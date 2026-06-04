@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PhotoField } from './PhotoField'
@@ -16,101 +16,73 @@ const baseField: FormField = {
   options: null,
   validations: null,
   revalidation_frequency: 'INHERIT',
-}
-
-// Clase mock de FileReader que actua como constructor
-class FileReaderMock {
-  onloadend: ((event: ProgressEvent) => void) | null = null
-  result: string | null = null
-
-  readAsDataURL(_file: Blob) {
-    this.result = 'data:image/png;base64,fakecontent'
-    // Llamar onloadend de forma sincrona en el mock
-    if (this.onloadend) {
-      this.onloadend(new ProgressEvent('loadend'))
-    }
-  }
+  help_text: null,
 }
 
 describe('PhotoField', () => {
-  let onChange: (file: File | null) => void
-  let originalFileReader: typeof FileReader
+  let onChange: (files: File[]) => void
 
   beforeEach(() => {
-    onChange = vi.fn() as unknown as (file: File | null) => void
-    originalFileReader = globalThis.FileReader
-    // Reemplazar FileReader con la clase mock
-    globalThis.FileReader = FileReaderMock as unknown as typeof FileReader
-  })
-
-  afterEach(() => {
-    globalThis.FileReader = originalFileReader
+    onChange = vi.fn()
+    // URL.createObjectURL mock
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:mock')
+    globalThis.URL.revokeObjectURL = vi.fn()
   })
 
   it('se renderiza sin crash', () => {
-    render(<PhotoField field={baseField} value={null} onChange={onChange} />)
+    render(<PhotoField field={baseField} value={[]} onChange={onChange} />)
     expect(screen.getByTestId('field-foto_doc')).toBeInTheDocument()
   })
 
-  it('muestra el boton de tomar foto cuando no hay valor', () => {
-    render(<PhotoField field={baseField} value={null} onChange={onChange} />)
+  it('muestra el boton de tomar foto cuando no hay fotos', () => {
+    render(<PhotoField field={baseField} value={[]} onChange={onChange} />)
     expect(screen.getByRole('button', { name: /tomar foto/i })).toBeInTheDocument()
   })
 
-  it('tiene un input de tipo file con accept de imagenes', () => {
-    render(<PhotoField field={baseField} value={null} onChange={onChange} />)
+  it('tiene un input de tipo file con accept de imagenes y multiple', () => {
+    render(<PhotoField field={baseField} value={[]} onChange={onChange} />)
     const input = document.querySelector('input[type="file"]') as HTMLInputElement
     expect(input).toBeInTheDocument()
     expect(input).toHaveAttribute('accept', 'image/*')
+    expect(input).toHaveAttribute('multiple')
   })
 
-  it('llama onChange con el File al subir una imagen', async () => {
+  it('llama onChange con el array de archivos al subir imagenes', async () => {
     const user = userEvent.setup()
-    render(<PhotoField field={baseField} value={null} onChange={onChange} />)
+    render(<PhotoField field={baseField} value={[]} onChange={onChange} />)
     const input = document.querySelector('input[type="file"]') as HTMLInputElement
     const file = new File(['imagen'], 'foto.png', { type: 'image/png' })
     await user.upload(input, file)
-    expect(onChange).toHaveBeenCalledWith(file)
+    expect(onChange).toHaveBeenCalledWith([file])
   })
 
-  it('con disabled=true el boton de tomar foto esta deshabilitado', () => {
-    render(<PhotoField field={baseField} value={null} onChange={onChange} disabled />)
-    expect(screen.getByRole('button', { name: /tomar foto/i })).toBeDisabled()
-  })
-
-  it('con disabled=true el input file esta deshabilitado', () => {
-    render(<PhotoField field={baseField} value={null} onChange={onChange} disabled />)
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement
-    expect(input).toBeDisabled()
-  })
-
-  it('cuando hay un value File muestra el boton cambiar foto', () => {
-    const file = new File(['imagen'], 'existente.png', { type: 'image/png' })
-    render(<PhotoField field={baseField} value={file} onChange={onChange} />)
-    // Sin preview cargado, el boton muestra "Cambiar foto" porque value !== null
-    expect(screen.getByRole('button', { name: /cambiar foto/i })).toBeInTheDocument()
-  })
-
-  it('despues de subir una imagen se muestra la preview', async () => {
+  it('acumula fotos al agregar mas', async () => {
+    const file1 = new File(['a'], 'foto1.png', { type: 'image/png' })
+    const file2 = new File(['b'], 'foto2.png', { type: 'image/png' })
     const user = userEvent.setup()
-    render(<PhotoField field={baseField} value={null} onChange={onChange} />)
+    render(<PhotoField field={baseField} value={[file1]} onChange={onChange} />)
     const input = document.querySelector('input[type="file"]') as HTMLInputElement
-    const file = new File(['imagen'], 'foto.png', { type: 'image/png' })
-    await user.upload(input, file)
-    // Con el mock de FileReader, el preview se carga sincronicamente
-    const preview = screen.queryByAltText('Vista previa')
-    expect(preview).toBeInTheDocument()
+    await user.upload(input, file2)
+    expect(onChange).toHaveBeenCalledWith([file1, file2])
   })
 
-  it('al hacer click en eliminar foto llama onChange con null', async () => {
-    const user = userEvent.setup()
-    render(<PhotoField field={baseField} value={null} onChange={onChange} />)
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement
-    const file = new File(['imagen'], 'foto.png', { type: 'image/png' })
-    await user.upload(input, file)
+  it('muestra thumbnails cuando hay fotos', () => {
+    const file = new File(['a'], 'foto.png', { type: 'image/png' })
+    render(<PhotoField field={baseField} value={[file]} onChange={onChange} />)
+    expect(screen.getByAltText('Foto 1')).toBeInTheDocument()
+  })
 
-    const botonEliminar = screen.getByRole('button', { name: /eliminar foto/i })
+  it('al hacer click en eliminar foto llama onChange sin ese archivo', async () => {
+    const user = userEvent.setup()
+    const file = new File(['a'], 'foto.png', { type: 'image/png' })
+    render(<PhotoField field={baseField} value={[file]} onChange={onChange} />)
+    const botonEliminar = screen.getByRole('button', { name: /eliminar foto 1/i })
     await user.click(botonEliminar)
-    expect(onChange).toHaveBeenLastCalledWith(null)
+    expect(onChange).toHaveBeenCalledWith([])
+  })
+
+  it('con disabled=true no muestra botones de accion', () => {
+    render(<PhotoField field={baseField} value={[]} onChange={onChange} disabled />)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })
