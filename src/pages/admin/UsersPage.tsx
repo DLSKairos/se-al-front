@@ -4,13 +4,13 @@ import {
   UserPlus,
   Users,
   PencilLine,
-  Power,
   KeyRound,
   Trash2,
   ShieldCheck,
   ShieldAlert,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { masterListsApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import {
   Button,
@@ -21,7 +21,8 @@ import {
   Modal,
   useToast,
 } from '@/components/ui'
-import { User, UserRole, WorkLocation } from '@/types'
+import Combobox from '@/components/ui/Combobox'
+import { User, UserRole, WorkLocation, MasterItem } from '@/types'
 
 // ── Constantes ─────────────────────────────────────────────────────────────
 
@@ -118,6 +119,16 @@ export default function UsersPage() {
     queryFn: () =>
       api.get<WorkLocation[]>('/work-locations').then((r) => r.data),
   })
+
+  const { data: positions = [], isLoading: loadingPositions } = useQuery({
+    queryKey: QK.masterLists.positions(),
+    queryFn: () => masterListsApi.getPositions().then((r) => r.data),
+  })
+
+  // Convierte MasterItem → { id, name } que consume Combobox
+  const positionItems: { id: string; name: string }[] = (positions as MasterItem[]).map(
+    (p) => ({ id: p.id, name: p.name }),
+  )
 
   // ── Mutations ──────────────────────────────────────────────────────────
 
@@ -251,6 +262,18 @@ export default function UsersPage() {
   }
 
   const isSaving = createMutation.isPending || editMutation.isPending
+
+  // Cuando el operador no encuentra su cargo en la lista → sugerencia
+  const suggestionMutation = useMutation({
+    mutationFn: (value: string) =>
+      masterListsApi.createSuggestion({ entity_type: 'positions', value }),
+    onSuccess: () => toast.success('Sugerencia enviada al administrador'),
+    onError: () => toast.error('No se pudo enviar la sugerencia'),
+  })
+
+  function handlePositionSuggest(text: string) {
+    if (text.trim()) suggestionMutation.mutate(text.trim())
+  }
 
   // ── Render ─────────────────────────────────────────────────────────────
 
@@ -444,19 +467,33 @@ export default function UsersPage() {
               />
             </div>
 
-            {/* Cargo */}
+            {/* Cargo — Combobox con listas maestras */}
             <div>
-              <FieldLabel htmlFor="user-job">Cargo *</FieldLabel>
+              <Combobox
+                label="Cargo *"
+                items={positionItems}
+                loading={loadingPositions}
+                value={
+                  // Busca por nombre (job_title es string en el payload)
+                  positionItems.find((p) => p.name === form.job_title)?.id ?? null
+                }
+                onChange={(id) => {
+                  const name = positionItems.find((p) => p.id === id)?.name ?? ''
+                  setForm((f) => ({ ...f, job_title: name }))
+                }}
+                placeholder="Selecciona un cargo"
+                onSuggest={handlePositionSuggest}
+                suggestLabel="cargo"
+              />
+              {/* Campo hidden para la validación required del form */}
               <input
-                id="user-job"
                 type="text"
                 required
                 value={form.job_title}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, job_title: e.target.value }))
-                }
-                placeholder="Ej: Inspector SST"
-                className={INPUT_CLASS}
+                onChange={() => {}}
+                aria-hidden="true"
+                tabIndex={-1}
+                className="sr-only"
               />
             </div>
 

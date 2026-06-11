@@ -1,12 +1,15 @@
 import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Fingerprint } from 'lucide-react'
-import api from '@/lib/api'
+import { AnimatePresence, motion } from 'framer-motion'
+import api, { featureFlagsApi } from '@/lib/api'
+import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/components/ui/Toast'
 import { SplashScreen } from '@/components/ui'
 import { LiteModeBanner } from '@/components/ui/LiteModeBanner'
+import OAuthButtons from '@/components/auth/OAuthButtons'
 import {
   authenticateWebAuthn,
   registerWebAuthnPublic,
@@ -96,8 +99,12 @@ function NumPad({
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const setToken = useAuthStore((s) => s.setToken)
   const toast    = useToast()
+
+  // Detecta error OAuth de vuelta desde OAuthCallbackPage
+  const oauthError = (location.state as { oauthError?: string } | null)?.oauthError ?? null
 
   const [step,          setStep]          = useState<Step>('splash')
   const [showLiteBanner, setShowLiteBanner] = useState(false)
@@ -109,7 +116,20 @@ export default function LoginPage() {
   const [registeringBiometric, setRegisteringBiometric] = useState(false)
   const [biometricFailed,      setBiometricFailed]      = useState(false)
 
+  // Toggle para el panel de ingreso administradores
+  const [showAdminLogin, setShowAdminLogin] = useState(false)
+
   const pinStatusRef = useRef<PinStatusResponse | null>(null)
+
+  // ── Feature flags para OAuth ─────────────────────────────────────────────────
+
+  const { data: featureFlags, isLoading: flagsLoading } = useQuery({
+    queryKey: QK.featureFlags(),
+    queryFn: () => featureFlagsApi.getAll().then((r) => r.data),
+    staleTime: 30_000,
+    // Solo cargar cuando el usuario expande el panel admin
+    enabled: showAdminLogin && step === 'cedula',
+  })
 
   // ── Login con token ──────────────────────────────────────────────────────────
 
@@ -294,36 +314,130 @@ export default function LoginPage() {
 
         {/* ── Cédula ── */}
         {step === 'cedula' && (
-          <form data-testid="login-form" onSubmit={handleContinuar} className="flex flex-col gap-5">
-            <div>
-              <label
-                htmlFor="cedula-input"
-                className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-2 block"
+          <AnimatePresence mode="wait" initial={false}>
+            {showAdminLogin ? (
+              /* ── Panel de ingreso administradores ── */
+              <motion.div
+                key="admin-login"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="flex flex-col gap-4"
               >
-                Número de identificación
-              </label>
-              <input
-                id="cedula-input"
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={cedula}
-                onChange={(e) => setCedula(e.target.value.replace(/\D/g, ''))}
-                placeholder="Ej. 1234567890"
-                autoComplete="username"
-                className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[14px] px-5 py-4 text-base text-[var(--off-white)] placeholder-[var(--muted)] font-dm outline-none focus:border-[var(--signal)] transition-all"
-                required
-              />
-            </div>
-            <button
-              data-testid="login-submit"
-              type="submit"
-              disabled={!cedula.trim()}
-              className="btn-primary-gradient w-full py-4 rounded-[14px]"
-            >
-              Continuar
-            </button>
-          </form>
+                {/* Banner de error OAuth (viene de OAuthCallbackPage) */}
+                {oauthError && (
+                  <div
+                    role="alert"
+                    className="rounded-[10px] bg-red-500/10 border border-red-500/25 px-4 py-3"
+                  >
+                    <p className="text-sm font-dm text-red-300 leading-snug">
+                      {oauthError}
+                    </p>
+                  </div>
+                )}
+
+                <div className="text-center mb-1">
+                  <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
+                    Administradores
+                  </p>
+                  <h2 className="font-display font-bold text-lg text-[var(--off-white)]">
+                    Ingresa con tu cuenta
+                  </h2>
+                  <p className="text-xs text-[var(--muted)] font-dm mt-1">
+                    Vincula tu cuenta corporativa para acceder al panel de administración.
+                  </p>
+                </div>
+
+                <OAuthButtons flags={featureFlags} isLoading={flagsLoading} />
+
+                <button
+                  type="button"
+                  onClick={() => setShowAdminLogin(false)}
+                  className="flex items-center justify-center gap-1.5 text-xs text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0 mt-1"
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.5 2L3.5 6L7.5 10"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Volver al ingreso de operarios
+                </button>
+              </motion.div>
+            ) : (
+              /* ── Formulario de cédula (flujo operarios) ── */
+              <motion.div
+                key="operator-login"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
+                {/* Banner de error OAuth (viene de OAuthCallbackPage) */}
+                {oauthError && (
+                  <div
+                    role="alert"
+                    className="rounded-[10px] bg-red-500/10 border border-red-500/25 px-4 py-3 mb-4"
+                  >
+                    <p className="text-sm font-dm text-red-300 leading-snug">
+                      {oauthError}
+                    </p>
+                  </div>
+                )}
+
+                <form data-testid="login-form" onSubmit={handleContinuar} className="flex flex-col gap-5">
+                  <div>
+                    <label
+                      htmlFor="cedula-input"
+                      className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-2 block"
+                    >
+                      Número de identificación
+                    </label>
+                    <input
+                      id="cedula-input"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={cedula}
+                      onChange={(e) => setCedula(e.target.value.replace(/\D/g, ''))}
+                      placeholder="Ej. 1234567890"
+                      autoComplete="username"
+                      className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[14px] px-5 py-4 text-base text-[var(--off-white)] placeholder-[var(--muted)] font-dm outline-none focus:border-[var(--signal)] transition-all"
+                      required
+                    />
+                  </div>
+                  <button
+                    data-testid="login-submit"
+                    type="submit"
+                    disabled={!cedula.trim()}
+                    className="btn-primary-gradient w-full py-4 rounded-[14px]"
+                  >
+                    Continuar
+                  </button>
+
+                  {/* Botón discreto de ingreso administradores */}
+                  <button
+                    type="button"
+                    onClick={() => setShowAdminLogin(true)}
+                    className="text-xs text-center text-[var(--muted)]/70 hover:text-[var(--muted)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0 -mt-1"
+                  >
+                    Ingreso administradores
+                  </button>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
         )}
 
         {/* ── Verificando ── */}

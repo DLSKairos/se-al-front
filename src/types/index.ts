@@ -104,14 +104,14 @@ export interface FormField {
   type: FieldType
   required: boolean
   default_value: string | null
-  help_text: string | null
+  help_text?: string | null
   options: Array<{ label: string; value: string }> | null
   validations: Record<string, unknown> | null
   revalidation_frequency: Frequency
 }
 
 // ── Form Submissions ──────────────────────────────
-export type SubmissionStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED'
+export type SubmissionStatus = 'DRAFT' | 'SUBMITTED' | 'PENDING_SIGNATURES' | 'APPROVED' | 'REJECTED'
 
 export interface FormSubmission {
   id: string
@@ -396,6 +396,335 @@ export interface InventarioSession {
   items?: InventarioItem[]
   fotos?: InventarioFoto[]
   _count?: { items: number; fotos: number }
+}
+
+// ─── NOTIFICACIONES ───────────────────────────────────────────────────────────
+
+/**
+ * Tipos de notificación del sistema (espejo del enum NotificationType de Prisma).
+ */
+export type NotificationType =
+  | 'FORM_SUBMITTED'
+  | 'FORM_APPROVED'
+  | 'FORM_REJECTED'
+  | 'FORM_PENDING_SIGNATURE'
+  | 'MAGIC_LINK_SENT'
+  | 'SYSTEM_ALERT'
+  | 'CUSTOM_ADMIN'
+
+/**
+ * Notificación de la aplicación (se usa AppNotification para no chocar con
+ * el Notification del DOM).
+ */
+export interface AppNotification {
+  id: string
+  user_id: string
+  type: NotificationType
+  title: string
+  body: string
+  read: boolean
+  read_at: string | null
+  deep_link: string | null
+  created_at: string
+  created_by_admin_id: string | null
+}
+
+/**
+ * Target de notificaciones masivas enviadas por admin.
+ */
+export type BulkNotificationTarget = 'ALL' | 'SITE' | 'SPECIFIC'
+
+/**
+ * DTO para crear notificación masiva desde el panel admin.
+ */
+export interface CreateBulkNotificationDto {
+  title: string
+  body: string
+  target: BulkNotificationTarget
+  work_location_id?: string
+  user_ids?: string[]
+  deep_link?: string
+}
+
+// ─── FEATURE FLAGS ────────────────────────────────────────────────────────────
+
+/**
+ * Mapa de feature flags que retorna GET /feature-flags.
+ * Las claves son los nombres conocidos del sistema.
+ */
+export interface FeatureFlags {
+  oauth_google: boolean
+  oauth_microsoft: boolean
+  electronic_signature: boolean
+  magic_link: boolean
+  superadmin_panel: boolean
+  [key: string]: boolean
+}
+
+// ─── PLAN / ORG CONFIG ───────────────────────────────────────────────────────
+
+export type PlanTier = 'STARTER' | 'PROFESSIONAL' | 'ENTERPRISE'
+
+/**
+ * Configuración de plan y personalización de una organización.
+ * Espejo del modelo OrgConfig de Prisma.
+ */
+export interface OrgConfig {
+  id: string
+  org_id: string
+  plan: PlanTier
+  max_users: number
+  max_sites: number
+  display_name: string
+  logo_url: string | null
+  primary_color: string | null
+  updated_at: string
+  updated_by_super_admin_id: string | null
+}
+
+/**
+ * Métricas de uso de una organización.
+ * Retornado por GET /superadmin/organizations/:id/usage.
+ */
+export interface OrgUsage {
+  current_users: number
+  max_users: number
+  current_sites: number
+  max_sites: number
+  plan: PlanTier
+}
+
+/**
+ * Organización con su config y métricas de uso.
+ * Retornado por GET /superadmin/organizations y GET /superadmin/organizations/:id.
+ */
+export interface OrgWithUsage {
+  id: string
+  name: string
+  created_at: string
+  config: OrgConfig | null
+  usage: OrgUsage
+}
+
+// ─── ADMINISTRADORES ─────────────────────────────────────────────────────────
+
+/**
+ * Administrador de una organización con estado de activación OAuth.
+ * Retornado por GET /admin/administrators.
+ */
+export interface AdminUser {
+  id: string
+  name: string
+  email: string | null
+  identification_number: string
+  is_active: boolean
+  oauth_provider: 'GOOGLE' | 'MICROSOFT' | null
+  /** true si ya completó el flujo OAuth de activación */
+  is_activated: boolean
+  created_at: string
+}
+
+// ─── MAGIC LINK ───────────────────────────────────────────────────────────────
+
+export type MagicLinkPurpose = 'FIRST_ACCESS_ADMIN' | 'ADMIN_INVITE'
+
+/**
+ * Respuesta de GET /auth/magic-link?token=xxx.
+ * Permite mostrar la pantalla de activación antes de completar OAuth.
+ */
+export interface MagicLinkInfo {
+  valid: boolean
+  error?: 'TOKEN_NOT_FOUND' | 'TOKEN_EXPIRED' | 'TOKEN_USED'
+  /** Nombre del usuario destinatario */
+  user_name?: string
+  /** Nombre de la organización */
+  org_name?: string
+  purpose?: MagicLinkPurpose
+}
+
+/**
+ * Entrada del historial de magic links.
+ * Retornado por GET /superadmin/magic-link/history?orgId=xxx.
+ */
+export interface MagicLinkHistoryItem {
+  id: string
+  token: string
+  user_id: string
+  purpose: MagicLinkPurpose
+  expires_at: string
+  used_at: string | null
+  created_by_super_admin: boolean
+  created_at: string
+  user?: { name: string; email: string | null }
+}
+
+// ─── LISTAS MAESTRAS ──────────────────────────────────────────────────────────
+
+export type MasterListType = 'roles' | 'positions' | 'departments'
+
+export type MasterEntityType = 'POSITION' | 'ROLE' | 'DEPARTMENT'
+
+export type SuggestionStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+/**
+ * Elemento de lista maestra (cargo, rol operativo o departamento).
+ * Campos comunes entre MasterPosition, MasterRole y Department.
+ */
+export interface MasterItem {
+  id: string
+  name: string
+  /** null = registro global (seed de Kairos) */
+  org_id: string | null
+  active: boolean
+  created_at: string
+}
+
+/**
+ * Solicitud de sugerencia de valor nuevo en lista maestra.
+ */
+export interface MasterSuggestion {
+  id: string
+  org_id: string
+  suggested_by: string
+  entity_type: MasterEntityType
+  value: string
+  status: SuggestionStatus
+  reviewed_by: string | null
+  reviewed_at: string | null
+  created_at: string
+  suggester?: { name: string }
+}
+
+// ─── USER CONTEXT (status) ────────────────────────────────────────────────────
+
+/**
+ * Contexto mínimo del usuario autenticado.
+ * Retornado por GET /status/user-context en <300ms.
+ */
+export interface UserContext {
+  id: string
+  name: string
+  role: UserRole
+  org_id: string
+  org_name: string
+  work_location_id: string | null
+  work_location_name: string | null
+}
+
+// ─── FIRMA ELECTRÓNICA ────────────────────────────────────────────────────────
+
+export type SignatureLinkStatus = 'SENT' | 'VIEWED' | 'SIGNED'
+export type SignerType = 'INTERNAL' | 'EXTERNAL'
+export type SignatureMode = 'STRICT' | 'FLEXIBLE'
+
+/**
+ * Firmante externo del catálogo reutilizable de una obra.
+ * Retornado por GET /signatures/external-signers.
+ */
+export interface ExternalSigner {
+  id: string
+  org_id: string
+  work_location_id: string
+  name: string
+  identification_number: string
+  phone: string
+  /** Sube foto de cédula y selfie en primer uso */
+  is_registered: boolean
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Estado de un token de firma (link enviado a externo).
+ */
+export interface SignatureTokenInfo {
+  id: string
+  token: string
+  submission_id: string
+  external_signer_id: string
+  link_status: SignatureLinkStatus
+  expires_at: string
+  viewed_at: string | null
+  used_at: string | null
+  created_at: string
+  external_signer?: ExternalSigner
+}
+
+/**
+ * Estado de firma por firmante en un submission.
+ * Retornado por GET /signatures/submissions/:submissionId/status.
+ */
+export interface SignatureStatusEntry {
+  signer_type: SignerType
+  /** Presente si es firmante interno */
+  internal_user_id: string | null
+  /** Presente si es firmante externo */
+  external_signer_id: string | null
+  external_signer?: ExternalSigner
+  link_status: SignatureLinkStatus | null
+  signed_at: string | null
+  /** Nombre para mostrar */
+  display_name: string
+}
+
+/**
+ * Configuración de firma por plantilla.
+ * Retornado por GET /signatures/templates/:templateId/config.
+ */
+export interface SignatureConfig {
+  id: string
+  template_id: string
+  signature_mode: SignatureMode
+  min_reading_seconds: number
+  requires_internal_sign: boolean
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Un punto del trazo manuscrito.
+ */
+export interface StrokeVector {
+  x: number
+  y: number
+  /** Timestamp en milisegundos */
+  t: number
+}
+
+/**
+ * Entrada del log de lectura por sección o pregunta.
+ */
+export interface ReadingLogEntry {
+  section_or_field_id: string
+  seconds_viewed: number
+}
+
+/**
+ * Vista pública del documento para firmar.
+ * Retornado por GET /public/signature/:token.
+ */
+export interface PublicSignatureView {
+  /** Firmante externo destinatario del token */
+  signer: ExternalSigner
+  /** Nombre del documento / template */
+  document_name: string
+  /** Nombre de quien solicita la firma */
+  requester_name: string
+  /** Secciones del documento con sus preguntas/respuestas */
+  sections: Array<{
+    id: string
+    name: string
+    fields: Array<{
+      id: string
+      label: string
+      value: string | null
+    }>
+  }>
+  /** Si ya subió foto de cédula + selfie */
+  identity_verified: boolean
+  /** Segundos mínimos de lectura del documento completo */
+  min_reading_seconds: number
+  link_status: SignatureLinkStatus
 }
 
 export interface DatosFacturaExtraida {

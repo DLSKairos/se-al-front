@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Search, Download, ChevronLeft, ChevronRight, FileText, Eye, Edit2 } from 'lucide-react'
-import api from '@/lib/api'
+import { Search, Download, ChevronLeft, ChevronRight, FileText, Eye, Edit2, XCircle } from 'lucide-react'
+import { approvalApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import {
   Button,
@@ -12,47 +12,67 @@ import {
   Modal,
   useToast,
 } from '@/components/ui'
+import RejectSubmissionModal from '@/components/submissions/RejectSubmissionModal'
 import { FormSubmission, FormTemplate, FormField, SubmissionStatus } from '@/types'
 import { formatDateTime, downloadFile } from '@/lib/utils'
+import api from '@/lib/api'
+
+// ── Constantes ────────────────────────────────────────────────────────────────
 
 const FIELD_TYPE_LABELS: Record<string, string> = {
-  TEXT: 'Texto',
-  NUMBER: 'Número',
-  DATE: 'Fecha',
-  DATETIME: 'Fecha/hora',
-  SELECT: 'Selección',
+  TEXT:        'Texto',
+  NUMBER:      'Número',
+  DATE:        'Fecha',
+  DATETIME:    'Fecha/hora',
+  SELECT:      'Selección',
   MULTISELECT: 'Multi-selección',
-  BOOLEAN: 'Sí/No',
-  SIGNATURE: 'Firma',
-  PHOTO: 'Foto',
+  BOOLEAN:     'Sí/No',
+  SIGNATURE:   'Firma',
+  PHOTO:       'Foto',
   GEOLOCATION: 'Ubicación',
-  FILE: 'Archivo',
+  FILE:        'Archivo',
 }
 
+/** Estados desde los que el admin puede rechazar manualmente */
+const REJECTABLE_STATUSES: SubmissionStatus[] = ['SUBMITTED', 'PENDING_SIGNATURES']
+
 interface SubmissionsFilters {
-  search: string
-  status: string
+  search:     string
+  status:     string
   templateId: string
-  dateFrom: string
-  dateTo: string
-  page: number
+  dateFrom:   string
+  dateTo:     string
+  page:       number
 }
 
 interface SubmissionsResponse {
-  data: FormSubmission[]
+  data:  FormSubmission[]
   total: number
-  page: number
+  page:  number
   limit: number
 }
 
 const LIMIT = 20
 
+/**
+ * Opciones de filtro de estado.
+ *
+ * DECISIÓN DE IMPLEMENTACIÓN:
+ * Se mantiene el endpoint /form-submissions (endpoint original) en lugar de
+ * approvalApi.listAdminSubmissions (/admin/submissions) porque el primero incluye
+ * filtros adicionales (search, template_id, dateFrom, dateTo) que no están
+ * documentados en el nuevo endpoint. El nuevo endpoint approvalApi.listAdminSubmissions
+ * sí se usa en el futuro para la integración de aprobación; por ahora se mantiene la
+ * query original y se añade el botón de rechazo + StatusBadge mejorado.
+ * Si el backend unifica endpoints, se puede migrar sin cambios de UX.
+ */
 const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: '', label: 'Todos los estados' },
-  { value: 'DRAFT', label: 'Borrador' },
-  { value: 'SUBMITTED', label: 'Pendiente' },
-  { value: 'APPROVED', label: 'Aprobado' },
-  { value: 'REJECTED', label: 'Rechazado' },
+  { value: '',                   label: 'Todos los estados'  },
+  { value: 'DRAFT',              label: 'Borrador'           },
+  { value: 'SUBMITTED',          label: 'Enviado'            },
+  { value: 'PENDING_SIGNATURES', label: 'En revisión'        },
+  { value: 'APPROVED',           label: 'Aprobado'           },
+  { value: 'REJECTED',           label: 'Rechazado'          },
 ]
 
 const INPUT_CLASS =
@@ -61,21 +81,24 @@ const INPUT_CLASS =
 const SELECT_CLASS =
   'bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all'
 
+// ── Componente principal ──────────────────────────────────────────────────────
+
 export default function FormSubmissionsPage() {
   const navigate = useNavigate()
-  const toast = useToast()
+  const toast    = useToast()
   const { templateId: routeTemplateId } = useParams<{ templateId: string }>()
 
   const [filters, setFilters] = useState<SubmissionsFilters>({
-    search: '',
-    status: '',
+    search:     '',
+    status:     '',
     templateId: routeTemplateId ?? '',
-    dateFrom: '',
-    dateTo: '',
-    page: 1,
+    dateFrom:   '',
+    dateTo:     '',
+    page:       1,
   })
-  const [isExporting, setIsExporting] = useState(false)
+  const [isExporting,      setIsExporting]      = useState(false)
   const [templateModalOpen, setTemplateModalOpen] = useState(false)
+  const [rejectTarget,     setRejectTarget]     = useState<string | null>(null)
 
   // Sincronizar cuando el usuario navega entre formularios desde el sidebar
   useEffect(() => {
@@ -83,18 +106,18 @@ export default function FormSubmissionsPage() {
   }, [routeTemplateId])
 
   const queryFilters = {
-    ...(filters.search     && { search: filters.search }),
-    ...(filters.status     && { status: filters.status }),
+    ...(filters.search     && { search:      filters.search }),
+    ...(filters.status     && { status:      filters.status }),
     ...(filters.templateId && { template_id: filters.templateId }),
-    ...(filters.dateFrom   && { from: filters.dateFrom }),
-    ...(filters.dateTo     && { to: filters.dateTo }),
-    page: filters.page,
+    ...(filters.dateFrom   && { from:        filters.dateFrom }),
+    ...(filters.dateTo     && { to:          filters.dateTo }),
+    page:  filters.page,
     limit: LIMIT,
   }
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: QK.submissions.list(queryFilters),
-    queryFn: () =>
+    queryFn:  () =>
       api
         .get<SubmissionsResponse>('/form-submissions', { params: queryFilters })
         .then((r) => r.data),
@@ -102,20 +125,26 @@ export default function FormSubmissionsPage() {
 
   const { data: templates = [] } = useQuery({
     queryKey: QK.templates.admin(),
-    queryFn: () =>
+    queryFn:  () =>
       api.get<FormTemplate[]>('/form-templates/admin').then((r) => r.data),
   })
 
   const { data: currentTemplate } = useQuery({
     queryKey: QK.templates.detail(routeTemplateId!),
-    queryFn: () =>
-      api.get<FormTemplate & { fields: FormField[] }>(`/form-templates/${routeTemplateId}`).then((r) => r.data),
+    queryFn:  () =>
+      api
+        .get<FormTemplate & { fields: FormField[] }>(`/form-templates/${routeTemplateId}`)
+        .then((r) => r.data),
     enabled: !!routeTemplateId,
   })
 
   const updateFilter = useCallback(
     <K extends keyof SubmissionsFilters>(key: K, value: SubmissionsFilters[K]) => {
-      setFilters((prev) => ({ ...prev, [key]: value, page: key !== 'page' ? 1 : (value as number) }))
+      setFilters((prev) => ({
+        ...prev,
+        [key]: value,
+        page: key !== 'page' ? 1 : (value as number),
+      }))
     },
     [],
   )
@@ -124,11 +153,11 @@ export default function FormSubmissionsPage() {
     setIsExporting(true)
     try {
       const params = new URLSearchParams()
-      if (filters.search) params.set('search', filters.search)
-      if (filters.status) params.set('status', filters.status)
+      if (filters.search)     params.set('search',     filters.search)
+      if (filters.status)     params.set('status',     filters.status)
       if (filters.templateId) params.set('templateId', filters.templateId)
-      if (filters.dateFrom) params.set('dateFrom', filters.dateFrom)
-      if (filters.dateTo) params.set('dateTo', filters.dateTo)
+      if (filters.dateFrom)   params.set('dateFrom',   filters.dateFrom)
+      if (filters.dateTo)     params.set('dateTo',     filters.dateTo)
       const query = params.toString()
       await downloadFile(
         `/form-submissions/export/excel${query ? `?${query}` : ''}`,
@@ -158,10 +187,7 @@ export default function FormSubmissionsPage() {
         </div>
         <div className="flex items-center gap-2">
           {routeTemplateId && (
-            <Button
-              variant="ghost"
-              onClick={() => setTemplateModalOpen(true)}
-            >
+            <Button variant="ghost" onClick={() => setTemplateModalOpen(true)}>
               <Eye className="w-4 h-4" />
               Ver formulario
             </Button>
@@ -194,7 +220,7 @@ export default function FormSubmissionsPage() {
             />
           </div>
 
-          {/* Estado */}
+          {/* Estado — incluye los 5 estados del sprint */}
           <select
             value={filters.status}
             onChange={(e) => updateFilter('status', e.target.value)}
@@ -248,10 +274,10 @@ export default function FormSubmissionsPage() {
       {/* Tabla */}
       <div className="glass-card overflow-hidden">
         {isLoading ? (
-          <LoadingSpinner label="Cargando submissions..." />
+          <LoadingSpinner label="Cargando envíos..." />
         ) : error ? (
           <ErrorMessage
-            message="Error al cargar los submissions"
+            message="Error al cargar los envíos"
             onRetry={() => refetch()}
           />
         ) : (
@@ -279,56 +305,20 @@ export default function FormSubmissionsPage() {
                         <div className="flex flex-col items-center gap-3">
                           <FileText className="w-10 h-10 text-[var(--muted)]" />
                           <p className="text-[var(--muted)] text-sm">
-                            No se encontraron submissions
+                            No se encontraron envíos
                           </p>
                         </div>
                       </td>
                     </tr>
                   ) : (
                     data?.data.map((item, i) => (
-                      <tr
+                      <SubmissionRow
                         key={item.id}
-                        className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors cursor-pointer ${
-                          i % 2 === 1 ? 'bg-white/[0.02]' : ''
-                        }`}
-                        onClick={() => navigate(`/admin/submissions/${item.id}`)}
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            navigate(`/admin/submissions/${item.id}`)
-                          }
-                        }}
-                        aria-label={`Ver submission de ${item.submitter?.name ?? item.submitted_by}`}
-                      >
-                        <td className="py-3 px-5 pr-4 text-[var(--off-white)] font-medium">
-                          {item.template?.name ?? '—'}
-                        </td>
-                        <td className="py-3 pr-4 text-[var(--muted)]">
-                          {item.submitter?.name ?? item.submitted_by}
-                        </td>
-                        <td className="py-3 pr-4 text-[var(--muted)]">
-                          {item.work_location?.name ?? '—'}
-                        </td>
-                        <td className="py-3 pr-4">
-                          <SubmissionStatusBadge status={item.status as SubmissionStatus} />
-                        </td>
-                        <td className="py-3 pr-4 text-[var(--muted)] whitespace-nowrap">
-                          {formatDateTime(item.submitted_at)}
-                        </td>
-                        <td className="py-3 pr-5">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              navigate(`/admin/submissions/${item.id}`)
-                            }}
-                          >
-                            Ver detalle
-                          </Button>
-                        </td>
-                      </tr>
+                        submission={item}
+                        index={i}
+                        onView={() => navigate(`/admin/submissions/${item.id}`)}
+                        onReject={() => setRejectTarget(item.id)}
+                      />
                     ))
                   )}
                 </tbody>
@@ -370,6 +360,7 @@ export default function FormSubmissionsPage() {
         )}
       </div>
 
+      {/* Modal de detalle del template */}
       <Modal
         open={templateModalOpen}
         onOpenChange={setTemplateModalOpen}
@@ -388,8 +379,15 @@ export default function FormSubmissionsPage() {
                     className="flex flex-col gap-0.5 px-3 py-2.5 rounded-lg hover:bg-[rgba(0,212,255,0.04)] transition-colors border border-transparent hover:border-[rgba(0,212,255,0.08)]"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-[var(--muted)] font-dm w-5 shrink-0 text-right">{i + 1}</span>
-                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${field.required ? 'bg-[var(--signal)]' : 'bg-transparent'}`} title={field.required ? 'Requerido' : 'Opcional'} />
+                      <span className="text-[10px] text-[var(--muted)] font-dm w-5 shrink-0 text-right">
+                        {i + 1}
+                      </span>
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          field.required ? 'bg-[var(--signal)]' : 'bg-transparent'
+                        }`}
+                        title={field.required ? 'Requerido' : 'Opcional'}
+                      />
                       <p className="text-sm text-[var(--off-white)] font-dm font-medium flex-1 min-w-0">
                         {field.label}
                       </p>
@@ -425,6 +423,114 @@ export default function FormSubmissionsPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Modal de rechazo */}
+      {rejectTarget && (
+        <RejectSubmissionModal
+          submissionId={rejectTarget}
+          open={!!rejectTarget}
+          onClose={() => setRejectTarget(null)}
+          onRejected={() => refetch()}
+        />
+      )}
     </div>
+  )
+}
+
+// ── Fila de submission ────────────────────────────────────────────────────────
+
+interface SubmissionRowProps {
+  submission: FormSubmission
+  index:      number
+  onView:     () => void
+  onReject:   () => void
+}
+
+function SubmissionRow({ submission, index, onView, onReject }: SubmissionRowProps) {
+  const canReject = REJECTABLE_STATUSES.includes(submission.status)
+
+  // Extraer rejection_reason del objeto submission (campo añadido en el sprint)
+  const rejectionReason = (submission as FormSubmission & { rejection_reason?: string })
+    .rejection_reason
+
+  // Detectar si fue aprobado automáticamente (campo auto_approved_at del sprint)
+  const autoApproved = !!(
+    submission.status === 'APPROVED' &&
+    (submission as FormSubmission & { auto_approved_at?: string | null }).auto_approved_at
+  )
+
+  return (
+    <tr
+      className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors cursor-pointer ${
+        index % 2 === 1 ? 'bg-white/[0.02]' : ''
+      }`}
+      onClick={onView}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onView()
+        }
+      }}
+      aria-label={`Ver envío de ${submission.submitter?.name ?? submission.submitted_by}`}
+    >
+      {/* Formulario */}
+      <td className="py-3 px-5 pr-4 text-[var(--off-white)] font-medium">
+        {submission.template?.name ?? '—'}
+      </td>
+
+      {/* Usuario */}
+      <td className="py-3 pr-4 text-[var(--muted)]">
+        {submission.submitter?.name ?? submission.submitted_by}
+      </td>
+
+      {/* Obra */}
+      <td className="py-3 pr-4 text-[var(--muted)]">
+        {submission.work_location?.name ?? '—'}
+      </td>
+
+      {/* Estado con badge enriquecido */}
+      <td className="py-3 pr-4">
+        <SubmissionStatusBadge
+          status={submission.status}
+          autoApproved={autoApproved}
+          rejectionReason={rejectionReason}
+        />
+      </td>
+
+      {/* Fecha */}
+      <td className="py-3 pr-4 text-[var(--muted)] whitespace-nowrap">
+        {formatDateTime(submission.submitted_at)}
+      </td>
+
+      {/* Acciones */}
+      <td className="py-3 pr-5">
+        <div
+          className="flex items-center gap-1"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Button variant="ghost" size="sm" onClick={onView}>
+            Ver detalle
+          </Button>
+
+          {/* Botón rechazar — solo en SUBMITTED o PENDING_SIGNATURES */}
+          {canReject && (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onReject()
+              }}
+              aria-label="Rechazar formulario"
+              title="Rechazar este envío"
+            >
+              <XCircle className="w-3.5 h-3.5" />
+              Rechazar
+            </Button>
+          )}
+        </div>
+      </td>
+    </tr>
   )
 }

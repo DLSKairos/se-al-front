@@ -50,6 +50,17 @@ const OrganizationsPage = lazy(() => import('@/pages/super/OrganizationsPage'))
 const CreateOrgPage     = lazy(() => import('@/pages/super/CreateOrgPage'))
 const OrgDetailPage     = lazy(() => import('@/pages/super/OrgDetailPage'))
 
+// ── Páginas nuevas del sprint ─────────────────────────────────────────────────
+
+/** Pública — firmante externo accede sin JWT de SEÑAL */
+const PublicSignaturePage  = lazy(() => import('@/pages/firma/PublicSignaturePage'))
+/** Pública — activación de cuenta admin vía magic link */
+const ActivateAccountPage  = lazy(() => import('@/pages/login/ActivateAccountPage'))
+/** Pública — callback de Google/Microsoft OAuth (completa, no stub) */
+const OAuthCallbackPage    = lazy(() => import('@/pages/login/OAuthCallbackPage'))
+/** Admin — panel de comunicaciones (notificaciones masivas) */
+const CommunicationsPage   = lazy(() => import('@/pages/admin/CommunicationsPage'))
+
 // ── Placeholder para rutas pendientes ─────────────────────────────────────────
 
 const Placeholder = ({ name }: { name: string }) => (
@@ -65,8 +76,11 @@ export function AppRouter() {
     <Suspense fallback={<LoadingSpinner fullscreen />}>
       <Routes>
 
-        {/* ── Pública ── */}
+        {/* ── Públicas ── */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/activar" element={<ActivateAccountPage />} />
+        <Route path="/auth/callback" element={<OAuthCallbackPage />} />
+        <Route path="/firma/:token" element={<PublicSignaturePage />} />
 
         {/* ── Location Select (todos los roles autenticados) ── */}
         <Route element={<RoleGuard allowedRoles={['OPERATOR', 'ADMIN', 'SUPER_ADMIN']} />}>
@@ -114,6 +128,7 @@ export function AppRouter() {
             <Route path="configuracion" element={<OrgSettingsPage />} />
             <Route path="configuracion/webhooks" element={<WebhooksPage />} />
             <Route path="configuracion/notificaciones-push" element={<PushTestPage />} />
+            <Route path="comunicaciones" element={<CommunicationsPage />} />
           </Route>
         </Route>
 

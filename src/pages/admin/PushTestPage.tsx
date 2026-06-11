@@ -73,7 +73,7 @@ export default function PushTestPage() {
       const reg = await navigator.serviceWorker.ready
       const subscribeOptions: PushSubscriptionOptionsInit = {
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer,
       }
       const subscription = await reg.pushManager.subscribe(subscribeOptions)
       subscribeMutation.mutate(subscription)

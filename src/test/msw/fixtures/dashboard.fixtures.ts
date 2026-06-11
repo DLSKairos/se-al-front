@@ -7,6 +7,7 @@ export const dashboardStatsFixture: DashboardStats = {
   by_status: {
     DRAFT: 12,
     SUBMITTED: 180,
+    PENDING_SIGNATURES: 0,
     APPROVED: 140,
     REJECTED: 16,
   },
