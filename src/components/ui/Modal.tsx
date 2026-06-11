@@ -1,5 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { ReactNode } from 'react'
+import { X } from 'lucide-react'
 
 interface ModalProps {
   open: boolean
@@ -34,9 +35,21 @@ export function Modal({
           className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full ${sizeClasses[size]} glass-card p-6 animate-[slideUp_0.2s_ease] max-h-[90vh] overflow-y-auto focus:outline-none`}
         >
           <div className="mb-5">
-            <Dialog.Title className="font-['Syne'] font-semibold text-[var(--off-white)] text-lg">
-              {title}
-            </Dialog.Title>
+            <div className="flex items-start justify-between gap-3">
+              <Dialog.Title className="font-['Syne'] font-semibold text-[var(--off-white)] text-lg">
+                {title}
+              </Dialog.Title>
+              <Dialog.Close asChild>
+                <button
+                  type="button"
+                  data-testid="modal-close"
+                  aria-label="Cerrar"
+                  className="shrink-0 text-[var(--muted)] hover:text-[var(--off-white)] transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </Dialog.Close>
+            </div>
             {description && (
               <Dialog.Description className="text-sm text-[var(--muted)] mt-1 font-['DM_Sans']">
                 {description}

@@ -313,9 +313,15 @@ export interface AIGenerateResult {
   aiError?: boolean
 }
 
+export type AIAssistPayload =
+  | { sections: EditorSection[] }
+  | { sectionId: string; field: Partial<EditorField> }
+  | { columns: 1 | 2 | 3 }
+  | Record<string, never>
+
 export interface AIAssistResult {
   action: 'update_sections' | 'add_field' | 'set_columns' | 'none'
-  payload: any
+  payload: AIAssistPayload
   message?: string
   aiError?: boolean
 }

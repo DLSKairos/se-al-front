@@ -13,6 +13,8 @@ interface SignatureFieldProps {
 export function SignatureField({ field, value, onChange, disabled }: SignatureFieldProps) {
   const canvasRef   = useRef<HTMLCanvasElement>(null)
   const padRef      = useRef<SignaturePad | null>(null)
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
   const [isEmpty, setIsEmpty] = useState(!value)
 
   // Inicializar SignaturePad
@@ -37,7 +39,7 @@ export function SignatureField({ field, value, onChange, disabled }: SignatureFi
 
     pad.addEventListener('endStroke', () => {
       const dataURL = pad.toDataURL('image/png')
-      onChange(dataURL)
+      onChangeRef.current(dataURL)
       setIsEmpty(pad.isEmpty())
     })
 

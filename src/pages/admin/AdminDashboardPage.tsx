@@ -172,8 +172,8 @@ export default function AdminDashboardPage() {
                   outerRadius={80}
                   dataKey="value"
                 >
-                  {pieData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
+                  {pieData.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip contentStyle={TOOLTIP_STYLE} />

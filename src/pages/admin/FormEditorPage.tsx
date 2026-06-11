@@ -17,16 +17,21 @@ export default function FormEditorPage() {
   const { templateId } = useParams<{ templateId: string }>()
   const location = useLocation()
 
-  const { state, setInitialState, setName, setColumns } = useFormEditorStore()
+  const { state, setInitialState, setName, setColumns, reset } = useFormEditorStore()
 
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [saveOpen, setSaveOpen] = useState(false)
   const [confirmBackOpen, setConfirmBackOpen] = useState(false)
 
+  // Limpiar el store al desmontar para que no quede estado sucio al volver a entrar
+  useEffect(() => {
+    return () => { reset() }
+  }, [reset])
+
   // Cargar template existente si hay :id en la URL
   const { data: existingTemplate } = useQuery({
-    queryKey: QK.templates.detail(templateId!),
+    queryKey: QK.templates.detail(templateId ?? ''),
     queryFn: () => api.get(`/form-templates/${templateId}`).then((r) => r.data),
     enabled: !!templateId,
   })

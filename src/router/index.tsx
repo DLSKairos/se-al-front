@@ -25,7 +25,6 @@ const InventarioDetailPage   = lazy(() => import('@/pages/operator/InventarioDet
 const AdminDashboardPage      = lazy(() => import('@/pages/admin/AdminDashboardPage'))
 const AdminChatPage           = lazy(() => import('@/pages/admin/AdminChatPage'))
 const FormTemplatesListPage   = lazy(() => import('@/pages/admin/FormTemplatesListPage'))
-const FormTemplateBuilderPage = lazy(() => import('@/pages/admin/FormTemplateBuilderPage'))
 const FormCreationPathPage    = lazy(() => import('@/pages/admin/FormCreationPathPage'))
 const FormEditorPage          = lazy(() => import('@/pages/admin/FormEditorPage'))
 const FormSubmissionsPage     = lazy(() => import('@/pages/admin/FormSubmissionsPage'))

@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
@@ -93,6 +93,14 @@ export default function NuevaActaPage() {
 
   // Debounce refs para actualizaciones de items
   const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+
+  // Limpiar todos los timers pendientes al desmontar
+  useEffect(() => {
+    return () => {
+      debounceTimers.current.forEach((timer) => clearTimeout(timer))
+      debounceTimers.current.clear()
+    }
+  }, [])
 
   // ── Mutaciones ────────────────────────────────────────────────────────────
 

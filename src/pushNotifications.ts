@@ -1,13 +1,5 @@
 import api from '@/lib/api'
-
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
-  const rawData = window.atob(base64)
-  const output = new Uint8Array(rawData.length)
-  for (let i = 0; i < rawData.length; i++) output[i] = rawData.charCodeAt(i)
-  return output
-}
+import { urlBase64ToUint8Array } from '@/lib/vapid'
 
 export async function subscribeUser(): Promise<void> {
   try {
@@ -23,7 +15,9 @@ export async function subscribeUser(): Promise<void> {
     await api.post('/push/subscribe', {
       subscription: subscription.toJSON(),
     })
-  } catch {
-    // La suscripción push no es crítica; errores silenciados intencionalmente.
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      console.warn('[pushNotifications] Error al suscribir:', err)
+    }
   }
 }

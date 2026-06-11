@@ -1,23 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { Bell, BellOff, Info, Send, Smartphone } from 'lucide-react'
+import { Bell, BellOff, Info, Send, Smartphone, AlertTriangle } from 'lucide-react'
 import api from '@/lib/api'
+import { urlBase64ToUint8Array } from '@/lib/vapid'
 import { Button, useToast } from '@/components/ui'
 
 type SubscriptionStatus = 'unknown' | 'unsupported' | 'denied' | 'subscribed' | 'not-subscribed'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
-
-function urlBase64ToArrayBuffer(base64String: string): ArrayBuffer {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
-  const rawData = window.atob(base64)
-  const bytes = new Uint8Array(rawData.length)
-  for (let i = 0; i < rawData.length; i++) {
-    bytes[i] = rawData.charCodeAt(i)
-  }
-  return bytes.buffer as ArrayBuffer
-}
 
 export default function PushTestPage() {
   const toast = useToast()
@@ -68,6 +58,10 @@ export default function PushTestPage() {
 
   async function handleSubscribe() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    if (!VAPID_PUBLIC_KEY) {
+      toast.error('VITE_VAPID_PUBLIC_KEY no está definida — no se puede suscribir')
+      return
+    }
     setIsSubscribing(true)
     try {
       const permission = await Notification.requestPermission()
@@ -79,13 +73,11 @@ export default function PushTestPage() {
       const reg = await navigator.serviceWorker.ready
       const subscribeOptions: PushSubscriptionOptionsInit = {
         userVisibleOnly: true,
-        ...(VAPID_PUBLIC_KEY
-          ? { applicationServerKey: urlBase64ToArrayBuffer(VAPID_PUBLIC_KEY) }
-          : {}),
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       }
       const subscription = await reg.pushManager.subscribe(subscribeOptions)
       subscribeMutation.mutate(subscription)
-    } catch (err) {
+    } catch {
       toast.error('Error al solicitar permiso de notificaciones')
     } finally {
       setIsSubscribing(false)
@@ -125,6 +117,17 @@ export default function PushTestPage() {
           Prueba y gestiona las notificaciones push del sistema
         </p>
       </div>
+
+      {/* Alerta si VAPID key no está configurada */}
+      {!VAPID_PUBLIC_KEY && (
+        <div className="glass-card p-4 flex items-start gap-3 border border-amber-500/30 bg-amber-500/5">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-400 font-['DM_Sans']">
+            La variable de entorno <code className="font-mono text-xs">VITE_VAPID_PUBLIC_KEY</code> no está configurada.
+            Las notificaciones push no funcionarán hasta que se defina.
+          </p>
+        </div>
+      )}
 
       {/* Info */}
       <div className="glass-card p-5 flex flex-col gap-3">

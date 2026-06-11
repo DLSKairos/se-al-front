@@ -45,7 +45,7 @@ function parseAddress(result: NominatimReverseResult) {
 
 function ReverseGeocodeCell({ lat, lng, index }: { lat: number; lng: number; index: number }) {
   const { data, isLoading } = useQuery<NominatimReverseResult>({
-    queryKey: ['reverse-geocode', lat, lng],
+    queryKey: QK.reverseGeocode(lat, lng),
     queryFn: async () => {
       // Escalonamos las peticiones para no superar 1 req/seg de Nominatim
       await new Promise((r) => setTimeout(r, index * 350))
@@ -57,7 +57,7 @@ function ReverseGeocodeCell({ lat, lng, index }: { lat: number; lng: number; ind
     },
     staleTime: Infinity,
     gcTime: Infinity,
-    retry: 1,
+    retry: false,
   })
 
   if (isLoading || !data) {

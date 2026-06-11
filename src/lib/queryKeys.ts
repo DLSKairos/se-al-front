@@ -7,6 +7,7 @@ export const QK = {
     context: (id: string) => ['form-templates', id, 'context'] as const,
   },
   submissions: {
+    all:    () => ['submissions'] as const,
     list:   (filters: object) => ['submissions', filters] as const,
     stats:  (filters: object) => ['submissions', 'stats', filters] as const,
     detail: (id: string)      => ['submissions', id] as const,
@@ -35,4 +36,5 @@ export const QK = {
     sesiones: () => [...QK.inventarios.all, 'sesiones'] as const,
     sesion: (id: string) => [...QK.inventarios.all, 'sesion', id] as const,
   },
+  reverseGeocode: (lat: number, lng: number) => ['reverse-geocode', lat, lng] as const,
 }

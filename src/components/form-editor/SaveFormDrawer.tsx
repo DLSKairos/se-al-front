@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, Save, BookMarked, X as XIcon } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -7,6 +7,7 @@ import { QK } from '@/lib/queryKeys'
 import api from '@/lib/api'
 import { toSnakeCase } from '@/utils/fieldType.utils'
 import { useToast } from '@/components/ui'
+import type { FormCategory } from '@/types'
 
 interface SaveFormDrawerProps {
   isOpen: boolean
@@ -22,15 +23,20 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
 
   const [name, setName] = useState(state.name || '')
   const [categoryId, setCategoryId] = useState(state.categoryId || '')
+
+  // Sincronizar name desde el store si cambia mientras el drawer está abierto
+  useEffect(() => {
+    setName(state.name || '')
+  }, [state.name])
   const [status, setStatus] = useState<'DRAFT' | 'ACTIVE'>(state.status || 'DRAFT')
   const [saveAsBlueprint, setSaveAsBlueprint] = useState(false)
   const [blueprintName, setBlueprintName] = useState('')
   const [jobTitles, setJobTitles] = useState<string[]>(state.targetJobTitles ?? [])
   const [jobTitleInput, setJobTitleInput] = useState('')
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<FormCategory[]>({
     queryKey: QK.categories(),
-    queryFn: () => api.get('/form-categories').then((r) => r.data),
+    queryFn: () => api.get<FormCategory[]>('/form-categories').then((r) => r.data),
   })
 
   const saveMutation = useMutation({
@@ -137,7 +143,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
               className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
             >
               <option value="">Selecciona categoría</option>
-              {(categories as any[]).map((c: any) => (
+              {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>

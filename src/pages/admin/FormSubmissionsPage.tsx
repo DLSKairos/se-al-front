@@ -397,9 +397,9 @@ export default function FormSubmissionsPage() {
                         {FIELD_TYPE_LABELS[field.type] ?? field.type}
                       </span>
                     </div>
-                    {(field as any).help_text && (
+                    {field.help_text && (
                       <p className="text-xs text-[var(--muted)] font-dm pl-9">
-                        {(field as any).help_text}
+                        {field.help_text}
                       </p>
                     )}
                   </div>

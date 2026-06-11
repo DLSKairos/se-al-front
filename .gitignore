@@ -28,5 +28,8 @@ DOCUMENTACION TECNICA FRONTEND.md
 localhost.pem
 localhost-key.pem
 
+# Variables de entorno
+.env
+
 # Claude Code context
 CLAUDE.md

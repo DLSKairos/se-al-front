@@ -206,7 +206,7 @@ export default function SubmissionDetailPage() {
 
   const invalidateQueries = () => {
     queryClient.invalidateQueries({ queryKey: QK.submissions.detail(id!) })
-    queryClient.invalidateQueries({ queryKey: ['submissions'] })
+    queryClient.invalidateQueries({ queryKey: QK.submissions.all() })
   }
 
   const approveMutation = useMutation({
@@ -223,8 +223,8 @@ export default function SubmissionDetailPage() {
   })
 
   const rejectMutation = useMutation({
-    mutationFn: (_reason: string) =>
-      api.patch(`/form-submissions/${id}/status`, { status: 'REJECTED' }),
+    mutationFn: (reason: string) =>
+      api.patch(`/form-submissions/${id}/status`, { status: 'REJECTED', reason }),
     onSuccess: () => {
       toast.success('Envío rechazado')
       setShowRejectModal(false)

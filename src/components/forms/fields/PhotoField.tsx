@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useMemo, useEffect } from 'react'
 import { Camera, X, Plus } from 'lucide-react'
 import { FormField } from '@/types'
 
@@ -11,6 +11,15 @@ interface PhotoFieldProps {
 
 export function PhotoField({ field, value = [], onChange, disabled }: PhotoFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Crear URLs de objeto una sola vez por referencia de archivo; revocarlas al desmontar o cambiar
+  const objectUrls = useMemo(() => value.map((f) => URL.createObjectURL(f)), [value])
+
+  useEffect(() => {
+    return () => {
+      objectUrls.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [objectUrls])
 
   const handleAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevas = Array.from(e.target.files ?? [])
@@ -43,7 +52,7 @@ export function PhotoField({ field, value = [], onChange, disabled }: PhotoField
           {value.map((file, i) => (
             <div key={i} className="relative aspect-square rounded-[var(--radius-input)] overflow-hidden border border-[var(--signal-dim)] bg-[var(--navy-mid)]">
               <img
-                src={URL.createObjectURL(file)}
+                src={objectUrls[i]}
                 alt={`Foto ${i + 1}`}
                 className="w-full h-full object-cover"
               />

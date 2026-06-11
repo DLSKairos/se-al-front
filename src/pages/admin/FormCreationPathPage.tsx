@@ -105,10 +105,10 @@ export default function FormCreationPathPage() {
       try {
         const formData = new FormData()
         formData.append('file', file)
-        console.log('[Upload] Enviando archivo:', file.name, file.type, file.size)
+        if (import.meta.env.DEV) console.log('[Upload] Enviando archivo:', file.name, file.type, file.size)
         const response = await formAiApi.extractFromFile(formData)
         const result = response.data
-        console.log('[Upload] Respuesta del servidor:', result)
+        if (import.meta.env.DEV) console.log('[Upload] Respuesta del servidor:', result)
 
         if (result.aiError) {
           setToast({
@@ -133,7 +133,7 @@ export default function FormCreationPathPage() {
         // Navegar siempre, incluso con aiError
         navigate('/admin/formularios/editor')
       } catch (err: unknown) {
-        console.error('[Upload] Error al subir archivo:', err)
+        if (import.meta.env.DEV) console.error('[Upload] Error al subir archivo:', err)
         setToast({
           type: 'error',
           message: 'No se pudo procesar el archivo. Verifica que sea PDF, DOCX o XLSX.',

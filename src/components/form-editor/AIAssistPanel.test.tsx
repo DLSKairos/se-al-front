@@ -12,14 +12,30 @@ const AI_ASSIST_URL = 'https://localhost:3000/api/form-ai/assist'
 
 // ── Mock framer-motion — evita problemas con AnimatePresence en jsdom ──────────
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    aside: ({ children, ...props }: React.HTMLAttributes<HTMLElement> & { children: React.ReactNode }) => (
-      <aside {...props}>{children}</aside>
-    ),
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}))
+vi.mock('framer-motion', () => {
+  const passthrough = (tag: string) =>
+    function MotionMock({
+      children,
+      initial: _initial,
+      animate: _animate,
+      exit: _exit,
+      transition: _transition,
+      ...props
+    }: Record<string, unknown> & { children?: React.ReactNode }) {
+      const Tag = tag as keyof React.JSX.IntrinsicElements
+      return <Tag {...(props as object)}>{children}</Tag>
+    }
+  const cache = new Map<string, unknown>()
+  return {
+    motion: new Proxy({} as Record<string, unknown>, {
+      get: (_target, prop: string) => {
+        if (!cache.has(prop)) cache.set(prop, passthrough(prop))
+        return cache.get(prop)
+      },
+    }),
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  }
+})
 
 // ── Setup ──────────────────────────────────────────────────────────────────────
 

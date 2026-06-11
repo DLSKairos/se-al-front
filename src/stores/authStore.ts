@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { JWTPayload, UserRole } from '@/types'
 import { registerTokenHelpers } from '@/lib/api'
+import { queryClient } from '@/lib/queryClient'
 
 interface AuthState {
   token: string | null
@@ -48,8 +49,30 @@ export const useAuthStore = create<AuthState>()(
 
         clear: () => {
           set({ token: null, user: null, workLocationId: null })
+          queryClient.clear()
           sessionStorage.removeItem('lite_mode')
           sessionStorage.removeItem('lite_banner_dismissed')
+
+          // Eliminar claves del juego con PII del localStorage
+          const GAME_LITERAL_KEYS = [
+            'nombre_trabajador',
+            'cargo_trabajador',
+            'selectedCharacter',
+            'obra',
+            'nombre_proyecto',
+            'game_mode',
+          ]
+          GAME_LITERAL_KEYS.forEach((k) => localStorage.removeItem(k))
+
+          // Eliminar claves con prefijo dinámico (game_session_*, intro_shown_*)
+          const keysToRemove: string[] = []
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i)
+            if (key && (key.startsWith('game_session_') || key.startsWith('intro_shown_'))) {
+              keysToRemove.push(key)
+            }
+          }
+          keysToRemove.forEach((k) => localStorage.removeItem(k))
         },
 
         isAuthenticated: () => {

@@ -54,6 +54,8 @@ api.interceptors.response.use(
 // El store de Zustand los registra al inicializar
 let _getToken: () => string | null = () => null
 let _clearToken: () => void = () => {}
+// Callback opcional para limpiar el caché de React Query en logout
+let _onLogout: () => void = () => {}
 
 export function registerTokenHelpers(
   getToken: () => string | null,
@@ -63,8 +65,15 @@ export function registerTokenHelpers(
   _clearToken = clearToken
 }
 
+export function registerLogoutCallback(onLogout: () => void) {
+  _onLogout = onLogout
+}
+
 function getToken() { return _getToken() }
-function clearToken() { _clearToken() }
+function clearToken() {
+  _clearToken()
+  _onLogout()
+}
 
 export default api
 

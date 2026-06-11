@@ -1,13 +1,12 @@
 import { BrowserRouter } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './lib/queryClient'
+import { registerLogoutCallback } from './lib/api'
 import { AppRouter } from './router'
 import { ToastProvider } from './components/ui/Toast'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: 1, staleTime: 30_000 },
-  },
-})
+// Limpiar caché de React Query en cada logout / 401
+registerLogoutCallback(() => queryClient.clear())
 
 export default function App() {
   return (

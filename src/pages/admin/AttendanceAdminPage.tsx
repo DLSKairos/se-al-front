@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Download, Clock } from 'lucide-react'
 import api from '@/lib/api'
@@ -233,6 +233,14 @@ function RecordsTab() {
 }
 
 function OpenShiftsTab() {
+  const [, setTick] = useState(0)
+
+  // Forzar re-render cada 30s para actualizar la columna de tiempo transcurrido
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 30_000)
+    return () => clearInterval(interval)
+  }, [])
+
   const { data: records = [], isLoading, error } = useQuery({
     queryKey: QK.attendance.open(),
     queryFn: () =>

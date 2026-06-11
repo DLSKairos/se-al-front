@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useCallback } from 'react'
-import { CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react'
 
 type ToastType = 'success' | 'error' | 'warning'
 
@@ -46,7 +46,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     (type: ToastType, message: string) => {
       const id = crypto.randomUUID()
       setToasts((prev) => [...prev, { id, type, message }])
-      setTimeout(() => remove(id), 3000)
+      setTimeout(() => remove(id), 4000)
     },
     [remove],
   )
@@ -71,6 +71,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             >
               <Icon className={`w-4 h-4 shrink-0 ${iconClasses[toast.type]}`} />
               <p className="text-sm text-[var(--off-white)] font-dm flex-1">{toast.message}</p>
+              <button
+                type="button"
+                aria-label="Cerrar"
+                onClick={() => remove(toast.id)}
+                className="shrink-0 text-[var(--off-white)]/60 hover:text-[var(--off-white)] transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
           )
         })}

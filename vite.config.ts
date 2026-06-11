@@ -28,15 +28,18 @@ export default defineConfig({
       strategies: 'injectManifest',
       srcDir: 'public',
       filename: 'sw.js',
-      injectRegister: false,
+      injectRegister: 'auto',
       manifest: {
         short_name: 'SEÑAL',
         name: 'SEÑAL — Sistema de Gestión de Seguridad',
+        description: 'Sistema de gestión operativa y seguridad laboral',
+        lang: 'es',
+        categories: ['productivity', 'business'],
         icons: [
-          { src: 'icon-192.png', type: 'image/png', sizes: '192x192' },
-          { src: 'icon-512.png', type: 'image/png', sizes: '512x512' },
+          { src: 'icon-192.png', type: 'image/png', sizes: '192x192', purpose: 'any maskable' },
+          { src: 'icon-512.png', type: 'image/png', sizes: '512x512', purpose: 'any maskable' },
         ],
-        start_url: '.',
+        start_url: '/',
         display: 'standalone',
         theme_color: '#0C1624',
         background_color: '#0C1624',
@@ -50,6 +53,9 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    sourcemap: false,
+  },
   server: {
     https: getHttpsConfig(),
     host: 'localhost',

@@ -154,7 +154,7 @@ function TemplateCard({ template }: TemplateCardProps) {
 export default function OperatorHomePage() {
   const { user } = useAuthStore()
   const navigate = useNavigate()
-  const firstName = 'Operario'
+  const firstName = user?.jobTitle ?? 'Operario'
 
   const isLiteMode = sessionStorage.getItem('lite_mode') === 'true'
   const introAlreadyShown = !!localStorage.getItem(introShownKey())

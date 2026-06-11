@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Sparkles, Send, Loader2, AlertTriangle } from 'lucide-react'
 import { formAiApi } from '@/lib/api'
 import { useFormEditorStore } from '@/stores/formEditorStore'
-import { EditorField } from '@/types'
+import { EditorField, EditorSection } from '@/types'
 
 // ── Tipos locales ──────────────────────────────────────────────────────────────
 
@@ -97,14 +97,15 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
 
       const result = res.data
 
-      // Aplicar acción según la respuesta
-      if (result.action === 'update_sections' && result.payload?.sections) {
-        applySectionsFromAI(result.payload.sections)
-      } else if (result.action === 'add_field' && result.payload?.sectionId) {
-        const fieldData = result.payload.field as Partial<EditorField> | undefined
-        addField(result.payload.sectionId, fieldData ?? {})
-      } else if (result.action === 'set_columns' && result.payload?.columns) {
-        setColumns(result.payload.columns)
+      // Aplicar acción según la respuesta (narrowing por action)
+      const payload = result.payload as Record<string, unknown>
+      if (result.action === 'update_sections' && Array.isArray(payload.sections)) {
+        applySectionsFromAI(payload.sections as EditorSection[])
+      } else if (result.action === 'add_field' && typeof payload.sectionId === 'string') {
+        const fieldData = payload.field as Partial<EditorField> | undefined
+        addField(payload.sectionId, fieldData ?? {})
+      } else if (result.action === 'set_columns' && typeof payload.columns === 'number') {
+        setColumns(payload.columns as 1 | 2 | 3)
       }
 
       const aiMsg: Message = {
