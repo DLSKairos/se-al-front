@@ -1,5 +1,6 @@
 import { Menu } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import NotificationBell from '@/components/notifications/NotificationBell'
 
 interface AdminHeaderProps {
   collapsed: boolean
@@ -27,6 +28,8 @@ export function AdminHeader({ collapsed, onToggleSidebar }: AdminHeaderProps) {
 
       <span className="ml-2 font-display font-semibold text-sm text-[var(--muted)]">Panel de Administración</span>
       <div className="flex-1" />
+
+      <NotificationBell />
 
       {user && (
         <div className="flex items-center gap-2">

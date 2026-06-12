@@ -54,6 +54,10 @@ const OrgDetailPage     = lazy(() => import('@/pages/super/OrgDetailPage'))
 
 /** Pública — firmante externo accede sin JWT de SEÑAL */
 const PublicSignaturePage  = lazy(() => import('@/pages/firma/PublicSignaturePage'))
+/** Operario autenticado — firma el documento que él mismo llenó */
+const InternalSignaturePage = lazy(() => import('@/pages/firma/InternalSignaturePage'))
+/** Operario autenticado — gestiona firmantes de un submission */
+const SignersViewPage       = lazy(() => import('@/pages/firma/SignersViewPage'))
 /** Pública — activación de cuenta admin vía magic link */
 const ActivateAccountPage  = lazy(() => import('@/pages/login/ActivateAccountPage'))
 /** Pública — callback de Google/Microsoft OAuth (completa, no stub) */
@@ -100,6 +104,10 @@ export function AppRouter() {
             <Route path="inventarios/nueva" element={<NuevaActaPage />} />
             <Route path="inventarios/:id" element={<InventarioDetailPage />} />
             <Route path="game/world-map" element={<WorldMap />} />
+            {/* Firma interna del operario */}
+            <Route path="firmar/:submissionId" element={<InternalSignaturePage />} />
+            {/* Gestión de firmantes externos del operario */}
+            <Route path="firmantes/:submissionId" element={<SignersViewPage />} />
           </Route>
           <Route path="/game/rotate-screen" element={<Placeholder name="RotateScreen" />} />
           <Route path="/game/story-intro" element={<Placeholder name="StoryIntro" />} />

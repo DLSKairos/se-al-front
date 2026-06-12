@@ -4,9 +4,14 @@ import { SubmissionStatusBadge, TemplateStatusBadge } from './StatusBadge'
 import type { SubmissionStatus, FormTemplateStatus } from '@/types'
 
 describe('SubmissionStatusBadge', () => {
-  it('renderiza el label "Pendiente" para estado SUBMITTED', () => {
+  it('renderiza el label "Enviado" para estado SUBMITTED', () => {
     render(<SubmissionStatusBadge status="SUBMITTED" />)
-    expect(screen.getByText('Pendiente')).toBeInTheDocument()
+    expect(screen.getByText('Enviado')).toBeInTheDocument()
+  })
+
+  it('renderiza el label "En revisión" para estado PENDING_SIGNATURES', () => {
+    render(<SubmissionStatusBadge status="PENDING_SIGNATURES" />)
+    expect(screen.getByText('En revisión')).toBeInTheDocument()
   })
 
   it('renderiza el label "Aprobado" para estado APPROVED', () => {
@@ -26,7 +31,7 @@ describe('SubmissionStatusBadge', () => {
 
   it('SUBMITTED y APPROVED tienen clases distintas (colores distintos)', () => {
     const { rerender } = render(<SubmissionStatusBadge status="SUBMITTED" />)
-    const submittedClass = screen.getByText('Pendiente').className
+    const submittedClass = screen.getByText('Enviado').className
 
     rerender(<SubmissionStatusBadge status="APPROVED" />)
     const approvedClass = screen.getByText('Aprobado').className

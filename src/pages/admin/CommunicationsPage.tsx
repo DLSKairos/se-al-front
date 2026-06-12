@@ -483,7 +483,7 @@ export default function CommunicationsPage() {
   interface SentPage { data: AppNotification[]; total: number }
 
   const sentQuery = useInfiniteQuery<SentPage>({
-    queryKey: ['admin-notifications-sent'],
+    queryKey: QK.adminNotificationsSent(),
     queryFn: async ({ pageParam }) => {
       const page = typeof pageParam === 'number' ? pageParam : 1
       const res = await notificationsApi.listSent({ page, limit: SENT_PAGE_SIZE })
@@ -508,7 +508,7 @@ export default function CommunicationsPage() {
       toast.success('Notificaciones enviadas correctamente')
       setForm(EMPTY_FORM)
       setConfirmOpen(false)
-      queryClient.invalidateQueries({ queryKey: ['admin-notifications-sent'] })
+      queryClient.invalidateQueries({ queryKey: QK.adminNotificationsSent() })
     },
     onError: () => {
       toast.error('Error al enviar las notificaciones')

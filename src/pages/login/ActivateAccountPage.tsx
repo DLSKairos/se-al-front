@@ -77,7 +77,12 @@ function MissingTokenScreen() {
 
 // ── Pantalla: error por código ────────────────────────────────────────────────
 
-type TokenErrorCode = 'TOKEN_NOT_FOUND' | 'TOKEN_EXPIRED' | 'TOKEN_USED'
+/**
+ * TOKEN_ALREADY_USED es el código real que devuelve el backend (magic-link.service.ts).
+ * El tipo MagicLinkInfo.error en src/types tiene TOKEN_USED por una discrepancia
+ * pendiente de corrección — manejamos ambos aquí con un cast explícito.
+ */
+type TokenErrorCode = 'TOKEN_NOT_FOUND' | 'TOKEN_EXPIRED' | 'TOKEN_USED' | 'TOKEN_ALREADY_USED'
 
 const ERROR_MESSAGES: Record<TokenErrorCode, { title: string; body: string }> = {
   TOKEN_NOT_FOUND: {
@@ -89,6 +94,10 @@ const ERROR_MESSAGES: Record<TokenErrorCode, { title: string; body: string }> = 
     body: 'Tu enlace expiró, pide a tu administrador que lo reenvíe.',
   },
   TOKEN_USED: {
+    title: 'Enlace ya utilizado',
+    body: 'Este enlace ya fue utilizado para activar una cuenta. Si aún no puedes acceder, contacta a tu administrador.',
+  },
+  TOKEN_ALREADY_USED: {
     title: 'Enlace ya utilizado',
     body: 'Este enlace ya fue utilizado para activar una cuenta. Si aún no puedes acceder, contacta a tu administrador.',
   },
@@ -286,7 +295,7 @@ export default function ActivateAccountPage() {
 
   // Query de validación — solo si hay token
   const { data: linkInfo, isLoading, isError } = useQuery({
-    queryKey: ['magic-link-validate', token],
+    queryKey: QK.magicLinkValidate(token),
     queryFn: () => magicLinkApi.validate(token!).then((r) => r.data),
     enabled: !!token,
     // No reintentar en errores de validación (TOKEN_EXPIRED, etc.)
@@ -357,16 +366,16 @@ export default function ActivateAccountPage() {
                 code={
                   linkInfo.error === 'TOKEN_EXPIRED'
                     ? 'TOKEN_EXPIRED'
-                    : linkInfo.error === 'TOKEN_USED'
-                    ? 'TOKEN_USED'
+                    : linkInfo.error === 'TOKEN_ALREADY_USED'
+                    ? 'TOKEN_ALREADY_USED'
                     : 'TOKEN_NOT_FOUND'
                 }
               />
-            ) : linkInfo.valid && linkInfo.user_name && linkInfo.org_name && linkInfo.purpose ? (
+            ) : linkInfo.valid && linkInfo.adminName && linkInfo.orgName && linkInfo.purpose ? (
               <ActivationScreen
                 token={token}
-                userName={linkInfo.user_name}
-                orgName={linkInfo.org_name}
+                userName={linkInfo.adminName}
+                orgName={linkInfo.orgName}
                 purpose={linkInfo.purpose}
                 flagsLoading={flagsLoading}
                 featureFlags={featureFlags}

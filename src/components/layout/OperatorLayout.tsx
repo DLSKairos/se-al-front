@@ -7,6 +7,7 @@ import { QK } from '@/lib/queryKeys'
 import { AttendanceRecord } from '@/types'
 import { SlowConnectionBanner } from '@/components/ui/SlowConnectionBanner'
 import { LiteModeBanner } from '@/components/ui/LiteModeBanner'
+import NotificationBell from '@/components/notifications/NotificationBell'
 
 // ── Rutas donde se oculta el nav ──────────────────────────────────────────────
 
@@ -229,6 +230,27 @@ function OperatorBottomNav() {
   )
 }
 
+// ── Campanita flotante del operario ───────────────────────────────────────────
+
+function OperatorNotificationBell() {
+  const { pathname } = useLocation()
+
+  const hidden =
+    NAV_HIDDEN_ROUTES.includes(pathname) ||
+    NAV_HIDDEN_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+
+  if (hidden) return null
+
+  return (
+    <div
+      className="fixed right-3 z-40"
+      style={{ top: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}
+    >
+      <NotificationBell />
+    </div>
+  )
+}
+
 // ── Layout principal ──────────────────────────────────────────────────────────
 
 export function OperatorLayout() {
@@ -251,6 +273,7 @@ export function OperatorLayout() {
   return (
     <div className="min-h-screen bg-[var(--navy)] flex flex-col">
       <SlowConnectionBanner />
+      <OperatorNotificationBell />
       <main className="flex-1 flex flex-col pb-20">
         <Outlet />
       </main>

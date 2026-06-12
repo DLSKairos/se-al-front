@@ -480,7 +480,8 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
   // Foco al abrir
   useEffect(() => {
     if (open) {
-      setTimeout(() => dropdownRef.current?.focus(), 50)
+      const timerId = setTimeout(() => dropdownRef.current?.focus(), 50)
+      return () => clearTimeout(timerId)
     }
   }, [open])
 

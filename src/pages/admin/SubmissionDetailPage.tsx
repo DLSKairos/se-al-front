@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useDownload } from '@/hooks/useDownload'
 import {
   ArrowLeft,
@@ -9,10 +9,10 @@ import {
   User,
   Building2,
   Hash,
-  CheckCircle,
-  XCircle,
   Download,
   ImageIcon,
+  AlertTriangle,
+  Users,
 } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
@@ -21,16 +21,19 @@ import {
   LoadingSpinner,
   ErrorMessage,
   SubmissionStatusBadge,
-  ConfirmModal,
-  Modal,
-  useToast,
 } from '@/components/ui'
-import { FormSubmission, FormSubmissionValue, FormSignature } from '@/types'
+import type { FormSubmission, FormSubmissionValue, FormSignature } from '@/types'
 import { formatDate, formatDateTime } from '@/lib/utils'
+import SignersPanel from '@/components/signature/SignersPanel'
+import RejectSubmissionModal from '@/components/submissions/RejectSubmissionModal'
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function isImageUrl(url: string): boolean {
   return /\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i.test(url)
 }
+
+// ── Componentes internos ──────────────────────────────────────────────────────
 
 function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) {
   if (fieldValue.value_file) {
@@ -68,7 +71,7 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
     )
   }
 
-  if (fieldValue.value_date !== null) {
+  if (fieldValue.value_date != null) {
     return (
       <span className="text-sm text-[var(--off-white)]">
         {formatDate(fieldValue.value_date)}
@@ -76,7 +79,7 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
     )
   }
 
-  if (fieldValue.value_number !== null) {
+  if (fieldValue.value_number != null) {
     return (
       <span className="text-sm text-[var(--off-white)]">
         {fieldValue.value_number}
@@ -84,7 +87,7 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
     )
   }
 
-  if (fieldValue.value_json !== null) {
+  if (fieldValue.value_json != null) {
     const content = fieldValue.value_json
     if (Array.isArray(content)) {
       return (
@@ -107,7 +110,7 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
     )
   }
 
-  if (fieldValue.value_text !== null) {
+  if (fieldValue.value_text != null) {
     if (fieldValue.value_text.startsWith('data:image/')) {
       return (
         <div className="bg-white rounded-lg p-3 inline-block">
@@ -186,54 +189,31 @@ function InfoRow({ icon: Icon, label, value }: InfoRowProps) {
   )
 }
 
+// ── FormSubmission extendido con campos de rechazo y auto-aprobación ──────────
+// Estos campos vienen del backend pero no están en el tipo base todavía;
+// los casteamos localmente para no tocar src/types.
+
+interface SubmissionWithExtras extends FormSubmission {
+  rejection_reason?: string | null
+  auto_approved_at?: string | null
+}
+
+// ── Página principal ──────────────────────────────────────────────────────────
+
 export default function SubmissionDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const toast = useToast()
 
   const { download, downloading } = useDownload()
-  const [showApproveModal, setShowApproveModal] = useState(false)
   const [showRejectModal, setShowRejectModal] = useState(false)
-  const [rejectReason, setRejectReason] = useState('')
 
-  const { data: submission, isLoading, error, refetch } = useQuery({
+  const { data: submission, isLoading, error, refetch } = useQuery<SubmissionWithExtras>({
     queryKey: QK.submissions.detail(id!),
     queryFn: () =>
-      api.get<FormSubmission>(`/form-submissions/${id}`).then((r) => r.data),
+      api
+        .get<SubmissionWithExtras>(`/form-submissions/${id}`)
+        .then((r) => r.data as SubmissionWithExtras),
     enabled: !!id,
-  })
-
-  const invalidateQueries = () => {
-    queryClient.invalidateQueries({ queryKey: QK.submissions.detail(id!) })
-    queryClient.invalidateQueries({ queryKey: QK.submissions.all() })
-  }
-
-  const approveMutation = useMutation({
-    mutationFn: () =>
-      api.patch(`/form-submissions/${id}/status`, { status: 'APPROVED' }),
-    onSuccess: () => {
-      toast.success('Envío aprobado correctamente')
-      setShowApproveModal(false)
-      invalidateQueries()
-    },
-    onError: () => {
-      toast.error('Error al aprobar el envío')
-    },
-  })
-
-  const rejectMutation = useMutation({
-    mutationFn: (reason: string) =>
-      api.patch(`/form-submissions/${id}/status`, { status: 'REJECTED', reason }),
-    onSuccess: () => {
-      toast.success('Envío rechazado')
-      setShowRejectModal(false)
-      setRejectReason('')
-      invalidateQueries()
-    },
-    onError: () => {
-      toast.error('Error al rechazar el envío')
-    },
   })
 
   if (isLoading) return <LoadingSpinner label="Cargando detalle..." />
@@ -245,20 +225,42 @@ export default function SubmissionDetailPage() {
       />
     )
 
-  const hasValues = submission.values && submission.values.length > 0
+  const hasValues     = submission.values && submission.values.length > 0
   const hasSignatures = submission.signatures && submission.signatures.length > 0
-  const canAct = submission.status === 'SUBMITTED'
+
+  // Puede rechazarse desde SUBMITTED o PENDING_SIGNATURES (según spec 4.4 y decisión 4)
+  const canReject = submission.status === 'SUBMITTED' || submission.status === 'PENDING_SIGNATURES'
+
+  const isAutoApproved = !!submission.auto_approved_at
+  const rejectionReason = submission.rejection_reason ?? undefined
 
   return (
     <div className="flex flex-col gap-6">
+
+      {/* Banner de rechazo ── visible solo cuando REJECTED y hay motivo */}
+      {submission.status === 'REJECTED' && rejectionReason && (
+        <div
+          className="flex items-start gap-3 p-4 rounded-[var(--radius-glass-md)] bg-red-500/10 border border-red-500/25"
+          role="alert"
+        >
+          <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-semibold text-red-300 font-['DM_Sans'] mb-0.5">
+              Formulario rechazado
+            </p>
+            <p className="text-sm text-red-200/80 font-['DM_Sans']">{rejectionReason}</p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-start gap-4">
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/admin/submissions')}
-            aria-label="Volver a envíos"
+            onClick={() => navigate(-1)}
+            aria-label="Volver"
           >
             <ArrowLeft className="w-4 h-4" />
             Volver
@@ -268,7 +270,11 @@ export default function SubmissionDetailPage() {
               <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
                 {submission.template?.name ?? 'Envío'}
               </h1>
-              <SubmissionStatusBadge status={submission.status} />
+              <SubmissionStatusBadge
+                status={submission.status}
+                autoApproved={isAutoApproved}
+                rejectionReason={rejectionReason}
+              />
             </div>
             <p className="text-sm text-[var(--muted)] mt-1 font-['DM_Sans']">
               Enviado por{' '}
@@ -290,23 +296,17 @@ export default function SubmissionDetailPage() {
             <Download className="w-4 h-4" />
             {downloading ? 'Descargando...' : 'Descargar PDF'}
           </Button>
-          {canAct && (
-            <>
-              <Button
-                variant="danger"
-                onClick={() => setShowRejectModal(true)}
-              >
-                <XCircle className="w-4 h-4" />
-                Rechazar
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => setShowApproveModal(true)}
-              >
-                <CheckCircle className="w-4 h-4" />
-                Aprobar
-              </Button>
-            </>
+
+          {/* Botón rechazar — solo cuando el estado lo permite. Sin botón "Aprobar" (aprobación solo automática) */}
+          {canReject && (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => setShowRejectModal(true)}
+            >
+              <AlertTriangle className="w-4 h-4" />
+              Rechazar
+            </Button>
           )}
         </div>
       </div>
@@ -347,6 +347,23 @@ export default function SubmissionDetailPage() {
             />
           )}
         </div>
+      </div>
+
+      {/* Firmantes requeridos — SignersPanel */}
+      <div className="glass-card p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-[var(--signal-dim)] flex items-center justify-center shrink-0">
+            <Users className="w-3.5 h-3.5 text-[var(--signal)]" />
+          </div>
+          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-sm">
+            Firmantes requeridos
+          </h2>
+        </div>
+        <SignersPanel
+          submissionId={id!}
+          workLocationId={submission.work_location_id}
+          mobileView={false}
+        />
       </div>
 
       {/* Valores del formulario */}
@@ -397,7 +414,7 @@ export default function SubmissionDetailPage() {
         </div>
       )}
 
-      {/* Firmas */}
+      {/* Firmas simples (FormSignature legacy) */}
       {hasSignatures && (
         <div className="glass-card p-5">
           <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
@@ -420,65 +437,13 @@ export default function SubmissionDetailPage() {
         </div>
       )}
 
-      {/* Modal confirmar aprobación */}
-      <ConfirmModal
-        open={showApproveModal}
-        onOpenChange={setShowApproveModal}
-        title="Aprobar envío"
-        description="Al aprobar este envío se notificará al usuario y quedará registrado. Esta acción no se puede deshacer."
-        confirmLabel="Aprobar"
-        variant="warning"
-        loading={approveMutation.isPending}
-        onConfirm={() => approveMutation.mutate()}
-      />
-
-      {/* Modal rechazar con razón */}
-      <Modal
+      {/* Modal rechazar — usa RejectSubmissionModal del agente de aprobaciones */}
+      <RejectSubmissionModal
+        submissionId={id!}
         open={showRejectModal}
-        onOpenChange={(open) => {
-          setShowRejectModal(open)
-          if (!open) setRejectReason('')
-        }}
-        title="Rechazar envío"
-        description="Opcionalmente puedes indicar el motivo del rechazo."
-        size="md"
-      >
-        <div className="flex flex-col gap-4">
-          <div>
-            <label
-              htmlFor="reject-reason"
-              className="block text-sm text-[var(--muted)] font-['DM_Sans'] mb-1.5"
-            >
-              Motivo del rechazo (opcional)
-            </label>
-            <textarea
-              id="reject-reason"
-              rows={4}
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Describe el motivo del rechazo..."
-              className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all resize-none placeholder:text-[var(--muted)]"
-            />
-          </div>
-          <div className="flex justify-end gap-3 pt-2">
-            <Button
-              variant="secondary"
-              onClick={() => setShowRejectModal(false)}
-              disabled={rejectMutation.isPending}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="danger"
-              loading={rejectMutation.isPending}
-              onClick={() => rejectMutation.mutate(rejectReason)}
-            >
-              <XCircle className="w-4 h-4" />
-              Rechazar
-            </Button>
-          </div>
-        </div>
-      </Modal>
+        onClose={() => setShowRejectModal(false)}
+        onRejected={() => refetch()}
+      />
     </div>
   )
 }

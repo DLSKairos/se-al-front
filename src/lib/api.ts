@@ -245,9 +245,8 @@ export const magicLinkApi = {
   validate: (token: string) =>
     api.get<MagicLinkInfo>('/auth/magic-link', { params: { token } }),
 
-  /** POST /superadmin/magic-link/first-admin */
-  generateFirstAdmin: (userId: string) =>
-    api.post<{ tokenId: string; link: string }>('/superadmin/magic-link/first-admin', { userId }),
+  // NOTA: el magic link de primer acceso se genera vía
+  // superadminApi.generateFirstAdminLink (valida pertenencia a la org).
 
   /** POST /admin/magic-link/invite */
   generateInvite: (userId: string) =>
@@ -414,6 +413,10 @@ export const superadminApi = {
   /** GET /superadmin/organizations/:id/usage */
   getUsage: (id: string) =>
     api.get<OrgUsage>(`/superadmin/organizations/${id}/usage`),
+
+  /** GET /superadmin/organizations/:id/administrators */
+  listAdministrators: (orgId: string) =>
+    api.get<AdminUser[]>(`/superadmin/organizations/${orgId}/administrators`),
 
   /** POST /superadmin/organizations/:id/first-admin-link */
   generateFirstAdminLink: (orgId: string, userId: string) =>

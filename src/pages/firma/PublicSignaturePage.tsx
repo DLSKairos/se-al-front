@@ -10,9 +10,6 @@ import SignatureCanvas from '@/components/signature/SignatureCanvas'
 import EvidenceSummaryModal from '@/components/signature/EvidenceSummaryModal'
 import { useReadingTracker } from '@/components/signature/useReadingTracker'
 import { useGeolocation } from '@/components/signature/useGeolocation'
-// Contrato de agente externo — puede no existir aún al integrar
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import VerifyingOverlay from '@/components/ui/VerifyingOverlay'
 import type { StrokeVector, PublicSignatureView } from '@/types'
 
@@ -60,58 +57,20 @@ function TokenErrorScreen({ code }: { code: TokenErrorCode }) {
 
 // ── Paso de Identificación (foto cédula + selfie) ─────────────────────────
 
-interface IdentityStepProps {
-  token: string
-  onComplete: () => void
+interface CaptureButtonProps {
+  label: string
+  preview: string | null
+  inputId: string
+  captureMode: 'user' | 'environment'
+  onChange: (file: File) => void
 }
 
-function IdentityStep({ token, onComplete }: IdentityStepProps) {
-  const [cedula, setCedula] = useState<File | null>(null)
-  const [selfie, setSelfie] = useState<File | null>(null)
-  const [cedulaPreview, setCedulaPreview] = useState<string | null>(null)
-  const [selfiePreview, setSelfiePreview] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
-  const [uploadError, setUploadError] = useState<string | null>(null)
-
-  const handleFile = (
-    file: File,
-    type: 'cedula' | 'selfie',
-  ) => {
-    const url = URL.createObjectURL(file)
-    if (type === 'cedula') {
-      setCedula(file)
-      setCedulaPreview(url)
-    } else {
-      setSelfie(file)
-      setSelfiePreview(url)
-    }
-  }
-
-  const handleUpload = async () => {
-    if (!cedula || !selfie) return
-    setUploading(true)
-    setUploadError(null)
-    try {
-      await publicSignatureApi.uploadIdentity(token, cedula, selfie)
-      onComplete()
-    } catch {
-      setUploadError('Error al subir las fotos. Verifica tu conexión e intenta de nuevo.')
-    } finally {
-      setUploading(false)
-    }
-  }
-
-  const CaptureButton = ({
-    label,
-    preview,
-    inputId,
-    type,
-  }: {
-    label: string
-    preview: string | null
-    inputId: string
-    type: 'cedula' | 'selfie'
-  }) => (
+/**
+ * Botón de captura de foto para cédula o selfie.
+ * Definido a nivel de módulo para evitar remount en cada render de IdentityStep.
+ */
+function CaptureButton({ label, preview, inputId, captureMode, onChange }: CaptureButtonProps) {
+  return (
     <div className="flex flex-col gap-3">
       <label htmlFor={inputId} className="block">
         {preview ? (
@@ -144,15 +103,54 @@ function IdentityStep({ token, onComplete }: IdentityStepProps) {
         id={inputId}
         type="file"
         accept="image/*"
-        capture={type === 'selfie' ? 'user' : 'environment'}
+        capture={captureMode}
         className="sr-only"
         onChange={(e) => {
           const file = e.target.files?.[0]
-          if (file) handleFile(file, type)
+          if (file) onChange(file)
         }}
       />
     </div>
   )
+}
+
+interface IdentityStepProps {
+  token: string
+  onComplete: () => void
+}
+
+function IdentityStep({ token, onComplete }: IdentityStepProps) {
+  const [cedula, setCedula] = useState<File | null>(null)
+  const [selfie, setSelfie] = useState<File | null>(null)
+  const [cedulaPreview, setCedulaPreview] = useState<string | null>(null)
+  const [selfiePreview, setSelfiePreview] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  const handleFile = (file: File, type: 'cedula' | 'selfie') => {
+    const url = URL.createObjectURL(file)
+    if (type === 'cedula') {
+      setCedula(file)
+      setCedulaPreview(url)
+    } else {
+      setSelfie(file)
+      setSelfiePreview(url)
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!cedula || !selfie) return
+    setUploading(true)
+    setUploadError(null)
+    try {
+      await publicSignatureApi.uploadIdentity(token, cedula, selfie)
+      onComplete()
+    } catch {
+      setUploadError('Error al subir las fotos. Verifica tu conexión e intenta de nuevo.')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -173,14 +171,16 @@ function IdentityStep({ token, onComplete }: IdentityStepProps) {
         label="Foto de la cédula (parte frontal)"
         preview={cedulaPreview}
         inputId="cedula-input"
-        type="cedula"
+        captureMode="environment"
+        onChange={(file) => handleFile(file, 'cedula')}
       />
 
       <CaptureButton
         label="Selfie — mira directo a la cámara"
         preview={selfiePreview}
         inputId="selfie-input"
-        type="selfie"
+        captureMode="user"
+        onChange={(file) => handleFile(file, 'selfie')}
       />
 
       {uploadError && (
@@ -365,6 +365,7 @@ function SigningStep({ token, view, onComplete }: SigningStepProps) {
   } | null>(null)
   const [showEvidence, setShowEvidence] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const { getLog } = useReadingTracker()
 
@@ -382,6 +383,7 @@ function SigningStep({ token, view, onComplete }: SigningStepProps) {
   const handleFinalConfirm = async () => {
     if (!pendingSignature) return
     setIsSending(true)
+    setSubmitError(null)
 
     try {
       const readingLog = getLog()
@@ -402,7 +404,7 @@ function SigningStep({ token, view, onComplete }: SigningStepProps) {
 
       onComplete(response.data.signed_at)
     } catch {
-      // El overlay se apaga, el error se muestra en pantalla
+      setSubmitError('No se pudo registrar la firma. Revisa tu conexión e intenta de nuevo.')
       setPendingSignature(null)
       setShowEvidence(false)
     } finally {
@@ -452,6 +454,20 @@ function SigningStep({ token, view, onComplete }: SigningStepProps) {
         onConfirm={handleCanvasConfirm}
         disabled={geoStatus === 'loading'}
       />
+
+      {/* Error de envío */}
+      {submitError && (
+        <div className="flex flex-col gap-2 p-3 rounded-[var(--radius-input)] bg-red-500/10 border border-red-500/20">
+          <p className="text-sm text-red-400 font-['DM_Sans']">{submitError}</p>
+          <button
+            type="button"
+            className="self-start text-xs text-red-400 underline font-['DM_Sans']"
+            onClick={() => setSubmitError(null)}
+          >
+            Reintentar
+          </button>
+        </div>
+      )}
 
       {/* VerifyingOverlay parcial durante el envío */}
       <VerifyingOverlay
@@ -530,18 +546,11 @@ export default function PublicSignaturePage() {
   const [signedAt, setSignedAt] = useState<string | null>(null)
   const [tokenError, setTokenError] = useState<TokenErrorCode | null>(null)
 
-  const { data: view, isLoading, error } = useQuery({
+  const { data: view, isLoading, error } = useQuery<PublicSignatureView>({
     queryKey: QK.signatures.publicView(token!),
-    queryFn: () => publicSignatureApi.getView(token!).then((r) => r.data),
+    queryFn: () => publicSignatureApi.getView(token!).then((r) => r.data as PublicSignatureView),
     enabled: !!token,
     retry: false,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (err: any) => {
-      const code = err?.response?.data?.code
-      if (['TOKEN_EXPIRED', 'TOKEN_USED', 'TOKEN_INVALID'].includes(code)) {
-        setTokenError(code as TokenErrorCode)
-      }
-    },
   })
 
   // Determinar si tenemos error de token desde el status code

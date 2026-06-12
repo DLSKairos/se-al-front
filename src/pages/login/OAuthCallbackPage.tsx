@@ -7,15 +7,15 @@ import type { UserRole } from '@/types'
  * Ruta pública: /auth/callback
  *
  * El backend OAuth redirige aquí tras el handshake con Google/Microsoft.
- * Query params que puede recibir:
- *  - token       JWT de SEÑAL (login exitoso)
- *  - activated   '1' si es primer acceso y la cuenta quedó activada
- *  - error       Código de error ('not_registered' | 'oauth_disabled' | 'unknown')
+ * El token JWT llega en el fragment (#token=JWT&activated=1) para evitar
+ * que quede en los logs del servidor. Los errores siguen llegando como
+ * query params (?error=...).
  *
  * Flujo:
- *  1. Si `token` presente → setToken → redirigir según rol del JWT
- *  2. Si `error=not_registered` → /login con state de error legible
- *  3. Cualquier otro error → /login con mensaje genérico
+ *  1. Lee `token` primero desde el hash, con fallback al query param (compatibilidad)
+ *  2. Si `token` presente → setToken → redirigir según rol del JWT
+ *  3. Si `error=not_registered` → /login con state de error legible
+ *  4. Cualquier otro error → /login con mensaje genérico
  */
 export default function OAuthCallbackPage() {
   const navigate = useNavigate()
@@ -24,7 +24,12 @@ export default function OAuthCallbackPage() {
   const setToken = useAuthStore((s) => s.setToken)
 
   useEffect(() => {
-    const token = searchParams.get('token')
+    // El token llega en el fragment (#token=JWT) para no exponerlo en server logs.
+    // Fallback al query param para compatibilidad con redirecciones antiguas.
+    const hashParams = new URLSearchParams(location.hash.slice(1))
+    const token = hashParams.get('token') ?? searchParams.get('token')
+
+    // Los errores siempre llegan por query param
     const error = searchParams.get('error')
 
     if (token) {
@@ -61,8 +66,7 @@ export default function OAuthCallbackPage() {
         oauthError: 'No se pudo completar el ingreso con la cuenta seleccionada. Intenta de nuevo.',
       },
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search])
+  }, [location.hash, location.search, searchParams, navigate, setToken])
 
   return (
     <div

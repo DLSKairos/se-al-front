@@ -534,11 +534,11 @@ export type MagicLinkPurpose = 'FIRST_ACCESS_ADMIN' | 'ADMIN_INVITE'
  */
 export interface MagicLinkInfo {
   valid: boolean
-  error?: 'TOKEN_NOT_FOUND' | 'TOKEN_EXPIRED' | 'TOKEN_USED'
-  /** Nombre del usuario destinatario */
-  user_name?: string
-  /** Nombre de la organización */
-  org_name?: string
+  error?: 'TOKEN_NOT_FOUND' | 'TOKEN_EXPIRED' | 'TOKEN_ALREADY_USED'
+  /** Nombre del usuario destinatario (key real del backend: adminName) */
+  adminName?: string
+  /** Nombre de la organización (key real del backend: orgName) */
+  orgName?: string
   purpose?: MagicLinkPurpose
 }
 

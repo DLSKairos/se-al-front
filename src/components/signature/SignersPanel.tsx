@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, MessageCircle, RotateCcw, Check, Eye, Send, Clock, Search, UserPlus } from 'lucide-react'
+import { Plus, MessageCircle, Check, Eye, Send, Clock, Search, UserPlus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, Modal, useToast } from '@/components/ui'
 import { signaturesApi } from '@/lib/api'
@@ -53,31 +53,9 @@ function SignerRow({
   workLocationId: string | null
   mobileView: boolean
 }) {
-  const toast = useToast()
-  const queryClient = useQueryClient()
-
-  const markSentMutation = useMutation({
-    mutationFn: (tokenId: string) => signaturesApi.markLinkSent(tokenId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QK.signatures.status(submissionId) })
-    },
-    onError: () => toast.error('Error al registrar el envío del link'),
-  })
-
-  // Construye el link de WhatsApp
-  const handleWhatsApp = (signer: ExternalSigner, token: SignatureStatusEntry) => {
-    const phone = signer.phone.replace(/\D/g, '')
-    const baseUrl = window.location.origin
-    // Buscamos el token_id desde el entry si está disponible
-    // El link apunta a /firma/:token — no disponemos del token string desde SignatureStatusEntry
-    // El token string solo está disponible en SignatureTokenInfo (post-crear token)
-    // Para este panel usamos una URL base con el submission + signer como fallback
-    const message = encodeURIComponent(
-      `Hola ${signer.name}, te comparto el link para firmar el documento en SEÑAL. ` +
-      `Por favor firma desde: ${baseUrl}/firma/[TOKEN]`
-    )
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank')
-  }
+  // El token string para construir el link de WhatsApp solo está disponible en
+  // SignatureTokenInfo (post-crear token), no en SignatureStatusEntry. El envío
+  // de WhatsApp ocurre exclusivamente en SendLinkModal, que sí recibe el token real.
 
   const isSigned = entry.link_status === 'SIGNED'
 
@@ -101,17 +79,9 @@ function SignerRow({
           <LinkStatusChip status={entry.link_status} />
         </div>
 
-        {entry.signer_type === 'EXTERNAL' && entry.external_signer && !isSigned && (
-          <Button
-            variant="secondary"
-            size="lg"
-            className="w-full min-h-[48px] border-green-500/30 text-green-400 hover:border-green-400/60"
-            onClick={() => handleWhatsApp(entry.external_signer!, entry)}
-          >
-            <MessageCircle className="w-5 h-5" />
-            Enviar por WhatsApp
-          </Button>
-        )}
+        {/* El botón de WhatsApp solo está disponible en el modal SendLinkModal,
+            que recibe el token real. Aquí no tenemos el token string y no
+            podemos construir un link válido. */}
       </div>
     )
   }
@@ -137,16 +107,8 @@ function SignerRow({
 
       <div className="flex items-center gap-2 shrink-0">
         <LinkStatusChip status={entry.link_status} />
-        {entry.signer_type === 'EXTERNAL' && entry.external_signer && !isSigned && (
-          <button
-            className="w-8 h-8 rounded-[var(--radius-btn)] bg-green-500/15 flex items-center justify-center text-green-400 hover:bg-green-500/25 transition-colors"
-            onClick={() => handleWhatsApp(entry.external_signer!, entry)}
-            title="Enviar link por WhatsApp"
-            aria-label={`Enviar link a ${entry.display_name} por WhatsApp`}
-          >
-            <MessageCircle className="w-4 h-4" />
-          </button>
-        )}
+        {/* El token string no está disponible en SignatureStatusEntry.
+            El link de WhatsApp solo se envía desde SendLinkModal. */}
       </div>
     </div>
   )

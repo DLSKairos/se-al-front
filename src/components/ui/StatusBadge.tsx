@@ -58,11 +58,12 @@ export function SubmissionStatusBadge({
 
       {/* Indicador "auto" solo en APPROVED automático */}
       {status === 'APPROVED' && autoApproved && (
-        <Zap
-          className="w-3 h-3 shrink-0 text-emerald-300"
-          aria-hidden="true"
-          title="Aprobado automáticamente"
-        />
+        <span title="Aprobado automáticamente" className="inline-flex">
+          <Zap
+            className="w-3 h-3 shrink-0 text-emerald-300"
+            aria-hidden="true"
+          />
+        </span>
       )}
     </Badge>
   )

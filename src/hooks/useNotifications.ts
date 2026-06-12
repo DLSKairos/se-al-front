@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query'
 import { notificationsApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
+import { useAuthStore } from '@/stores/authStore'
 import type { AppNotification } from '@/types'
 
 const PAGE_SIZE = 15
@@ -23,6 +24,7 @@ interface NotificationsPage {
  */
 export function useNotifications() {
   const queryClient = useQueryClient()
+  const token = useAuthStore((s) => s.token)
 
   // ── Infinite query ────────────────────────────────────────────────────────
 
@@ -39,6 +41,7 @@ export function useNotifications() {
       return loaded < lastPage.total ? allPages.length + 1 : undefined
     },
     staleTime: 30_000,
+    enabled: !!token,
   })
 
   // Aplanar todas las páginas

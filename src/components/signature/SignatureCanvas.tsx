@@ -44,11 +44,20 @@ export default function SignatureCanvas({ onConfirm, disabled = false }: Signatu
     ctx.strokeStyle = '#0C1624'
   }, [])
 
+  // Al hacer resize, solo reinicializar el canvas si no hay trazos capturados.
+  // Asignar canvas.width/height borra el bitmap, por lo que si el usuario ya
+  // trazó su firma y gira el dispositivo, preservamos el contenido no
+  // redimensionando hasta que limpie o confirme.
+  const handleResize = useCallback(() => {
+    if (vectorsRef.current.length > 0) return
+    setupCanvas()
+  }, [setupCanvas])
+
   useEffect(() => {
     setupCanvas()
-    window.addEventListener('resize', setupCanvas)
-    return () => window.removeEventListener('resize', setupCanvas)
-  }, [setupCanvas])
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [setupCanvas, handleResize])
 
   // ── Coordenadas relativas al canvas ──────────────────────────────────────
   const getPos = (e: PointerEvent): { x: number; y: number } => {

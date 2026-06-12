@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { Building2, LogOut, Radio } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import NotificationBell from '@/components/notifications/NotificationBell'
 
 export function SuperAdminLayout() {
   const navigate = useNavigate()
@@ -13,6 +14,8 @@ export function SuperAdminLayout() {
         <span className="font-display font-bold text-[var(--off-white)]">SEÑAL Super Admin</span>
 
         <div className="flex-1" />
+
+        <NotificationBell />
 
         <NavLink
           to="/super"

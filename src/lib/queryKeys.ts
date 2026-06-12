@@ -95,4 +95,11 @@ export const QK = {
 
   /** Contexto mínimo del usuario (status/user-context) */
   userContext: () => ['user-context'] as const,
+
+  /** Historial de notificaciones masivas enviadas (CommunicationsPage) */
+  adminNotificationsSent: () => ['admin-notifications-sent'] as const,
+
+  /** Validación de magic link en ActivateAccountPage */
+  magicLinkValidate: (token: string | null) =>
+    ['magic-link-validate', token] as const,
 }

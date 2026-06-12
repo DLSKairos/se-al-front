@@ -11,6 +11,7 @@ import {
   Settings,
   Webhook,
   Bell,
+  Megaphone,
   MessageSquare,
   Plus,
   LogOut,
@@ -139,11 +140,12 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
 
         {(
           [
-            { to: '/admin/usuarios',     icon: Users,    label: 'Usuarios'      },
-            { to: '/admin/ubicaciones',  icon: MapPin,   label: 'Ubicaciones'   },
-            { to: '/admin/departamentos',icon: Building2,label: 'Departamentos' },
-            { to: '/admin/categorias',   icon: Tags,     label: 'Categorías'    },
-            { to: '/admin/asistencia',   icon: Clock,    label: 'Asistencia'    },
+            { to: '/admin/usuarios',      icon: Users,     label: 'Usuarios'       },
+            { to: '/admin/ubicaciones',   icon: MapPin,    label: 'Ubicaciones'    },
+            { to: '/admin/departamentos', icon: Building2, label: 'Departamentos'  },
+            { to: '/admin/categorias',    icon: Tags,      label: 'Categorías'     },
+            { to: '/admin/asistencia',    icon: Clock,     label: 'Asistencia'     },
+            { to: '/admin/comunicaciones',icon: Megaphone, label: 'Comunicaciones' },
           ] as const
         ).map(({ to, icon: Icon, label }) => (
           <NavLink

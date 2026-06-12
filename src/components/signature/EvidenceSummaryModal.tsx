@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui'
 import { MapPin, Clock, Smartphone, ShieldCheck } from 'lucide-react'
@@ -37,7 +38,8 @@ export default function EvidenceSummaryModal({
   loading = false,
   position,
 }: EvidenceSummaryModalProps) {
-  const now = new Date()
+  // Capturada al montar: la hora mostrada no debe cambiar mientras el modal está abierto
+  const [now] = useState(() => new Date())
   const formattedDate = now.toLocaleDateString('es-CO', {
     weekday: 'long',
     year: 'numeric',
