@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.11% </span>
+                <span class="strong">91.3% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>41/45</span>
+                <span class='fraction'>42/46</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.68% </span>
+                <span class="strong">92.85% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>38/41</span>
+                <span class='fraction'>39/42</span>
             </div>
         
             
@@ -281,7 +281,19 @@
 <a name='L216'></a><a href='#L216'>216</a>
 <a name='L217'></a><a href='#L217'>217</a>
 <a name='L218'></a><a href='#L218'>218</a>
-<a name='L219'></a><a href='#L219'>219</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -382,6 +394,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -421,6 +434,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">197x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -499,12 +522,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Sparkles, Send, Loader2, AlertTriangle } from 'lucide-react'
 import { formAiApi } from '@/lib/api'
 import { useFormEditorStore } from '@/stores/formEditorStore'
-import { EditorField } from '@/types'
+import { EditorField, EditorSection } from '@/types'
 &nbsp;
 // ── Tipos locales ──────────────────────────────────────────────────────────────
 &nbsp;
@@ -598,14 +622,15 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
 &nbsp;
       const result = res.data
 &nbsp;
-      // Aplicar acción según la respuesta
-      if (result.action === 'update_sections' &amp;&amp; result.payload?.sections) {
-        applySectionsFromAI(result.payload.sections)
-      <span class="missing-if-branch" title="if path not taken" >I</span>} else if (result.action === 'add_field' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >result.payload?.sectionId) {</span>
-        const fieldData = <span class="cstat-no" title="statement not covered" >result.payload.field as Partial&lt;EditorField&gt; | undefined</span>
-<span class="cstat-no" title="statement not covered" >        addField(result.payload.sectionId, fieldData ?? {})</span>
-      <span class="missing-if-branch" title="if path not taken" >I</span>} else if (result.action === 'set_columns' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >result.payload?.columns) {</span>
-<span class="cstat-no" title="statement not covered" >        setColumns(result.payload.columns)</span>
+      // Aplicar acción según la respuesta (narrowing por action)
+      const payload = result.payload as Record&lt;string, unknown&gt;
+      if (result.action === 'update_sections' &amp;&amp; Array.isArray(payload.sections)) {
+        applySectionsFromAI(payload.sections as EditorSection[])
+      <span class="missing-if-branch" title="if path not taken" >I</span>} else if (result.action === 'add_field' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >typeof payload.sectionId === 'string') {</span>
+        const fieldData = <span class="cstat-no" title="statement not covered" >payload.field as Partial&lt;EditorField&gt; | undefined</span>
+<span class="cstat-no" title="statement not covered" >        addField(payload.sectionId, fieldData ?? {})</span>
+      <span class="missing-if-branch" title="if path not taken" >I</span>} else if (result.action === 'set_columns' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >typeof payload.columns === 'number') {</span>
+<span class="cstat-no" title="statement not covered" >        setColumns(payload.columns as 1 | 2 | 3)</span>
       }
 &nbsp;
       const aiMsg: Message = {
@@ -641,15 +666,25 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
   return (
     &lt;AnimatePresence&gt;
       {isOpen &amp;&amp; (
-        &lt;motion.aside
-          key="ai-panel"
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '100%', opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="w-80 shrink-0 flex flex-col bg-[var(--navy-mid)] border-l border-[rgba(0,212,255,0.15)] overflow-hidden"
-          aria-label="Panel de asistente IA"
-        &gt;
+        &lt;&gt;
+          &lt;motion.div
+            key="ai-panel-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 z-30 md:hidden"
+            onClick={onClose}
+            aria-hidden="true"
+          /&gt;
+          &lt;motion.aside
+            key="ai-panel"
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '100%', opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed inset-x-0 bottom-0 z-40 max-h-[60vh] flex flex-col bg-(--navy-mid) border-t border-border rounded-t-2xl overflow-hidden md:static md:inset-auto md:max-h-none md:w-80 md:shrink-0 md:rounded-none md:border-t-0 md:border-l md:z-auto"
+            aria-label="Panel de asistente IA"
+          &gt;
           {/* Header */}
           &lt;div className="flex items-center gap-2 px-4 py-3 border-b border-[rgba(0,212,255,0.12)]"&gt;
             &lt;Sparkles size={16} className="text-[var(--signal)]" /&gt;
@@ -712,7 +747,8 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
               Enter para enviar · Shift+Enter nueva línea
             &lt;/p&gt;
           &lt;/div&gt;
-        &lt;/motion.aside&gt;
+          &lt;/motion.aside&gt;
+        &lt;/&gt;
       )}
     &lt;/AnimatePresence&gt;
   )
@@ -724,7 +760,7 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-29T22:45:36.145Z
+                at 2026-06-12T15:42:43.072Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
