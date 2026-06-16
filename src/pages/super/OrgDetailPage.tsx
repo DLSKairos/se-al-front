@@ -255,8 +255,9 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
       queryClient.invalidateQueries({ queryKey: [...QK.administrators(), orgId] })
     },
     onError: (err: unknown) => {
-      const message = err instanceof Error ? err.message : 'Error al crear el administrador'
-      toast.error(message)
+      const axiosMsg = (err as any)?.response?.data?.message
+      const message = axiosMsg || (err instanceof Error ? err.message : 'Error al crear el administrador')
+      toast.error(Array.isArray(message) ? message[0] : message)
     },
   })
 
@@ -266,8 +267,9 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
       toast.success('Magic link generado y enviado correctamente')
     },
     onError: (err: unknown) => {
-      const message = err instanceof Error ? err.message : 'Error al generar el magic link'
-      toast.error(message)
+      const axiosMsg = (err as any)?.response?.data?.message
+      const message = axiosMsg || (err instanceof Error ? err.message : 'Error al generar el magic link')
+      toast.error(Array.isArray(message) ? message[0] : message)
     },
   })
 

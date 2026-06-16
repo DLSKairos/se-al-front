@@ -524,9 +524,8 @@ export function oauthLoginUrl(
   provider: 'google' | 'microsoft',
   magicToken?: string,
 ): string {
-  // Quita el sufijo '/api' de la base URL para obtener la raíz del servidor
-  const serverBase = BASE_URL.replace(/\/api\/?$/, '')
-  const url = new URL(`/auth/${provider}`, serverBase)
+  const base = BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`
+  const url = new URL(`auth/${provider}`, base)
   if (magicToken) url.searchParams.set('magicToken', magicToken)
   return url.toString()
 }

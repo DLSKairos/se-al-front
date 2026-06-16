@@ -6,6 +6,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -242,7 +243,7 @@ function UnreadBadge({ count }: { count: number }) {
   return (
     <span
       aria-label={`${count > 99 ? '99+' : count} notificaciones sin leer`}
-      className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold font-['DM_Sans'] px-1 leading-none shadow-[0_0_0_2px_var(--navy)]"
+      className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-[var(--signal)] text-[var(--navy)] text-[9px] font-bold font-['DM_Sans'] px-1 leading-none shadow-[0_0_0_2px_var(--navy-mid)]"
     >
       {count > 99 ? '99+' : count}
     </span>
@@ -434,6 +435,7 @@ interface AdminDropdownProps {
 function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
   const navigate = useNavigate()
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null)
 
   const {
     notifications,
@@ -447,6 +449,14 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
     markAllAsRead,
     isMarkingAll,
   } = useNotifications()
+
+  // Calcular posición del dropdown desde el botón anchor
+  useEffect(() => {
+    if (open && anchorRef.current) {
+      const rect = anchorRef.current.getBoundingClientRect()
+      setPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right })
+    }
+  }, [open, anchorRef])
 
   // Cerrar con Escape y click fuera
   useEffect(() => {
@@ -493,9 +503,9 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
     }
   }
 
-  return (
+  return createPortal(
     <AnimatePresence>
-      {open && (
+      {open && pos && (
         <motion.div
           ref={dropdownRef}
           key="admin-dropdown"
@@ -503,25 +513,27 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
           aria-modal="true"
           aria-label="Centro de notificaciones"
           tabIndex={-1}
-          initial={{ opacity: 0, y: -8, scale: 0.96 }}
+          initial={{ opacity: 0, y: -6, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -8, scale: 0.96 }}
-          transition={{ duration: 0.15 }}
-          className="absolute right-0 top-full mt-2 w-[400px] max-w-[calc(100vw-2rem)] z-50 rounded-[var(--radius-glass)] shadow-glass border border-white/[0.08] flex flex-col overflow-hidden focus:outline-none"
+          exit={{ opacity: 0, y: -6, scale: 0.97 }}
+          transition={{ duration: 0.13, ease: 'easeOut' }}
+          className="fixed w-[380px] max-w-[calc(100vw-2rem)] z-[9999] rounded-[var(--radius-glass)] shadow-glass border border-white/[0.07] flex flex-col overflow-hidden focus:outline-none"
           style={{
-            background: 'linear-gradient(160deg, #162238 0%, #111E30 100%)',
+            top: pos.top,
+            right: pos.right,
+            background: 'linear-gradient(160deg, #162238 0%, #0E1A2C 100%)',
           }}
         >
           {/* Cabecera */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2.5">
               <Bell className="w-4 h-4 text-[var(--signal)]" aria-hidden="true" />
-              <h2 className="text-sm font-semibold text-[var(--off-white)] font-['Syne']">
+              <h2 className="text-sm font-semibold text-[var(--off-white)] font-['Syne'] tracking-wide">
                 Notificaciones
               </h2>
               {unreadCount > 0 && (
-                <span className="text-xs text-[var(--muted)] font-['DM_Sans']">
-                  ({unreadCount} sin leer)
+                <span className="text-[10px] font-medium text-[var(--navy)] bg-[var(--signal)] rounded-full px-1.5 py-0.5 leading-none font-['DM_Sans']">
+                  {unreadCount}
                 </span>
               )}
             </div>
@@ -531,7 +543,7 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
                 onClick={() => markAllAsRead()}
                 disabled={isMarkingAll}
                 aria-label="Marcar todas como leídas"
-                className="flex items-center gap-1 text-xs text-[var(--signal)] font-['DM_Sans'] px-2 py-1 rounded hover:bg-[rgba(0,212,255,0.08)] transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 text-xs text-[var(--signal)]/80 hover:text-[var(--signal)] font-['DM_Sans'] px-2 py-1 rounded-md hover:bg-[rgba(0,212,255,0.08)] transition-all disabled:opacity-40"
               >
                 <CheckCheck className="w-3 h-3" aria-hidden="true" />
                 Marcar todas
@@ -541,7 +553,7 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
 
           {/* Lista con scroll */}
           <div
-            className="flex-1 overflow-y-auto max-h-[420px] divide-y divide-white/[0.04]"
+            className="flex-1 overflow-y-auto max-h-[400px] divide-y divide-white/[0.03]"
             role="list"
             aria-label="Lista de notificaciones"
           >
@@ -586,7 +598,8 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 
@@ -636,12 +649,16 @@ export default function NotificationBell() {
         }
         aria-expanded={open}
         aria-haspopup="dialog"
-        className="relative w-10 h-10 flex items-center justify-center rounded-[var(--radius-btn)] text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--signal)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
+        className={`
+          relative w-9 h-9 flex items-center justify-center rounded-full transition-all
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--signal)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--navy-mid)]
+          ${open
+            ? 'bg-[rgba(0,212,255,0.12)] text-[var(--signal)]'
+            : 'text-[var(--off-white)]/60 hover:text-[var(--off-white)] hover:bg-white/[0.06]'
+          }
+        `}
       >
-        <Bell
-          className={`w-5 h-5 transition-colors ${open ? 'text-[var(--signal)]' : ''}`}
-          aria-hidden="true"
-        />
+        <Bell className="w-[18px] h-[18px]" aria-hidden="true" />
         <UnreadBadge count={unreadCount} />
       </button>
 
