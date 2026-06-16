@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Fingerprint, Trash2, Plus, Building2, LogOut } from 'lucide-react'
+import { Fingerprint, Trash2, Plus, Building2, LogOut, HardHat, ChevronRight, AlertTriangle } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
-import { WebAuthnCredential } from '@/types'
+import { WebAuthnCredential, WorkLocation } from '@/types'
 import {
   Button,
   LoadingSpinner,
@@ -24,12 +24,20 @@ export default function OperatorProfilePage() {
   const navigate    = useNavigate()
   const toast       = useToast()
   const queryClient = useQueryClient()
-  const { user, clear } = useAuthStore()
+  const { user, clear, workLocationId } = useAuthStore()
 
   const userId = user?.sub ?? ''
 
   const [registeringPasskey, setRegisteringPasskey] = useState(false)
   const [credToDelete, setCredToDelete]             = useState<string | null>(null)
+
+  // ── Query: obra actual ────────────────────────────────────────────────────
+  const { data: locations = [] } = useQuery({
+    queryKey: QK.workLocations(),
+    queryFn: () => api.get<WorkLocation[]>('/work-locations').then((r) => r.data),
+  })
+
+  const currentLocation = locations.find((l) => l.id === workLocationId) ?? null
 
   // ── Query: credenciales WebAuthn ──────────────────────────────────────────
   const {
@@ -135,6 +143,58 @@ export default function OperatorProfilePage() {
               </div>
             </div>
           </div>
+        </section>
+
+        {/* ── Obra actual ───────────────────────────────────────────────── */}
+        <section aria-label="Obra actual" className="mb-4">
+          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-3">
+            Obra
+          </p>
+
+          {!currentLocation && (
+            <div
+              className="glass p-4 rounded-[14px] flex items-start gap-3 mb-2"
+              style={{
+                background: 'rgba(245,166,35,0.08)',
+                border: '1.5px solid rgba(245,166,35,0.3)',
+              }}
+            >
+              <AlertTriangle className="w-4 h-4 text-[var(--amber)] shrink-0 mt-0.5" aria-hidden="true" />
+              <p className="text-sm text-[var(--amber)] font-dm leading-snug">
+                No tienes una obra seleccionada. Algunas funciones no estarán disponibles.
+              </p>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => navigate('/location-select')}
+            className="glass w-full p-4 flex items-center gap-3 rounded-[14px] active:scale-[0.98] transition-transform text-left"
+            style={!currentLocation ? { border: '1.5px solid rgba(245,166,35,0.4)' } : undefined}
+          >
+            <HardHat
+              className="w-4 h-4 shrink-0"
+              style={{ color: currentLocation ? 'var(--signal)' : 'var(--amber)' }}
+              aria-hidden="true"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)]">
+                {currentLocation ? 'Obra seleccionada' : 'Seleccionar obra'}
+              </p>
+              <p
+                className="text-sm font-dm truncate"
+                style={{ color: currentLocation ? 'var(--off-white)' : 'var(--amber)' }}
+              >
+                {currentLocation ? currentLocation.name : 'Toca para seleccionar una obra'}
+              </p>
+              {currentLocation?.contractor && (
+                <p className="text-xs text-[var(--muted)] font-dm truncate mt-0.5">
+                  {currentLocation.contractor}
+                </p>
+              )}
+            </div>
+            <ChevronRight className="w-4 h-4 text-[var(--muted)] shrink-0" aria-hidden="true" />
+          </button>
         </section>
 
         {/* ── Biometria / Passkeys ──────────────────────────────────────── */}

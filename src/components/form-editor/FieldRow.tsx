@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { GripVertical, MoreVertical, Settings, Copy, Trash2 } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { GripVertical, MoreVertical, Settings, Copy, Trash2, Plus, X } from 'lucide-react'
 import { EditorField } from '@/types'
 import { FIELD_TYPE_LABELS, FIELD_TYPE_ICON_NAMES, toSnakeCase } from '@/utils/fieldType.utils'
 import { useFormEditorStore } from '@/stores/formEditorStore'
@@ -15,16 +16,29 @@ interface OptionsMenuProps {
 
 function OptionsMenu({ onAdvanced, onDuplicate, onDelete }: OptionsMenuProps) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number }>({ top: 0, right: 0 })
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  function openMenu(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect()
+      setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
+    }
+    setOpen((p) => !p)
+  }
 
   useEffect(() => {
     if (!open) return
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
+      const target = e.target as Node
+      if (triggerRef.current?.contains(target)) return
+      if (menuRef.current?.contains(target)) return
+      setOpen(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('scroll', () => setOpen(false), { capture: true, once: true })
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
@@ -34,17 +48,22 @@ function OptionsMenu({ onAdvanced, onDuplicate, onDelete }: OptionsMenuProps) {
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div className="relative">
       <button
-        onClick={(e) => { e.stopPropagation(); setOpen((p) => !p) }}
+        ref={triggerRef}
+        onClick={openMenu}
         className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] opacity-0 group-hover:opacity-100 transition-all"
         aria-label="Opciones del campo"
       >
         <MoreVertical size={14} />
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-1 bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-44 z-50">
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
+          className="bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-44"
+        >
           <button
             onClick={() => handle(onAdvanced)}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] cursor-pointer text-left"
@@ -67,7 +86,8 @@ function OptionsMenu({ onAdvanced, onDuplicate, onDelete }: OptionsMenuProps) {
             <Trash2 size={13} />
             Eliminar
           </button>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )
@@ -86,6 +106,8 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
   const { updateField, removeField, addField } = useFormEditorStore()
   const [label, setLabel] = useState(field.label)
   const [helpText, setHelpText] = useState(field.helpText ?? '')
+  const [newOption, setNewOption] = useState('')
+  const newOptionRef = useRef<HTMLInputElement>(null)
 
   // Sincronizar si el campo cambia externamente (p.ej. AI)
   useEffect(() => {
@@ -122,6 +144,25 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
 
   function handleTypeChange(type: EditorField['type']) {
     updateField(sectionId, field.id, { type })
+  }
+
+  const isChoice = field.type === 'SELECT' || field.type === 'MULTISELECT'
+  const options = field.options ?? []
+
+  function addOption() {
+    const val = newOption.trim()
+    if (!val || options.includes(val)) return
+    updateField(sectionId, field.id, { options: [...options, val] })
+    setNewOption('')
+    newOptionRef.current?.focus()
+  }
+
+  function removeOption(idx: number) {
+    updateField(sectionId, field.id, { options: options.filter((_, i) => i !== idx) })
+  }
+
+  function handleOptionKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') { e.preventDefault(); addOption() }
   }
 
   function handleDuplicate() {
@@ -207,6 +248,64 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
           aria-label="Descripción del campo"
         />
       </div>
+
+      {/* Opciones de selección */}
+      {isChoice && (
+        // stopPropagation en pointer events para que dnd-kit no capture
+        // interacciones dentro del área de opciones
+        <div
+          className="pl-[52px] pr-1 pt-2 flex flex-col gap-1.5"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          {/* Lista de opciones existentes */}
+          {options.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {options.map((opt, idx) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-['DM_Sans'] bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.18)] text-[var(--off-white)]"
+                >
+                  {opt}
+                  <button
+                    type="button"
+                    onClick={() => removeOption(idx)}
+                    className="text-[var(--muted)] hover:text-red-400 transition-colors ml-0.5"
+                    aria-label={`Eliminar opción "${opt}"`}
+                  >
+                    <X size={10} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Input para nueva opción */}
+          <div
+            className="flex items-center gap-1.5 rounded-md px-2 py-1"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(0,212,255,0.12)' }}
+          >
+            <input
+              ref={newOptionRef}
+              type="text"
+              value={newOption}
+              onChange={(e) => setNewOption(e.target.value)}
+              onKeyDown={handleOptionKeyDown}
+              placeholder="Escribe una opción y presiona Enter…"
+              className="flex-1 bg-transparent border-none outline-none text-xs text-[var(--off-white)] font-['DM_Sans'] placeholder:text-[var(--muted)] min-w-0"
+              aria-label="Agregar nueva opción"
+            />
+            <button
+              type="button"
+              onClick={addOption}
+              disabled={!newOption.trim()}
+              className="shrink-0 text-[var(--signal)] hover:text-[var(--signal)]/70 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
+              aria-label="Agregar opción"
+            >
+              <Plus size={13} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

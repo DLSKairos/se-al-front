@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { LogIn, LogOut, Clock, Coffee } from 'lucide-react'
+import type { AxiosError } from 'axios'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { AttendanceRecord } from '@/types'
@@ -13,6 +14,11 @@ import {
   useToast,
 } from '@/components/ui'
 import { SOSButton } from '@/components/ui/SOSButton'
+
+function getApiMessage(err: unknown, fallback: string): string {
+  const msg = (err as AxiosError<{ message?: string }>)?.response?.data?.message
+  return typeof msg === 'string' && msg.length > 0 ? msg : fallback
+}
 
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -74,7 +80,11 @@ export default function AttendancePage() {
       api
         .get<AttendanceRecord | null>('/attendance/today')
         .then((r) => r.data)
-        .catch(() => null),
+        .catch((err: AxiosError) => {
+          // 404 significa que no hay registro hoy → null es el valor correcto
+          if (err.response?.status === 404) return null
+          throw err
+        }),
   })
 
   // ── Mutation: registrar entrada ───────────────────────────────────────────
@@ -84,7 +94,11 @@ export default function AttendancePage() {
       queryClient.invalidateQueries({ queryKey: QK.attendance.today() })
       toast.success('Entrada registrada correctamente')
     },
-    onError: () => toast.error('No se pudo registrar la entrada. Intenta de nuevo.'),
+    onError: (err) => {
+      // Siempre refrescar para que la UI muestre el estado real del servidor
+      queryClient.invalidateQueries({ queryKey: QK.attendance.today() })
+      toast.error(getApiMessage(err, 'No se pudo registrar la entrada. Intenta de nuevo.'))
+    },
   })
 
   // ── Mutation: registrar salida ────────────────────────────────────────────
@@ -96,7 +110,10 @@ export default function AttendancePage() {
       setExitModalOpen(false)
       toast.success('Salida registrada correctamente')
     },
-    onError: () => toast.error('No se pudo registrar la salida. Intenta de nuevo.'),
+    onError: (err) => {
+      queryClient.invalidateQueries({ queryKey: QK.attendance.today() })
+      toast.error(getApiMessage(err, 'No se pudo registrar la salida. Intenta de nuevo.'))
+    },
   })
 
   const handleExitConfirm = () => {

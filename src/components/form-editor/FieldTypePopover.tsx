@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import * as icons from 'lucide-react'
 import { FieldType } from '@/types'
 import {
@@ -35,28 +36,46 @@ export function FieldTypePopover({
   children,
 }: FieldTypePopoverProps) {
   const [open, setOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
-  // Cerrar al hacer click fuera
-  useEffect(() => {
-    if (!open) return
-    function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
+  function openMenu() {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect()
+      setMenuPos({ top: rect.bottom + 4, left: rect.left })
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    setOpen(true)
+  }
+
+  // Ajusta la posición vertical si el menú se sale por abajo de la pantalla
+  useEffect(() => {
+    if (!open || !menuRef.current || !triggerRef.current) return
+    const menuRect = menuRef.current.getBoundingClientRect()
+    const triggerRect = triggerRef.current.getBoundingClientRect()
+    if (menuRect.bottom > window.innerHeight - 8) {
+      setMenuPos({ top: triggerRect.top - menuRect.height - 4, left: triggerRect.left })
+    }
   }, [open])
 
-  // Cerrar con Escape
   useEffect(() => {
     if (!open) return
-    function handleKeyDown(e: KeyboardEvent) {
+    function handleClose(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as Node
+      if (triggerRef.current?.contains(target)) return
+      if (menuRef.current?.contains(target)) return
+      setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleClose)
+    document.addEventListener('scroll', () => setOpen(false), { capture: true, once: true })
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleClose)
+    }
   }, [open])
 
   function handleSelect(type: FieldType) {
@@ -65,14 +84,16 @@ export function FieldTypePopover({
   }
 
   return (
-    <div ref={containerRef} className="relative">
-      <div onClick={() => setOpen((prev) => !prev)} className="cursor-pointer">
+    <>
+      <div ref={triggerRef} onClick={openMenu} className="cursor-pointer">
         {children}
       </div>
 
-      {open && (
+      {open && createPortal(
         <div
-          className="absolute top-full left-0 mt-1 bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-48 z-50"
+          ref={menuRef}
+          style={{ position: 'fixed', top: menuPos.top, left: menuPos.left, zIndex: 9999 }}
+          className="bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-48"
           role="listbox"
           aria-label="Seleccionar tipo de campo"
         >
@@ -99,9 +120,10 @@ export function FieldTypePopover({
               </button>
             )
           })}
-        </div>
+        </div>,
+        document.body,
       )}
-    </div>
+    </>
   )
 }
 
