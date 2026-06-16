@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { superadminApi, featureFlagsApi, magicLinkApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
-import { OrgWithUsage, OrgConfig, PlanTier, AdminUser, FeatureFlags, MagicLinkHistoryItem } from '@/types'
+import { OrgWithUsage, OrgConfig, PlanTier, AdminUser, FeatureFlags, MagicLinkHistoryItem, CreateOrgAdminPayload } from '@/types'
 import { Button, LoadingSpinner, ErrorMessage, Badge, useToast } from '@/components/ui'
 import { UsageBar } from '@/components/super/UsageBar'
 
@@ -224,17 +224,41 @@ function PlanSection({
 
 // ── Sección Magic Link de primer acceso ──────────────────────────────────────
 
-function MagicLinkSection({ orgId }: { orgId: string }) {
-  const toast       = useToast()
-  const [selectedAdminId, setSelectedAdminId] = useState('')
-  const adminSelectId = useId()
+const EMPTY_ADMIN_FORM: CreateOrgAdminPayload = {
+  name: '',
+  identification_number: '',
+  email: '',
+  job_title: '',
+}
 
+function MagicLinkSection({ orgId }: { orgId: string }) {
+  const toast        = useToast()
+  const queryClient  = useQueryClient()
+  const [selectedAdminId, setSelectedAdminId] = useState('')
+  const [createForm, setCreateForm] = useState<CreateOrgAdminPayload>(EMPTY_ADMIN_FORM)
+  const adminSelectId = useId()
   const { data: admins = [], isLoading: loadingAdmins } = useQuery({
     queryKey: [...QK.administrators(), orgId],
     queryFn:  () => superadminApi.listAdministrators(orgId).then((r) => r.data),
   })
 
   const orgAdmins: AdminUser[] = admins
+
+  const createAdminMutation = useMutation({
+    mutationFn: () => superadminApi.createAdmin(orgId, {
+      ...createForm,
+      job_title: createForm.job_title || undefined,
+    }),
+    onSuccess: () => {
+      toast.success('Administrador creado correctamente')
+      setCreateForm(EMPTY_ADMIN_FORM)
+      queryClient.invalidateQueries({ queryKey: [...QK.administrators(), orgId] })
+    },
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : 'Error al crear el administrador'
+      toast.error(message)
+    },
+  })
 
   const generateMutation = useMutation({
     mutationFn: () => superadminApi.generateFirstAdminLink(orgId, selectedAdminId),
@@ -246,6 +270,15 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
       toast.error(message)
     },
   })
+
+  const setField = (key: keyof CreateOrgAdminPayload) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setCreateForm((prev) => ({ ...prev, [key]: e.target.value }))
+
+  function handleCreateSubmit(e: FormEvent) {
+    e.preventDefault()
+    createAdminMutation.mutate()
+  }
 
   const selectedAdmin = orgAdmins.find((a) => a.id === selectedAdminId)
   const noEmail       = selectedAdmin && !selectedAdmin.email
@@ -264,9 +297,84 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
           {loadingAdmins ? (
             <div className="h-11 rounded-[var(--radius-input)] bg-white/5 animate-pulse" />
           ) : orgAdmins.length === 0 ? (
-            <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
-              Esta organización no tiene administradores registrados.
-            </p>
+            <div className="flex flex-col gap-4">
+              <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+                Esta organización no tiene administradores registrados. Crea uno para poder generar el magic link.
+              </p>
+              <form onSubmit={handleCreateSubmit} className="flex flex-col gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                      Nombre completo
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={100}
+                      value={createForm.name}
+                      onChange={setField('name')}
+                      placeholder="Juan Pérez"
+                      className={INPUT_CLASS}
+                      disabled={createAdminMutation.isPending}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                      Número de cédula
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={50}
+                      value={createForm.identification_number}
+                      onChange={setField('identification_number')}
+                      placeholder="12345678"
+                      className={INPUT_CLASS}
+                      disabled={createAdminMutation.isPending}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={createForm.email}
+                      onChange={setField('email')}
+                      placeholder="admin@empresa.com"
+                      className={INPUT_CLASS}
+                      disabled={createAdminMutation.isPending}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                      Cargo <span className="normal-case text-[var(--muted)]">(opcional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={100}
+                      value={createForm.job_title}
+                      onChange={setField('job_title')}
+                      placeholder="Gerente de operaciones"
+                      className={INPUT_CLASS}
+                      disabled={createAdminMutation.isPending}
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    loading={createAdminMutation.isPending}
+                    disabled={createAdminMutation.isPending}
+                  >
+                    {createAdminMutation.isPending ? 'Creando...' : 'Crear administrador'}
+                  </Button>
+                </div>
+              </form>
+            </div>
           ) : (
             <div className="relative">
               <select
@@ -299,16 +407,18 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
           </div>
         )}
 
-        <Button
-          variant="primary"
-          size="md"
-          disabled={!selectedAdminId || generateMutation.isPending}
-          loading={generateMutation.isPending}
-          onClick={() => generateMutation.mutate()}
-        >
-          <Link2 className="w-4 h-4" />
-          {generateMutation.isPending ? 'Generando...' : 'Generar y enviar magic link'}
-        </Button>
+        {orgAdmins.length > 0 && (
+          <Button
+            variant="primary"
+            size="md"
+            disabled={!selectedAdminId || generateMutation.isPending}
+            loading={generateMutation.isPending}
+            onClick={() => generateMutation.mutate()}
+          >
+            <Link2 className="w-4 h-4" />
+            {generateMutation.isPending ? 'Generando...' : 'Generar y enviar magic link'}
+          </Button>
+        )}
       </div>
     </SectionCard>
   )

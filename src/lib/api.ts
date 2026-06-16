@@ -30,6 +30,7 @@ import type {
   OrgConfig,
   OrgUsage,
   AdminUser,
+  CreateOrgAdminPayload,
   MasterItem,
   MasterSuggestion,
   UserContext,
@@ -207,7 +208,7 @@ export const inventariosApi = {
 export const notificationsApi = {
   /** GET /notifications — lista paginada del usuario autenticado */
   list: (params?: { unreadOnly?: boolean; page?: number; limit?: number }) =>
-    api.get<{ data: AppNotification[]; total: number }>('/notifications', { params }),
+    api.get<{ items: AppNotification[]; total: number; unreadCount: number }>('/notifications', { params }),
 
   /** PATCH /notifications/:id/read */
   markAsRead: (id: string) =>
@@ -413,6 +414,10 @@ export const superadminApi = {
   /** GET /superadmin/organizations/:id/usage */
   getUsage: (id: string) =>
     api.get<OrgUsage>(`/superadmin/organizations/${id}/usage`),
+
+  /** POST /superadmin/organizations/:id/admin */
+  createAdmin: (orgId: string, payload: CreateOrgAdminPayload) =>
+    api.post<AdminUser>(`/superadmin/organizations/${orgId}/admin`, payload),
 
   /** GET /superadmin/organizations/:id/administrators */
   listAdministrators: (orgId: string) =>

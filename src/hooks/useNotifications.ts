@@ -11,8 +11,9 @@ import type { AppNotification } from '@/types'
 const PAGE_SIZE = 15
 
 interface NotificationsPage {
-  data: AppNotification[]
+  items: AppNotification[]
   total: number
+  unreadCount: number
 }
 
 /**
@@ -37,7 +38,7 @@ export function useNotifications() {
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const loaded = allPages.flatMap((p) => p.data).length
+      const loaded = allPages.flatMap((p) => p.items).length
       return loaded < lastPage.total ? allPages.length + 1 : undefined
     },
     staleTime: 30_000,
@@ -46,10 +47,10 @@ export function useNotifications() {
 
   // Aplanar todas las páginas
   const notifications: AppNotification[] =
-    query.data?.pages.flatMap((p) => p.data) ?? []
+    query.data?.pages.flatMap((p) => p.items) ?? []
 
   const total: number = query.data?.pages[0]?.total ?? 0
-  const unreadCount = notifications.filter((n) => !n.read).length
+  const unreadCount: number = query.data?.pages[0]?.unreadCount ?? 0
 
   // ── Mutaciones ────────────────────────────────────────────────────────────
 
@@ -68,7 +69,7 @@ export function useNotifications() {
             ...old,
             pages: old.pages.map((page) => ({
               ...page,
-              data: page.data.map((n) =>
+              items: page.items.map((n) =>
                 n.id === id ? { ...n, read: true, read_at: new Date().toISOString() } : n
               ),
             })),
@@ -102,7 +103,7 @@ export function useNotifications() {
             ...old,
             pages: old.pages.map((page) => ({
               ...page,
-              data: page.data.map((n) => ({
+              items: page.items.map((n) => ({
                 ...n,
                 read: true,
                 read_at: new Date().toISOString(),

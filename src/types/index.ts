@@ -524,6 +524,13 @@ export interface AdminUser {
   created_at: string
 }
 
+export interface CreateOrgAdminPayload {
+  name: string
+  identification_number: string
+  email: string
+  job_title?: string
+}
+
 // ─── MAGIC LINK ───────────────────────────────────────────────────────────────
 
 export type MagicLinkPurpose = 'FIRST_ACCESS_ADMIN' | 'ADMIN_INVITE'
