@@ -121,7 +121,8 @@ export default function OAuthButtons({ magicToken, flags, isLoading }: OAuthButt
           logo={<GoogleLogo />}
           label="Continuar con Google"
           onClick={() => {
-            window.location.href = oauthLoginUrl('google', magicToken)
+            // Fix M9/#7: replace() no deja la URL con el token en el historial.
+            window.location.replace(oauthLoginUrl('google', magicToken))
           }}
         />
       )}
@@ -130,7 +131,7 @@ export default function OAuthButtons({ magicToken, flags, isLoading }: OAuthButt
           logo={<MicrosoftLogo />}
           label="Continuar con Microsoft"
           onClick={() => {
-            window.location.href = oauthLoginUrl('microsoft', magicToken)
+            window.location.replace(oauthLoginUrl('microsoft', magicToken))
           }}
         />
       )}

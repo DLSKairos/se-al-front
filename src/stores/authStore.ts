@@ -27,10 +27,13 @@ function decodeJWT(token: string): JWTPayload | null {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => {
-      // Registrar helpers para el interceptor de Axios
+      // Registrar helpers para el interceptor de Axios.
+      // Fix M6: el logout automático (401) debe ejecutar el clear() COMPLETO,
+      // que además limpia sessionStorage y la PII residual en localStorage
+      // (crítico en tablets/kioscos compartidos en obra), no un reset parcial.
       registerTokenHelpers(
         () => get().token,
-        () => set({ token: null, user: null, workLocationId: null })
+        () => get().clear()
       )
 
       return {

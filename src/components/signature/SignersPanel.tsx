@@ -57,18 +57,16 @@ function SignerRow({
   // SignatureTokenInfo (post-crear token), no en SignatureStatusEntry. El envío
   // de WhatsApp ocurre exclusivamente en SendLinkModal, que sí recibe el token real.
 
-  const isSigned = entry.link_status === 'SIGNED'
-
   if (mobileView) {
     return (
       <div className="flex flex-col gap-3 p-4 rounded-[var(--radius-glass-md)] bg-white/5 border border-white/8">
         <div className="flex items-start justify-between gap-2">
           <div>
             <p className="text-base font-semibold text-[var(--off-white)] font-['Syne']">
-              {entry.display_name}
+              {entry.name}
             </p>
             <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5">
-              {entry.signer_type === 'INTERNAL' ? 'Operario SEÑAL' : 'Firmante externo'}
+              {entry.type === 'INTERNAL' ? 'Operario SEÑAL' : 'Firmante externo'}
             </p>
             {entry.signed_at && (
               <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5">
@@ -76,7 +74,7 @@ function SignerRow({
               </p>
             )}
           </div>
-          <LinkStatusChip status={entry.link_status} />
+          <LinkStatusChip status={entry.status} />
         </div>
 
         {/* El botón de WhatsApp solo está disponible en el modal SendLinkModal,
@@ -91,22 +89,22 @@ function SignerRow({
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-8 h-8 rounded-full bg-[var(--signal-dim)] flex items-center justify-center shrink-0">
           <span className="text-xs font-bold text-[var(--signal)] font-['Syne']">
-            {entry.display_name.charAt(0).toUpperCase()}
+            {entry.name.charAt(0).toUpperCase()}
           </span>
         </div>
         <div className="min-w-0">
           <p className="text-sm font-medium text-[var(--off-white)] font-['DM_Sans'] truncate">
-            {entry.display_name}
+            {entry.name}
           </p>
           <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
-            {entry.signer_type === 'INTERNAL' ? 'Operario SEÑAL' : 'Externo'}
+            {entry.type === 'INTERNAL' ? 'Operario SEÑAL' : 'Externo'}
             {entry.signed_at && ` · ${new Date(entry.signed_at).toLocaleDateString('es-CO')}`}
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <LinkStatusChip status={entry.link_status} />
+        <LinkStatusChip status={entry.status} />
         {/* El token string no está disponible en SignatureStatusEntry.
             El link de WhatsApp solo se envía desde SendLinkModal. */}
       </div>
@@ -464,7 +462,9 @@ export default function SignersPanel({
   } = useQuery({
     queryKey: QK.signatures.status(submissionId),
     queryFn: () =>
-      signaturesApi.getSubmissionStatus(submissionId).then((r) => r.data),
+      signaturesApi
+        .getSubmissionStatus(submissionId)
+        .then((r) => r.data.signers ?? []),
     enabled: !!submissionId,
   })
 
@@ -507,7 +507,7 @@ export default function SignersPanel({
         <AnimatePresence>
           {signerEntries.map((entry: SignatureStatusEntry, i: number) => (
             <motion.div
-              key={`${entry.signer_type}-${entry.internal_user_id ?? entry.external_signer_id}`}
+              key={entry.token_id ?? entry.record_id ?? `${entry.type}-${entry.signer_id ?? i}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}

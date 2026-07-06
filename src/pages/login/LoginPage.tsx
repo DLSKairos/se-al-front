@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Fingerprint } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -29,7 +29,7 @@ interface TokenResponse {
   access_token: string
 }
 
-type Step = 'splash' | 'cedula' | 'loading' | 'webauthn-register' | 'pin' | 'pin-create'
+type Step = 'splash' | 'cedula' | 'loading' | 'webauthn-register' | 'pin' | 'pin-create' | 'need-activation'
 type CreatePhase = 'new' | 'confirm'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -100,8 +100,16 @@ function NumPad({
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const setToken = useAuthStore((s) => s.setToken)
   const toast    = useToast()
+
+  // Fix C2: código de activación de primer acceso, entregado por el admin vía
+  // un enlace /login?ci=<cedula>&code=<codigo>. Se guarda en sessionStorage y se
+  // borra de la barra de direcciones para no dejarlo en el historial.
+  const [activationCode, setActivationCode] = useState<string | null>(
+    () => searchParams.get('code') || sessionStorage.getItem('activation_code'),
+  )
 
   // Detecta error OAuth de vuelta desde OAuthCallbackPage
   const oauthError = (location.state as { oauthError?: string } | null)?.oauthError ?? null
@@ -121,6 +129,21 @@ export default function LoginPage() {
 
   const pinStatusRef = useRef<PinStatusResponse | null>(null)
 
+  // Captura el código/cédula del enlace de activación una sola vez.
+  useEffect(() => {
+    const code = searchParams.get('code')
+    const ci = searchParams.get('ci')
+    if (code) {
+      sessionStorage.setItem('activation_code', code)
+      setActivationCode(code)
+    }
+    if (ci) setCedula(ci)
+    if (code || ci) {
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // ── Feature flags para OAuth ─────────────────────────────────────────────────
 
   const { data: featureFlags, isLoading: flagsLoading } = useQuery({
@@ -134,6 +157,8 @@ export default function LoginPage() {
   // ── Login con token ──────────────────────────────────────────────────────────
 
   function handleToken(access_token: string) {
+    // El código de activación es de un solo uso; ya fue consumido en backend.
+    sessionStorage.removeItem('activation_code')
     setToken(access_token)
     const user = useAuthStore.getState().user
     if (user?.role) redirectByRole(user.role, navigate)
@@ -156,9 +181,13 @@ export default function LoginPage() {
       api.post<TokenResponse>('/auth/pin/init', {
         identification_number: cedula,
         pin,
+        activation_code: activationCode ?? '',
       }),
     onSuccess: (res) => handleToken(res.data.access_token),
-    onError:   () => toast.error('No se pudo crear el PIN. Intenta de nuevo.'),
+    onError:   () =>
+      toast.error(
+        'No se pudo crear el PIN. Verifica tu código de activación o solicita uno nuevo a tu administrador.',
+      ),
   })
 
   // ── Flujo principal: Continuar ────────────────────────────────────────────────
@@ -188,7 +217,15 @@ export default function LoginPage() {
       return
     }
 
-    // 3. Sin PIN: intentar WebAuthn si el dispositivo lo soporta
+    // 3. Primer acceso (sin PIN): Fix C2 — requiere código de activación
+    //    entregado por el administrador fuera de banda. Sin él no se permite
+    //    ni registrar biométrico ni crear PIN.
+    if (!activationCode) {
+      setStep('need-activation')
+      return
+    }
+
+    // 4. Con código: intentar WebAuthn si el dispositivo lo soporta
     const webAuthnAvailable = await checkWebAuthnSupport()
 
     if (webAuthnAvailable) {
@@ -207,7 +244,7 @@ export default function LoginPage() {
       }
     }
 
-    // 4. WebAuthn no disponible o cancelado → crear PIN
+    // 5. WebAuthn no disponible o cancelado → crear PIN
     setStep('pin-create')
     setCreatePhase('new')
   }
@@ -215,9 +252,13 @@ export default function LoginPage() {
   // ── Registro biométrico ───────────────────────────────────────────────────────
 
   async function handleWebAuthnRegister() {
+    if (!activationCode) {
+      setStep('need-activation')
+      return
+    }
     setRegisteringBiometric(true)
     try {
-      const token = await registerWebAuthnPublic(cedula.trim())
+      const token = await registerWebAuthnPublic(cedula.trim(), activationCode)
       setRegisteringBiometric(false)
       handleToken(token)
     } catch {
@@ -507,6 +548,32 @@ export default function LoginPage() {
               className="text-xs text-center text-[var(--muted)]/60 hover:text-[var(--muted)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
             >
               Cambiar cédula
+            </button>
+          </div>
+        )}
+
+        {/* ── Necesita código de activación (primer acceso) ── */}
+        {step === 'need-activation' && (
+          <div className="flex flex-col gap-5 text-center">
+            <div>
+              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
+                Primer acceso
+              </p>
+              <h2 className="font-display font-bold text-xl text-[var(--off-white)]">
+                Necesitas tu enlace de activación
+              </h2>
+              <p className="text-sm text-[var(--muted)] font-dm mt-2 leading-relaxed">
+                Para crear tu PIN o registrar tu biométrico por primera vez, abre
+                el enlace de activación que te compartió tu administrador. Por
+                seguridad, no es posible activar la cuenta solo con la cédula.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setStep('cedula'); setBiometricFailed(false) }}
+              className="text-sm text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
+            >
+              Volver
             </button>
           </div>
         )}

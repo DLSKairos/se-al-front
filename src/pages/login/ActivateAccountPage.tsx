@@ -6,6 +6,7 @@
  * y vincula su cuenta Google/Microsoft para quedar activo.
  */
 
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { magicLinkApi, featureFlagsApi } from '@/lib/api'
@@ -291,7 +292,15 @@ function ActivationScreen({
 
 export default function ActivateAccountPage() {
   const [searchParams] = useSearchParams()
-  const token = searchParams.get('token')
+  // Fix M9/#7: capturar el token una sola vez y borrarlo de la barra de
+  // direcciones para no dejarlo en el historial del navegador.
+  const [token] = useState(() => searchParams.get('token'))
+
+  useEffect(() => {
+    if (token && window.location.search) {
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [token])
 
   // Query de validación — solo si hay token
   const { data: linkInfo, isLoading, isError } = useQuery({

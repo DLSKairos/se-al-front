@@ -18,7 +18,7 @@ import type {
   MagicLinkHistoryItem,
   ExternalSigner,
   SignatureTokenInfo,
-  SignatureStatusEntry,
+  SubmissionSignatureStatus,
   SignatureConfig,
   StrokeVector,
   ReadingLogEntry,
@@ -288,7 +288,7 @@ export const signaturesApi = {
     api.post<void>('/signatures/tokens/mark-sent', { signature_token_id }),
 
   getSubmissionStatus: (submissionId: string) =>
-    api.get<SignatureStatusEntry[]>(`/signatures/submissions/${submissionId}/status`),
+    api.get<SubmissionSignatureStatus>(`/signatures/submissions/${submissionId}/status`),
 
   // Firma interna
   signInternal: (

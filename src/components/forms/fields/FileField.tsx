@@ -12,8 +12,22 @@ interface FileFieldProps {
 export function FileField({ field, value, onChange, disabled }: FileFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // Fix L3: primera barrera de tipo en el cliente (la validación real de
+  // magic bytes es server-side). Restringe a documentos e imágenes comunes.
+  const ACCEPTED = 'image/*,.pdf,.doc,.docx,.xls,.xlsx'
+  const ACCEPTED_EXTENSIONS = ['pdf', 'doc', 'docx', 'xls', 'xlsx']
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
+    if (file) {
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+      const ok = file.type.startsWith('image/') || ACCEPTED_EXTENSIONS.includes(ext)
+      if (!ok) {
+        if (inputRef.current) inputRef.current.value = ''
+        onChange(null)
+        return
+      }
+    }
     onChange(file)
   }
 
@@ -28,6 +42,7 @@ export function FileField({ field, value, onChange, disabled }: FileFieldProps) 
         ref={inputRef}
         id={`input-${field.id}`}
         type="file"
+        accept={ACCEPTED}
         onChange={handleChange}
         disabled={disabled}
         className="sr-only"

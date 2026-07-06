@@ -28,9 +28,9 @@ export interface User {
 
 export interface WebAuthnCredential {
   id: string
-  user_id: string
   credential_id: string
-  created_at: string
+  authenticator_type: string | null
+  registered_at: string
 }
 
 // ── Organization ──────────────────────────────────
@@ -659,19 +659,36 @@ export interface SignatureTokenInfo {
 
 /**
  * Estado de firma por firmante en un submission.
- * Retornado por GET /signatures/submissions/:submissionId/status.
+ * Entrada del array `signers` retornado por
+ * GET /signatures/submissions/:submissionId/status.
  */
 export interface SignatureStatusEntry {
-  signer_type: SignerType
-  /** Presente si es firmante interno */
-  internal_user_id: string | null
-  /** Presente si es firmante externo */
-  external_signer_id: string | null
-  external_signer?: ExternalSigner
-  link_status: SignatureLinkStatus | null
+  type: SignerType
+  /** id del User (interno) o ExternalSigner (externo); null si el usuario fue eliminado */
+  signer_id: string | null
+  name: string
+  identification_number: string | null
+  status: SignatureLinkStatus
   signed_at: string | null
-  /** Nombre para mostrar */
-  display_name: string
+  /** Solo firmantes externos */
+  phone?: string | null
+  identity_verified?: boolean
+  token_id?: string
+  expires_at?: string
+  viewed_at?: string | null
+  is_expired?: boolean
+  /** Solo firmantes internos ya firmados */
+  record_id?: string
+}
+
+/**
+ * Respuesta completa de GET /signatures/submissions/:submissionId/status.
+ */
+export interface SubmissionSignatureStatus {
+  submission_id: string
+  signature_mode: SignatureMode
+  requires_internal_sign: boolean
+  signers: SignatureStatusEntry[]
 }
 
 /**

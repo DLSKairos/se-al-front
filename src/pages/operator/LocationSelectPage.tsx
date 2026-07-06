@@ -445,6 +445,12 @@ export default function LocationSelectPage() {
 
   function handleConfirm() {
     if (!selectedLocation) return
+    // NOTA DE SEGURIDAD (M7): esta verificación de proximidad GPS es un control
+    // "de buena fe" que corre 100% en el cliente y es falsificable (mock de
+    // geolocalización). NO es prueba de cumplimiento. El fichaje de asistencia
+    // real (/attendance/entry|exit) no depende de esto. Si en el futuro se
+    // requiere geofencing con valor probatorio, debe enviarse lat/lng/accuracy
+    // al backend y validarse server-side, guardando la posición para auditoría.
     setGpsState('loading')
     setGpsError(null)
 

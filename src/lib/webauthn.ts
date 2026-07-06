@@ -145,16 +145,23 @@ export async function registerWebAuthn(userId: string): Promise<boolean> {
  * Registra biometría de primer uso usando identification_number (sin JWT).
  * Retorna el access_token tras el registro exitoso, dejando al usuario autenticado.
  */
-export async function registerWebAuthnPublic(identificationNumber: string): Promise<string> {
-  // 1. Obtener opciones de registro
+export async function registerWebAuthnPublic(
+  identificationNumber: string,
+  activationCode: string,
+): Promise<string> {
+  // 1. Obtener opciones de registro (Fix C2: requiere código de activación)
   let options: RegisterBeginResponse
   try {
     const res = await api.post<RegisterBeginResponse>(
       '/auth/webauthn/register-init/begin',
-      { identification_number: identificationNumber },
+      { identification_number: identificationNumber, activation_code: activationCode },
     )
     options = res.data
   } catch (e: unknown) {
+    const status = (e as { response?: { status?: number } })?.response?.status
+    if (status === 401) {
+      throw new WebAuthnError('Código de activación inválido o expirado', 'INVALID_STATE')
+    }
     throw new WebAuthnError('Error al iniciar registro biométrico', 'NETWORK_ERROR')
   }
 
@@ -206,7 +213,11 @@ export async function registerWebAuthnPublic(identificationNumber: string): Prom
   // 4. Verificar con backend y obtener token
   const finishRes = await api.post<{ access_token: string }>(
     '/auth/webauthn/register-init/finish',
-    { identification_number: identificationNumber, attestationResponse },
+    {
+      identification_number: identificationNumber,
+      attestationResponse,
+      activation_code: activationCode,
+    },
   )
 
   return finishRes.data.access_token
@@ -227,7 +238,9 @@ export async function authenticateWebAuthn(userId: string): Promise<string> {
     options = res.data
   } catch (e: unknown) {
     const status = (e as { response?: { status?: number } })?.response?.status
-    if (status === 400) {
+    // El backend unificó la respuesta a 401 (Fix H3, antes 400) para no
+    // filtrar si la cédula existe o si tiene credenciales registradas.
+    if (status === 400 || status === 401) {
       throw new WebAuthnError('Sin credenciales WebAuthn registradas', 'NO_CREDENTIALS')
     }
     throw new WebAuthnError(

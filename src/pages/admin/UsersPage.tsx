@@ -8,6 +8,7 @@ import {
   Trash2,
   ShieldCheck,
   ShieldAlert,
+  Link as LinkIcon,
 } from 'lucide-react'
 import api from '@/lib/api'
 import { masterListsApi } from '@/lib/api'
@@ -97,6 +98,13 @@ export default function UsersPage() {
   const [toggleModalOpen, setToggleModalOpen] = useState(false)
   const [deletePinModalOpen, setDeletePinModalOpen] = useState(false)
 
+  // Fix C2: enlace de activación de primer acceso para compartir con el operario
+  const [activationInfo, setActivationInfo] = useState<{ name: string; link: string } | null>(null)
+
+  function buildActivationLink(cedula: string, code: string): string {
+    return `${window.location.origin}/login?ci=${encodeURIComponent(cedula)}&code=${encodeURIComponent(code)}`
+  }
+
   // Usuario seleccionado para acciones
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
@@ -137,13 +145,38 @@ export default function UsersPage() {
 
   const createMutation = useMutation({
     mutationFn: (data: Omit<UserFormData, 'pin'> & { pin?: string }) =>
-      api.post('/users', data),
-    onSuccess: () => {
+      api.post<{ name: string; identification_number: string; activation_code?: string }>(
+        '/users',
+        data,
+      ),
+    onSuccess: (res) => {
       toast.success('Usuario creado correctamente')
       setUserModalOpen(false)
       invalidateUsers()
+      // Fix C2: mostrar el enlace de activación de un solo uso para compartirlo.
+      const u = res.data
+      if (u?.activation_code) {
+        setActivationInfo({
+          name: u.name,
+          link: buildActivationLink(u.identification_number, u.activation_code),
+        })
+      }
     },
     onError: () => toast.error('Error al crear el usuario'),
+  })
+
+  const activationCodeMutation = useMutation({
+    mutationFn: (user: User) =>
+      api
+        .post<{ activation_code: string }>(`/users/${user.id}/activation-code`)
+        .then((res) => ({ user, code: res.data.activation_code })),
+    onSuccess: ({ user, code }) => {
+      setActivationInfo({
+        name: user.name,
+        link: buildActivationLink(user.identification_number, code),
+      })
+    },
+    onError: () => toast.error('No se pudo generar el enlace de activación'),
   })
 
   const editMutation = useMutation({
@@ -411,6 +444,15 @@ export default function UsersPage() {
                             aria-label={`Gestionar PIN de ${user.name}`}
                           >
                             <KeyRound className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => activationCodeMutation.mutate(user)}
+                            title="Generar enlace de primer acceso"
+                            aria-label={`Generar enlace de activación de ${user.name}`}
+                          >
+                            <LinkIcon className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </td>
@@ -682,6 +724,40 @@ export default function UsersPage() {
         loading={deletePinMutation.isPending}
         onConfirm={() => deletePinMutation.mutate()}
       />
+
+      {/* Modal enlace de activación (Fix C2) */}
+      <Modal
+        open={!!activationInfo}
+        onOpenChange={(open) => { if (!open) setActivationInfo(null) }}
+        title="Enlace de primer acceso"
+        description={
+          activationInfo
+            ? `Comparte este enlace con ${activationInfo.name} por un canal seguro (WhatsApp, en persona). Es de un solo uso, expira en 7 días y permite crear el PIN o registrar el biométrico una sola vez.`
+            : ''
+        }
+      >
+        {activationInfo && (
+          <div className="flex flex-col gap-3">
+            <div className="break-all text-xs font-mono bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] p-3 text-[var(--off-white)]">
+              {activationInfo.link}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  navigator.clipboard?.writeText(activationInfo.link)
+                  toast.success('Enlace copiado al portapapeles')
+                }}
+              >
+                Copiar enlace
+              </Button>
+              <Button variant="ghost" onClick={() => setActivationInfo(null)}>
+                Cerrar
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }

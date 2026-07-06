@@ -249,7 +249,7 @@ export default function OperatorProfilePage() {
                       Dispositivo biometrico
                     </p>
                     <p className="text-xs text-[var(--muted)] font-dm mt-0.5">
-                      Registrado {formatDateTime(cred.created_at)}
+                      Registrado {formatDateTime(cred.registered_at)}
                     </p>
                   </div>
                   <button
