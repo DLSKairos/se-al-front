@@ -23,7 +23,7 @@ import {
   useToast,
 } from '@/components/ui'
 import Combobox from '@/components/ui/Combobox'
-import { User, UserRole, WorkLocation, MasterItem } from '@/types'
+import { User, UserRole, WorkLocation } from '@/types'
 
 // ── Constantes ─────────────────────────────────────────────────────────────
 
@@ -134,7 +134,7 @@ export default function UsersPage() {
   })
 
   // Convierte MasterItem → { id, name } que consume Combobox
-  const positionItems: { id: string; name: string }[] = (positions as MasterItem[]).map(
+  const positionItems: { id: string; name: string }[] = positions.map(
     (p) => ({ id: p.id, name: p.name }),
   )
 

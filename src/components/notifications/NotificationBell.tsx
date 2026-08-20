@@ -22,37 +22,12 @@ import {
   FileCheck,
   Inbox,
 } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/stores/authStore'
 import { useNotifications } from '@/hooks/useNotifications'
 import { useNotificationsSocket } from '@/hooks/useNotificationsSocket'
+import { useClickOutside } from '@/hooks/useClickOutside'
+import { relativeTime } from '@/lib/relativeTime'
 import type { AppNotification, NotificationType } from '@/types'
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
-
-/**
- * Tiempo relativo en español sin dependencias externas.
- * Ejemplos: "hace 5 min", "hace 2 h", "ayer", "3 jun"
- */
-function relativeTime(dateStr: string): string {
-  const now = Date.now()
-  const then = new Date(dateStr).getTime()
-  const diff = Math.floor((now - then) / 1000) // segundos
-
-  if (diff < 60) return 'hace un momento'
-  if (diff < 3600) {
-    const m = Math.floor(diff / 60)
-    return `hace ${m} min`
-  }
-  if (diff < 86400) {
-    const h = Math.floor(diff / 3600)
-    return `hace ${h} h`
-  }
-  if (diff < 172800) return 'ayer'
-
-  const d = new Date(dateStr)
-  const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
-  return `${d.getDate()} ${months[d.getMonth()]}`
-}
 
 // ── Icono por tipo ───────────────────────────────────────────────────────────
 
@@ -458,7 +433,11 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
     }
   }, [open, anchorRef])
 
-  // Cerrar con Escape y click fuera
+  // Cerrar con click fuera (el botón ancla detiene su propio mousedown, ver
+  // NotificationBell más abajo, para evitar que se cierre y reabra a la vez)
+  useClickOutside(dropdownRef, onClose, open)
+
+  // Cerrar con Escape
   useEffect(() => {
     function onKeyDown(e: globalThis.KeyboardEvent) {
       if (e.key === 'Escape') {
@@ -467,23 +446,9 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
       }
     }
 
-    function onMouseDown(e: globalThis.MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node) &&
-        !anchorRef.current?.contains(e.target as Node)
-      ) {
-        onClose()
-      }
-    }
-
     if (open) {
       document.addEventListener('keydown', onKeyDown)
-      document.addEventListener('mousedown', onMouseDown)
-      return () => {
-        document.removeEventListener('keydown', onKeyDown)
-        document.removeEventListener('mousedown', onMouseDown)
-      }
+      return () => document.removeEventListener('keydown', onKeyDown)
     }
   }, [open, onClose, anchorRef])
 
@@ -616,7 +581,7 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
  * Export: export default NotificationBell
  */
 export default function NotificationBell() {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated } = useAuthStore()
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { unreadCount } = useNotifications()
@@ -642,6 +607,7 @@ export default function NotificationBell() {
         ref={buttonRef}
         type="button"
         onClick={handleButtonClick}
+        onMouseDown={(e) => e.stopPropagation()}
         aria-label={
           unreadCount > 0
             ? `Notificaciones, ${unreadCount > 99 ? '99+' : unreadCount} sin leer`

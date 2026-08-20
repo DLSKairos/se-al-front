@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { LogIn, LogOut, Clock, Coffee } from 'lucide-react'
 import type { AxiosError } from 'axios'
@@ -55,7 +54,6 @@ function formatMinutes(total: number): string {
 // ── Componente ────────────────────────────────────────────────────────────────
 
 export default function AttendancePage() {
-  const navigate    = useNavigate()
   const toast       = useToast()
   const queryClient = useQueryClient()
 

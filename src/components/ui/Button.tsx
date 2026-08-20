@@ -37,7 +37,7 @@ export function Button({
   className = '',
   disabled,
   style,
-  testId = 'button',
+  testId,
   ...props
 }: ButtonProps) {
   return (

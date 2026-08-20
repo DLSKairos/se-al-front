@@ -7,6 +7,7 @@ import {
   FIELD_TYPE_LABELS,
   FIELD_TYPE_ICON_NAMES,
 } from '@/utils/fieldType.utils'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
 // ── DynamicIcon ────────────────────────────────────────────────────────────────
 
@@ -58,22 +59,19 @@ export function FieldTypePopover({
     }
   }, [open])
 
+  // El menú está portado fuera del árbol DOM del trigger, así que el hook
+  // (basado solo en menuRef) no necesita revisar el trigger: éste detiene
+  // la propagación de su propio mousedown (ver más abajo).
+  useClickOutside(menuRef, () => setOpen(false), open)
+
   useEffect(() => {
     if (!open) return
     function handleClose(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false)
     }
-    function handleClickOutside(e: MouseEvent) {
-      const target = e.target as Node
-      if (triggerRef.current?.contains(target)) return
-      if (menuRef.current?.contains(target)) return
-      setOpen(false)
-    }
-    document.addEventListener('mousedown', handleClickOutside)
     document.addEventListener('keydown', handleClose)
     document.addEventListener('scroll', () => setOpen(false), { capture: true, once: true })
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('keydown', handleClose)
     }
   }, [open])
@@ -85,7 +83,12 @@ export function FieldTypePopover({
 
   return (
     <>
-      <div ref={triggerRef} onClick={openMenu} className="cursor-pointer">
+      <div
+        ref={triggerRef}
+        onClick={openMenu}
+        onMouseDown={(e) => e.stopPropagation()}
+        className="cursor-pointer"
+      >
         {children}
       </div>
 

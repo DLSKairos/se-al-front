@@ -7,7 +7,7 @@ vi.mock('@/stores/authStore', () => ({
   },
 }))
 
-import { haversineDistance, slugify, formatDate, formatDateTime, downloadFile } from './utils'
+import { haversineDistance, formatDate, formatDateTime, downloadFile } from './utils'
 
 // ── haversineDistance ─────────────────────────────────────────────────────────
 
@@ -30,27 +30,6 @@ describe('haversineDistance', () => {
     const d1 = haversineDistance(4.7110, -74.0721, 6.2442, -75.5812)
     const d2 = haversineDistance(6.2442, -75.5812, 4.7110, -74.0721)
     expect(d1).toBeCloseTo(d2, 0)
-  })
-})
-
-// ── slugify ───────────────────────────────────────────────────────────────────
-
-describe('slugify', () => {
-  it('should convert a two-word string to snake_case', () => {
-    expect(slugify('Nombre Completo')).toBe('nombre_completo')
-  })
-
-  it('should remove accents/tildes and lowercase', () => {
-    expect(slugify('Año de Nacimiento')).toBe('ano_de_nacimiento')
-  })
-
-  it('should trim leading/trailing spaces and collapse internal whitespace to single underscore', () => {
-    // .trim() removes edges; .replace(/\s+/g, '_') collapses multiple spaces to one _
-    expect(slugify('  espacios  al inicio  ')).toBe('espacios_al_inicio')
-  })
-
-  it('should convert uppercase letters to lowercase', () => {
-    expect(slugify('MAYÚSCULAS')).toBe('mayusculas')
   })
 })
 

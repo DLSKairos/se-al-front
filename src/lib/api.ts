@@ -4,7 +4,6 @@ import type {
   AIGenerateResult,
   AIAssistResult,
   EditorSection,
-  EditorField,
   FormBlueprint,
   FormTemplate,
   InventarioSession,
@@ -19,11 +18,9 @@ import type {
   ExternalSigner,
   SignatureTokenInfo,
   SubmissionSignatureStatus,
-  SignatureConfig,
   StrokeVector,
   ReadingLogEntry,
   PublicSignatureView,
-  SignatureMode,
   SubmissionStatus,
   FormSubmission,
   OrgWithUsage,
@@ -122,12 +119,6 @@ export const formAiApi = {
 export const blueprintsApi = {
   list: (filters?: { category?: string; search?: string }) =>
     api.get<FormBlueprint[]>('/form-blueprints', { params: filters }),
-  create: (dto: {
-    name: string
-    description?: string
-    category: string
-    fields: EditorField[]
-  }) => api.post<FormBlueprint>('/form-blueprints', dto),
   use: (id: string) =>
     api.post<FormTemplate>(`/form-blueprints/${id}/use`),
 }
@@ -304,28 +295,6 @@ export const signaturesApi = {
     },
   ) => api.post<{ signed_at: string }>(`/signatures/submissions/${submissionId}/sign`, dto),
 
-  // Verificación de integridad
-  verifyIntegrity: (submissionId: string) =>
-    api.get<{ valid: boolean; document_hash: string }>(`/signatures/submissions/${submissionId}/verify`),
-
-  // URLs firmadas para ver identidad (solo ADMIN)
-  getIdentityUrls: (signerId: string) =>
-    api.get<{ photo_id_url: string; selfie_url: string }>(
-      `/signatures/external-signers/${signerId}/identity-urls`,
-    ),
-
-  // Config de firma por template (solo ADMIN)
-  getConfig: (templateId: string) =>
-    api.get<SignatureConfig>(`/signatures/templates/${templateId}/config`),
-
-  updateConfig: (
-    templateId: string,
-    dto: {
-      signature_mode?: SignatureMode
-      min_reading_seconds?: number
-      requires_internal_sign?: boolean
-    },
-  ) => api.put<SignatureConfig>(`/signatures/templates/${templateId}/config`, dto),
 }
 
 // ── Public Signature (sin auth de JWT de SEÑAL) ───────────────────────────────
@@ -435,10 +404,6 @@ export const superadminApi = {
     api.get<MagicLinkHistoryItem[]>('/superadmin/magic-link/history', {
       params: { orgId },
     }),
-
-  /** PATCH /superadmin/feature-flags/:flag */
-  setFeatureFlag: (flag: string, enabled: boolean) =>
-    featureFlagsApi.setFlag(flag, enabled),
 }
 
 // ── Admin Management ──────────────────────────────────────────────────────────
@@ -469,38 +434,10 @@ export const adminManagementApi = {
 export const masterListsApi = {
   // Lectura (todos los usuarios autenticados)
   getPositions: () => api.get<MasterItem[]>('/master/positions'),
-  getRoles: () => api.get<MasterItem[]>('/master/roles'),
-  getDepartments: () => api.get<MasterItem[]>('/master/departments'),
 
   /** POST /master/suggestions — sugerir un valor nuevo */
   createSuggestion: (dto: { entity_type: string; value: string }) =>
     api.post<MasterSuggestion>('/master/suggestions', dto),
-
-  // Gestión (solo ADMIN)
-  createPosition: (dto: { name: string }) =>
-    api.post<MasterItem>('/admin/master/positions', dto),
-  createRole: (dto: { name: string }) =>
-    api.post<MasterItem>('/admin/master/roles', dto),
-  createDepartment: (dto: { name: string }) =>
-    api.post<MasterItem>('/admin/master/departments', dto),
-
-  updateItem: (
-    type: 'positions' | 'roles' | 'departments',
-    id: string,
-    dto: { name: string },
-  ) => api.patch<MasterItem>(`/admin/master/${type}/${id}`, dto),
-
-  deactivateItem: (type: 'positions' | 'roles' | 'departments', id: string) =>
-    api.patch<MasterItem>(`/admin/master/${type}/${id}/deactivate`),
-
-  // Sugerencias (solo ADMIN)
-  listSuggestions: () => api.get<MasterSuggestion[]>('/admin/master/suggestions'),
-
-  approveSuggestion: (id: string) =>
-    api.patch<MasterSuggestion>(`/admin/master/suggestions/${id}/approve`),
-
-  rejectSuggestion: (id: string) =>
-    api.patch<MasterSuggestion>(`/admin/master/suggestions/${id}/reject`),
 }
 
 // ── Status ────────────────────────────────────────────────────────────────────

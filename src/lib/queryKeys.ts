@@ -3,7 +3,6 @@ export const QK = {
     admin:  () => ['form-templates', 'admin'] as const,
     active: () => ['form-templates', 'active'] as const,
     detail: (id: string) => ['form-templates', id] as const,
-    fields: (id: string) => ['form-templates', id, 'fields'] as const,
     context: (id: string) => ['form-templates', id, 'context'] as const,
   },
   submissions: {
@@ -11,7 +10,6 @@ export const QK = {
     list:   (filters: object) => ['submissions', filters] as const,
     stats:  (filters: object) => ['submissions', 'stats', filters] as const,
     detail: (id: string)      => ['submissions', id] as const,
-    signatures: (id: string)  => ['submissions', id, 'signatures'] as const,
   },
   users:         () => ['users'] as const,
   workLocations: (all?: boolean) => ['work-locations', all] as const,
@@ -31,7 +29,6 @@ export const QK = {
   blueprints: {
     list: (filters?: { category?: string; search?: string }) =>
       ['blueprints', 'list', filters] as const,
-    detail: (id: string) => ['blueprints', id] as const,
   },
   inventarios: {
     all: ['inventarios'] as const,
@@ -46,7 +43,6 @@ export const QK = {
   appNotifications: {
     list:   (params?: { unreadOnly?: boolean; page?: number }) =>
       ['app-notifications', 'list', params] as const,
-    unread: () => ['app-notifications', 'unread'] as const,
   },
 
   /** Feature flags del sistema */
@@ -87,10 +83,6 @@ export const QK = {
   /** Listas maestras */
   masterLists: {
     positions:  () => ['master-lists', 'positions'] as const,
-    roles:      () => ['master-lists', 'roles'] as const,
-    departments: () => ['master-lists', 'departments'] as const,
-    /** Sugerencias pendientes (solo admin) */
-    suggestions: () => ['master-lists', 'suggestions'] as const,
   },
 
   /** Contexto mínimo del usuario (status/user-context) */

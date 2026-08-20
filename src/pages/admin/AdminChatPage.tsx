@@ -111,7 +111,7 @@ export default function AdminChatPage() {
 
     try {
       const history = messages
-        .filter((_, i) => i > 0)
+        .slice(1)
         .map((m) => ({ role: m.role, content: m.content }))
 
       const { data } = await adminAiApi.chat({ message: trimmed, history })

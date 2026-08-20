@@ -21,7 +21,6 @@ const DEFAULT_MIN_SECONDS = 30
 
 interface DocumentSectionProps {
   section: { id: string; title: string; entries: Array<{ label: string; value: string }> }
-  isCurrent: boolean
   isCompleted: boolean
 }
 
@@ -60,6 +59,33 @@ function DocumentSection({ section, isCompleted }: DocumentSectionProps) {
 
 // ── Paso de lectura del documento ─────────────────────────────────────────────
 
+// Construye la única sección de lectura a partir de los values del submission.
+// Si hay values estructurados los usa (agrupados en una sola sección); si no,
+// cae de vuelta a los datos crudos del submission.
+function buildDocumentSection(submission: FormSubmission) {
+  if (!submission.values || submission.values.length === 0) {
+    return {
+      id: 'main',
+      title: submission.template?.name ?? 'Documento',
+      entries: Object.entries(submission.data).map(([k, v]) => ({
+        label: k,
+        value: typeof v === 'object' ? JSON.stringify(v) : String(v ?? ''),
+      })),
+    }
+  }
+
+  return {
+    id: 'main-section',
+    title: submission.template?.name ?? 'Documento',
+    entries: submission.values
+      .filter((fv) => fv.field?.field_type !== 'SIGNATURE' && !fv.value_text?.startsWith('data:image/'))
+      .map((fv) => ({
+        label: fv.field?.label ?? fv.field_id,
+        value: fv.value_text ?? (fv.value_number != null ? String(fv.value_number) : ''),
+      })),
+  }
+}
+
 interface ReadingViewProps {
   submission: FormSubmission
   onComplete: (readingLog: Array<{ section_or_field_id: string; seconds_viewed: number }>) => void
@@ -70,34 +96,8 @@ function ReadingView({ submission, onComplete }: ReadingViewProps) {
   const [elapsed, setElapsed] = useState(0)
   const minSeconds = DEFAULT_MIN_SECONDS
 
-  // Construir secciones a partir de los values del submission
-  const sections = (() => {
-    if (!submission.values || submission.values.length === 0) {
-      return [{
-        id: 'main',
-        title: submission.template?.name ?? 'Documento',
-        entries: Object.entries(submission.data).map(([k, v]) => ({
-          label: k,
-          value: typeof v === 'object' ? JSON.stringify(v) : String(v ?? ''),
-        })),
-      }]
-    }
-
-    // Agrupar por sección si hay fields; un solo grupo si no
-    const sectionId = 'main-section'
-    return [{
-      id: sectionId,
-      title: submission.template?.name ?? 'Documento',
-      entries: submission.values
-        .filter((fv) => fv.field?.field_type !== 'SIGNATURE' && !fv.value_text?.startsWith('data:image/'))
-        .map((fv) => ({
-          label: fv.field?.label ?? fv.field_id,
-          value: fv.value_text ?? (fv.value_number != null ? String(fv.value_number) : ''),
-        })),
-    }]
-  })()
-
-  const singleSectionId = sections[0].id
+  const documentSection = buildDocumentSection(submission)
+  const singleSectionId = documentSection.id
   const secondsInSection = getSecondsForSection(singleSectionId)
   const canProceed = secondsInSection >= minSeconds
 
@@ -160,14 +160,7 @@ function ReadingView({ submission, onComplete }: ReadingViewProps) {
 
       {/* Documento */}
       <div className="flex flex-col gap-3">
-        {sections.map((section) => (
-          <DocumentSection
-            key={section.id}
-            section={section}
-            isCurrent
-            isCompleted={canProceed}
-          />
-        ))}
+        <DocumentSection section={documentSection} isCompleted={canProceed} />
       </div>
 
       <Button

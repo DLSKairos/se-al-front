@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import type { Socket } from 'socket.io-client'
 import { connectNotificationsSocket, NotificationSocketPayload } from '@/lib/socket'
 import { QK } from '@/lib/queryKeys'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/components/ui'
 
 /**
@@ -16,7 +16,7 @@ import { useToast } from '@/components/ui'
  * Se desconecta al desmontar o al cerrar sesión.
  */
 export function useNotificationsSocket() {
-  const { token, isAuthenticated } = useAuth()
+  const { token, isAuthenticated } = useAuthStore()
   const queryClient = useQueryClient()
   const toast = useToast()
   const socketRef = useRef<Socket | null>(null)

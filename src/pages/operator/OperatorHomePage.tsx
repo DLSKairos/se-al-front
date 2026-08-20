@@ -9,6 +9,7 @@ import { FormTemplate, AttendanceRecord } from '@/types'
 import { LoadingSpinner, ErrorMessage } from '@/components/ui'
 import { SOSButton } from '@/components/ui/SOSButton'
 import StoryIntro from '@/components/game/StoryIntro'
+import { frequencyLabel } from '@/pages/operator/PermisosPage'
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -133,15 +134,7 @@ function TemplateCard({ template }: TemplateCardProps) {
           </p>
         )}
         <span className="text-[9px] font-bold tracking-[0.1em] uppercase px-2.5 py-1 rounded bg-[rgba(0,212,255,0.1)] text-[var(--signal)] border border-[rgba(0,212,255,0.25)]">
-          {template.data_frequency === 'DAILY'
-            ? 'Diario'
-            : template.data_frequency === 'WEEKLY'
-            ? 'Semanal'
-            : template.data_frequency === 'PER_EVENT'
-            ? 'Por evento'
-            : template.data_frequency === 'ONCE'
-            ? 'Una vez'
-            : 'Cuando aplique'}
+          {frequencyLabel(template.data_frequency)}
         </span>
       </div>
       <ChevronRight className="w-4 h-4 text-[var(--muted)] shrink-0" aria-hidden="true" />

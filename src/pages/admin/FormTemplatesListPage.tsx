@@ -34,6 +34,35 @@ const FREQUENCY_LABEL: Record<string, string> = {
   PER_EVENT: 'Por evento',
 }
 
+const CONFIRM_CONFIG: Record<
+  ConfirmAction,
+  {
+    title: string
+    description: (templateName: string) => string
+    variant: 'danger' | 'warning'
+    confirmLabel: string
+  }
+> = {
+  delete: {
+    title: 'Eliminar formulario',
+    description: (name) => `¿Eliminar "${name}"? Esta acción no se puede deshacer.`,
+    variant: 'danger',
+    confirmLabel: 'Eliminar',
+  },
+  archive: {
+    title: 'Archivar formulario',
+    description: (name) => `¿Archivar "${name}"? Los operarios dejarán de verlo.`,
+    variant: 'danger',
+    confirmLabel: 'Archivar',
+  },
+  activate: {
+    title: 'Publicar formulario',
+    description: (name) => `¿Publicar "${name}"? Los operarios podrán verlo y llenarlo.`,
+    variant: 'warning',
+    confirmLabel: 'Publicar',
+  },
+}
+
 export default function FormTemplatesListPage() {
   const navigate   = useNavigate()
   const qc         = useQueryClient()
@@ -279,33 +308,10 @@ export default function FormTemplatesListPage() {
         <ConfirmModal
           open={confirmState.open}
           onOpenChange={(open) => !open && setConfirmState(null)}
-          title={
-            confirmState.action === 'delete'
-              ? 'Eliminar formulario'
-              : confirmState.action === 'archive'
-                ? 'Archivar formulario'
-                : 'Publicar formulario'
-          }
-          description={
-            confirmState.action === 'delete'
-              ? `¿Eliminar "${confirmState.templateName}"? Esta acción no se puede deshacer.`
-              : confirmState.action === 'archive'
-                ? `¿Archivar "${confirmState.templateName}"? Los operarios dejarán de verlo.`
-                : `¿Publicar "${confirmState.templateName}"? Los operarios podrán verlo y llenarlo.`
-          }
-          variant={
-            confirmState.action === 'delete' ||
-            confirmState.action === 'archive'
-              ? 'danger'
-              : 'warning'
-          }
-          confirmLabel={
-            confirmState.action === 'delete'
-              ? 'Eliminar'
-              : confirmState.action === 'archive'
-                ? 'Archivar'
-                : 'Publicar'
-          }
+          title={CONFIRM_CONFIG[confirmState.action].title}
+          description={CONFIRM_CONFIG[confirmState.action].description(confirmState.templateName)}
+          variant={CONFIRM_CONFIG[confirmState.action].variant}
+          confirmLabel={CONFIRM_CONFIG[confirmState.action].confirmLabel}
           loading={changeStatus.isPending || deleteTemplate.isPending}
           onConfirm={handleConfirm}
         />

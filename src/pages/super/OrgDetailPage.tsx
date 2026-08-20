@@ -19,14 +19,9 @@ import { QK } from '@/lib/queryKeys'
 import { OrgWithUsage, OrgConfig, PlanTier, AdminUser, FeatureFlags, MagicLinkHistoryItem, CreateOrgAdminPayload } from '@/types'
 import { Button, LoadingSpinner, ErrorMessage, Badge, useToast } from '@/components/ui'
 import { UsageBar } from '@/components/super/UsageBar'
+import { PLAN_OPTIONS } from '@/lib/plans'
 
 // ── Constantes ────────────────────────────────────────────────────────────────
-
-const PLAN_OPTIONS: { value: PlanTier; label: string }[] = [
-  { value: 'STARTER',      label: 'Starter'      },
-  { value: 'PROFESSIONAL', label: 'Professional' },
-  { value: 'ENTERPRISE',   label: 'Enterprise'   },
-]
 
 const FEATURE_FLAG_LABELS: Record<keyof FeatureFlags, string> = {
   oauth_google:          'OAuth Google',
@@ -534,13 +529,7 @@ function MagicLinkHistory({ orgId }: { orgId: string }) {
 
 // ── Sección Feature flags ─────────────────────────────────────────────────────
 
-const KNOWN_FLAGS = [
-  'oauth_google',
-  'oauth_microsoft',
-  'electronic_signature',
-  'magic_link',
-  'superadmin_panel',
-] as const
+const KNOWN_FLAGS = Object.keys(FEATURE_FLAG_LABELS) as Extract<keyof FeatureFlags, string>[]
 
 function FeatureFlagsSection() {
   const toast       = useToast()

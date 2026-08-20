@@ -19,11 +19,6 @@ import {
   MapPin,
   User,
   CheckCircle2,
-  XCircle,
-  Clock,
-  Link2,
-  AlertTriangle,
-  FileCheck,
   Bell,
   Search,
   X,
@@ -32,6 +27,7 @@ import {
 } from 'lucide-react'
 import api, { notificationsApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
+import { relativeTime } from '@/lib/relativeTime'
 import {
   Button,
   Badge,
@@ -46,7 +42,6 @@ import type {
   AppNotification,
   BulkNotificationTarget,
   CreateBulkNotificationDto,
-  NotificationType,
 } from '@/types'
 
 // ── Constantes de estilo (siguiendo UsersPage) ────────────────────────────────
@@ -67,35 +62,12 @@ const MAX_TITLE = 60
 const MAX_BODY = 200
 const SENT_PAGE_SIZE = 15
 
-// ── Helper: tiempo relativo en español ────────────────────────────────────────
+// ── Icono de la notificación de comunicaciones (siempre CUSTOM_ADMIN) ─────────
 
-function relativeTime(dateStr: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
-  if (diff < 60) return 'hace un momento'
-  if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`
-  if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`
-  if (diff < 172800) return 'ayer'
-  const d = new Date(dateStr)
-  const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
-  return `${d.getDate()} ${months[d.getMonth()]}`
-}
-
-// ── Icono por tipo de notificación ────────────────────────────────────────────
-
-interface TypeConfig {
-  Icon: React.ElementType
-  color: string
-  bg: string
-}
-
-const TYPE_CONFIG: Record<NotificationType, TypeConfig> = {
-  FORM_APPROVED: { Icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/15' },
-  FORM_REJECTED: { Icon: XCircle, color: 'text-red-400', bg: 'bg-red-500/15' },
-  FORM_PENDING_SIGNATURE: { Icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/15' },
-  FORM_SUBMITTED: { Icon: FileCheck, color: 'text-blue-400', bg: 'bg-blue-500/15' },
-  MAGIC_LINK_SENT: { Icon: Link2, color: 'text-[var(--signal)]', bg: 'bg-[rgba(0,212,255,0.12)]' },
-  SYSTEM_ALERT: { Icon: AlertTriangle, color: 'text-amber-300', bg: 'bg-amber-400/10' },
-  CUSTOM_ADMIN: { Icon: Megaphone, color: 'text-violet-400', bg: 'bg-violet-500/15' },
+const CUSTOM_ADMIN_ICON = {
+  Icon: Megaphone,
+  color: 'text-violet-400',
+  bg: 'bg-violet-500/15',
 }
 
 // ── Componente: preview de notificación ──────────────────────────────────────
@@ -106,7 +78,7 @@ interface NotificationPreviewProps {
 }
 
 function NotificationPreview({ title, body }: NotificationPreviewProps) {
-  const cfg = TYPE_CONFIG.CUSTOM_ADMIN
+  const cfg = CUSTOM_ADMIN_ICON
   const Icon = cfg.Icon
 
   const hasContent = title.trim() || body.trim()

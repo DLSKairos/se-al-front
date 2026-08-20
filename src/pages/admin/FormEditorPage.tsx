@@ -12,6 +12,20 @@ import { NotificationsDrawer } from '@/components/form-editor/NotificationsDrawe
 import { SaveFormDrawer } from '@/components/form-editor/SaveFormDrawer'
 import { ConfirmModal } from '@/components/ui'
 
+// Mapea un campo crudo del template (backend) al shape que consume el editor
+function mapField(f: any) {
+  return {
+    id: f.id,
+    label: f.label,
+    key: f.key,
+    type: f.type,
+    required: f.required,
+    options: Array.isArray(f.options) ? f.options : undefined,
+    placeholder: f.placeholder ?? undefined,
+    helpText: f.help_text ?? undefined,
+  }
+}
+
 export default function FormEditorPage() {
   const navigate = useNavigate()
   const { templateId } = useParams<{ templateId: string }>()
@@ -66,16 +80,7 @@ export default function FormEditorPage() {
           hasObservations: sec.hasObservations ?? false,
           fields: (tpl.fields ?? [])
             .filter((f: any) => f.section === sec.name)
-            .map((f: any) => ({
-              id: f.id,
-              label: f.label,
-              key: f.key,
-              type: f.type,
-              required: f.required,
-              options: Array.isArray(f.options) ? f.options : undefined,
-              placeholder: f.placeholder ?? undefined,
-              helpText: f.help_text ?? undefined,
-            })),
+            .map(mapField),
         }))
       } else {
         // Template sin secciones (flujo anterior) — agrupar en "General"
@@ -84,16 +89,7 @@ export default function FormEditorPage() {
             id: crypto.randomUUID(),
             name: 'General',
             hasObservations: false,
-            fields: (tpl.fields ?? []).map((f: any) => ({
-              id: f.id,
-              label: f.label,
-              key: f.key,
-              type: f.type,
-              required: f.required,
-              options: Array.isArray(f.options) ? f.options : undefined,
-              placeholder: f.placeholder ?? undefined,
-              helpText: f.help_text ?? undefined,
-            })),
+            fields: (tpl.fields ?? []).map(mapField),
           },
         ]
       }

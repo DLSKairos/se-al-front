@@ -7,7 +7,7 @@ import { FormTemplate } from '@/types'
 import { LoadingSpinner, ErrorMessage } from '@/components/ui'
 import { SOSButton } from '@/components/ui/SOSButton'
 
-function frequencyLabel(freq: string) {
+export function frequencyLabel(freq: string) {
   const map: Record<string, string> = {
     DAILY: 'Diario',
     WEEKLY: 'Semanal',

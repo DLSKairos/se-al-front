@@ -6,14 +6,9 @@ import { QK } from '@/lib/queryKeys'
 import { OrgWithUsage, PlanTier } from '@/types'
 import { Button, LoadingSpinner, ErrorMessage, Badge } from '@/components/ui'
 import { UsageBar } from '@/components/super/UsageBar'
+import { PLAN_LABEL } from '@/lib/plans'
 
 // ── Badge de plan ─────────────────────────────────────────────────────────────
-
-const PLAN_LABEL: Record<PlanTier, string> = {
-  STARTER:      'Starter',
-  PROFESSIONAL: 'Professional',
-  ENTERPRISE:   'Enterprise',
-}
 
 type BadgeVariant = 'draft' | 'default' | 'warning'
 

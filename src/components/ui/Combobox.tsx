@@ -6,6 +6,7 @@ import {
   KeyboardEvent,
 } from 'react'
 import { Search, ChevronDown, PlusCircle, X } from 'lucide-react'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -105,17 +106,11 @@ export default function Combobox({
   const hasSuggestOption = !!onSuggest && filtered.length === 0 && query.trim().length > 0
 
   // Cierra al hacer click fuera
-  useEffect(() => {
-    function handleOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false)
-        setQuery('')
-        setActiveIndex(-1)
-      }
-    }
-    document.addEventListener('mousedown', handleOutside)
-    return () => document.removeEventListener('mousedown', handleOutside)
-  }, [])
+  useClickOutside(containerRef, () => {
+    setOpen(false)
+    setQuery('')
+    setActiveIndex(-1)
+  })
 
   // Scroll del item activo al campo visible
   useEffect(() => {

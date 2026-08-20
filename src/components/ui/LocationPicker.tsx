@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-lea
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { Search, MapPin, Loader2 } from 'lucide-react'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
 // Leaflet marker icon — bypass the Vite asset URL issue usando CDN
 const defaultIcon = new L.Icon({
@@ -101,15 +102,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
   }, [query, search])
 
   // Cierra sugerencias si se hace clic fuera
-  useEffect(() => {
-    function handleOutside(e: MouseEvent) {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false)
-      }
-    }
-    document.addEventListener('mousedown', handleOutside)
-    return () => document.removeEventListener('mousedown', handleOutside)
-  }, [])
+  useClickOutside(suggestionsRef, () => setShowSuggestions(false))
 
   function selectSuggestion(result: NominatimResult) {
     const coords: LatLng = { lat: parseFloat(result.lat), lng: parseFloat(result.lon) }

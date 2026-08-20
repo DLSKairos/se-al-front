@@ -14,36 +14,9 @@ import { inventariosApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { InventarioSession } from '@/types'
 import { LoadingSpinner, ErrorMessage } from '@/components/ui'
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-type EstadoSesion = InventarioSession['estado']
-
-const ESTADO_LABELS: Record<EstadoSesion, string> = {
-  borrador:   'Borrador',
-  completado: 'Completado',
-  firmado:    'Firmado',
-  cerrado:    'Cerrado',
-}
-
-const ESTADO_CLASES: Record<EstadoSesion, string> = {
-  borrador:   'bg-[rgba(245,166,35,0.15)] text-amber-400 border border-[rgba(245,166,35,0.3)]',
-  completado: 'bg-blue-500/10 text-blue-400 border border-blue-500/30',
-  firmado:    'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-  cerrado:    'bg-white/5 text-white/40 border border-white/10',
-}
+import { BadgeEstado } from '@/components/inventarios/BadgeEstado'
 
 // ── Subcomponentes ────────────────────────────────────────────────────────────
-
-function BadgeEstado({ estado }: { estado: EstadoSesion }) {
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-[var(--radius-badge)] text-[10px] font-semibold font-['DM_Sans'] uppercase tracking-wide ${ESTADO_CLASES[estado]}`}
-    >
-      {ESTADO_LABELS[estado]}
-    </span>
-  )
-}
 
 interface CampoLecturaProps {
   label: string
@@ -146,7 +119,7 @@ export default function InventarioDetailPage() {
             {sesion.tipo_formulario}
           </h1>
           <div className="flex items-center gap-2 mt-0.5">
-            <BadgeEstado estado={sesion.estado} />
+            <BadgeEstado estado={sesion.estado} className="px-2.5 py-1" />
             <span className="text-[10px] text-white/30 font-['DM_Sans']">{fechaCreacion}</span>
           </div>
         </div>

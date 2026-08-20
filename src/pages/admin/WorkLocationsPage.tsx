@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Pencil, ToggleLeft, ToggleRight, MapPin } from 'lucide-react'
+import { Plus, Pencil, ToggleLeft, ToggleRight } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { WorkLocation, Department } from '@/types'

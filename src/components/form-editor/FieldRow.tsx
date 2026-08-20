@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { GripVertical, MoreVertical, Settings, Copy, Trash2, Plus, X } from 'lucide-react'
+import { GripVertical, MoreVertical, Copy, Trash2, Plus, X } from 'lucide-react'
 import { EditorField } from '@/types'
 import { FIELD_TYPE_LABELS, FIELD_TYPE_ICON_NAMES, toSnakeCase } from '@/utils/fieldType.utils'
 import { useFormEditorStore } from '@/stores/formEditorStore'
+import { useClickOutside } from '@/hooks/useClickOutside'
 import { FieldTypePopover, DynamicIcon } from './FieldTypePopover'
 
 // ── OptionsMenu ────────────────────────────────────────────────────────────────
 
 interface OptionsMenuProps {
-  onAdvanced: () => void
   onDuplicate: () => void
   onDelete: () => void
 }
 
-function OptionsMenu({ onAdvanced, onDuplicate, onDelete }: OptionsMenuProps) {
+function OptionsMenu({ onDuplicate, onDelete }: OptionsMenuProps) {
   const [open, setOpen] = useState(false)
   const [menuPos, setMenuPos] = useState<{ top: number; right: number }>({ top: 0, right: 0 })
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -29,17 +29,14 @@ function OptionsMenu({ onAdvanced, onDuplicate, onDelete }: OptionsMenuProps) {
     setOpen((p) => !p)
   }
 
+  // El trigger detiene el mousedown para que el hook (basado solo en menuRef,
+  // ya que el menú está portado fuera del árbol DOM del trigger) no lo procese
+  // como "click afuera" y cierre el menú antes de que el onClick lo vuelva a abrir.
+  useClickOutside(menuRef, () => setOpen(false), open)
+
   useEffect(() => {
     if (!open) return
-    function handleClickOutside(e: MouseEvent) {
-      const target = e.target as Node
-      if (triggerRef.current?.contains(target)) return
-      if (menuRef.current?.contains(target)) return
-      setOpen(false)
-    }
-    document.addEventListener('mousedown', handleClickOutside)
     document.addEventListener('scroll', () => setOpen(false), { capture: true, once: true })
-    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
   function handle(fn: () => void) {
@@ -52,6 +49,7 @@ function OptionsMenu({ onAdvanced, onDuplicate, onDelete }: OptionsMenuProps) {
       <button
         ref={triggerRef}
         onClick={openMenu}
+        onMouseDown={(e) => e.stopPropagation()}
         className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] opacity-0 group-hover:opacity-100 transition-all"
         aria-label="Opciones del campo"
       >
@@ -64,13 +62,6 @@ function OptionsMenu({ onAdvanced, onDuplicate, onDelete }: OptionsMenuProps) {
           style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
           className="bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-44"
         >
-          <button
-            onClick={() => handle(onAdvanced)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] cursor-pointer text-left"
-          >
-            <Settings size={13} className="text-[var(--muted)]" />
-            Configuración avanzada
-          </button>
           <button
             onClick={() => handle(onDuplicate)}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] cursor-pointer text-left"
@@ -229,7 +220,6 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
 
         {/* Menu de opciones */}
         <OptionsMenu
-          onAdvanced={() => {/* TODO: abrir configuración avanzada */}}
           onDuplicate={handleDuplicate}
           onDelete={() => removeField(sectionId, field.id)}
         />

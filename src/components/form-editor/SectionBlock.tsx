@@ -17,6 +17,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { EditorSection } from '@/types'
 import { useFormEditorStore } from '@/stores/formEditorStore'
+import { useClickOutside } from '@/hooks/useClickOutside'
 import { FieldRow } from './FieldRow'
 
 // ── SectionOptionsMenu ─────────────────────────────────────────────────────────
@@ -35,16 +36,7 @@ function SectionOptionsMenu({
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!open) return
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [open])
+  useClickOutside(ref, () => setOpen(false), open)
 
   function handle(fn: () => void) {
     fn()

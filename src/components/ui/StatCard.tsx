@@ -1,17 +1,12 @@
 import { LucideIcon } from 'lucide-react'
-import { ReactNode } from 'react'
 
 type StatVariant = 'default' | 'signal' | 'amber' | 'success'
 
 interface StatCardProps {
   title: string
   value: string | number
-  subtitle?: string
   icon?: LucideIcon
-  trend?: { value: number; label: string }
-  highlight?: boolean
   variant?: StatVariant
-  children?: ReactNode
 }
 
 const variantColors: Record<StatVariant, string> = {
@@ -38,15 +33,9 @@ const variantIconColor: Record<StatVariant, string> = {
 export function StatCard({
   title,
   value,
-  subtitle,
   icon: Icon,
-  trend,
-  highlight = false,
   variant = 'default',
-  children,
 }: StatCardProps) {
-  const trendPositive = trend && trend.value >= 0
-
   return (
     <div className={`glass-card-md flex flex-col gap-3 p-5 stat-glow`}>
       <div className="flex items-start justify-between gap-2">
@@ -61,16 +50,7 @@ export function StatCard({
       </div>
       <div>
         <p className={`text-3xl font-bold font-display ${variantColors[variant]}`}>{value}</p>
-        {subtitle && (
-          <p className="text-xs text-[var(--muted)] mt-0.5 font-dm">{subtitle}</p>
-        )}
       </div>
-      {trend && (
-        <p className={`text-xs font-dm ${trendPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-          {trendPositive ? '↑' : '↓'} {Math.abs(trend.value)}% {trend.label}
-        </p>
-      )}
-      {children}
     </div>
   )
 }

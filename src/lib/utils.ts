@@ -39,19 +39,6 @@ export function haversineDistance(
 }
 
 /**
- * Convierte un string a snake_case (para generar el `key` de campos de formulario).
- */
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s_]/g, '')
-    .trim()
-    .replace(/\s+/g, '_')
-}
-
-/**
  * Formatea una fecha ISO a formato legible en Colombia.
  */
 export function formatDate(iso: string): string {

@@ -36,8 +36,6 @@ interface FormEditorStore {
   moveField: (fromSectionId: string, toSectionId: string, fromIndex: number, toIndex: number) => void
   reorderFieldsInSection: (sectionId: string, fromIndex: number, toIndex: number) => void
   applySectionsFromAI: (sections: EditorSection[]) => void
-  markDirty: () => void
-  setTargetJobTitles: (titles: string[]) => void
 }
 
 export const useFormEditorStore = create<FormEditorStore>((set, get) => ({
@@ -184,12 +182,4 @@ export const useFormEditorStore = create<FormEditorStore>((set, get) => ({
     set((s) => ({
       state: { ...s.state, sections, isDirty: true },
     })),
-
-  markDirty: () => set((s) => ({ state: { ...s.state, isDirty: true } })),
-
-  setTargetJobTitles: (targetJobTitles) =>
-    set((s) => ({ state: { ...s.state, targetJobTitles, isDirty: true } })),
 }))
-
-// Permite acceder al store fuera de componentes React
-export const getFormEditorState = () => useFormEditorStore.getState()

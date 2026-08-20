@@ -231,6 +231,89 @@ function EmptyState() {
   )
 }
 
+// ── Mensajes de estado GPS (compartidos entre vista única y grid) ─────────────
+// `variant` controla las clases que difieren entre ambos usos: la vista de
+// obra única usa "w-full ... mb-6" y el grid usa "... mt-4".
+
+function renderGpsStatus(
+  gpsState: GpsState,
+  gpsError: string | null,
+  distance: number | null,
+  variant: 'single' | 'grid',
+) {
+  const keySuffix = variant === 'grid' ? '-grid' : ''
+  const wrapperClass = variant === 'single' ? 'w-full ' : ''
+  const spacingClass = variant === 'single' ? 'mb-6' : 'mt-4'
+
+  return (
+    <>
+      {gpsState === 'error' && gpsError && (
+        <motion.div
+          key={`gps-error${keySuffix}`}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          role="alert"
+          className={`${wrapperClass}flex items-start gap-3 p-4 rounded-[14px] ${spacingClass}`}
+          style={{
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.2)',
+          }}
+        >
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm text-red-300 font-dm">{gpsError}</p>
+        </motion.div>
+      )}
+
+      {gpsState === 'ok' && (
+        <motion.div
+          key={`gps-ok${keySuffix}`}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          role="status"
+          className={`${wrapperClass}flex items-center gap-3 p-4 rounded-[14px] ${spacingClass}`}
+          style={{
+            background: 'rgba(34,197,94,0.1)',
+            border: '1px solid rgba(34,197,94,0.2)',
+          }}
+        >
+          <CheckCircle className="w-5 h-5 text-emerald-400" aria-hidden="true" />
+          <p className="text-sm text-emerald-300 font-dm">
+            Ubicación verificada ({distance}m de la obra)
+          </p>
+        </motion.div>
+      )}
+    </>
+  )
+}
+
+// ── Contenido del botón de confirmación (compartido entre vista única y grid) ─
+
+function renderConfirmButtonLabel(gpsState: GpsState, idleGapClass: string) {
+  if (gpsState === 'loading') {
+    return (
+      <span className="inline-flex items-center gap-3 justify-center">
+        <span
+          className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin inline-block shrink-0"
+          style={{
+            borderColor: 'rgba(12,22,36,0.5)',
+            borderTopColor: 'transparent',
+          }}
+        />
+        Verificando ubicación...
+      </span>
+    )
+  }
+
+  return (
+    <span className={`flex items-center ${idleGapClass} justify-center`}>
+      <MapPin className="w-5 h-5 shrink-0" />
+      Confirmar y entrar
+    </span>
+  )
+}
+
 // ── Pantalla de obra única ────────────────────────────────────────────────────
 
 interface SingleLocationViewProps {
@@ -314,43 +397,7 @@ function SingleLocationView({
 
       {/* Mensajes GPS */}
       <AnimatePresence mode="wait">
-        {gpsState === 'error' && gpsError && (
-          <motion.div
-            key="gps-error"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            role="alert"
-            className="w-full flex items-start gap-3 p-4 rounded-[14px] mb-6"
-            style={{
-              background: 'rgba(239,68,68,0.1)',
-              border: '1px solid rgba(239,68,68,0.2)',
-            }}
-          >
-            <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-sm text-red-300 font-dm">{gpsError}</p>
-          </motion.div>
-        )}
-
-        {gpsState === 'ok' && (
-          <motion.div
-            key="gps-ok"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            role="status"
-            className="w-full flex items-center gap-3 p-4 rounded-[14px] mb-6"
-            style={{
-              background: 'rgba(34,197,94,0.1)',
-              border: '1px solid rgba(34,197,94,0.2)',
-            }}
-          >
-            <CheckCircle className="w-5 h-5 text-emerald-400" aria-hidden="true" />
-            <p className="text-sm text-emerald-300 font-dm">
-              Ubicación verificada ({distance}m de la obra)
-            </p>
-          </motion.div>
-        )}
+        {renderGpsStatus(gpsState, gpsError, distance, 'single')}
       </AnimatePresence>
 
       {/* Botón enorme */}
@@ -367,23 +414,7 @@ function SingleLocationView({
           boxShadow: '0 4px 20px rgba(0,212,255,0.35)',
         }}
       >
-        {gpsState === 'loading' ? (
-          <span className="inline-flex items-center gap-3 justify-center">
-            <span
-              className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin inline-block shrink-0"
-              style={{
-                borderColor: 'rgba(12,22,36,0.5)',
-                borderTopColor: 'transparent',
-              }}
-            />
-            Verificando ubicación...
-          </span>
-        ) : (
-          <span className="flex items-center gap-3 justify-center">
-            <MapPin className="w-5 h-5 shrink-0" />
-            Confirmar y entrar
-          </span>
-        )}
+        {renderConfirmButtonLabel(gpsState, 'gap-3')}
       </button>
     </motion.div>
   )
@@ -673,43 +704,7 @@ export default function LocationSelectPage() {
 
         {/* Mensajes GPS bajo el grid */}
         <AnimatePresence>
-          {gpsState === 'error' && gpsError && (
-            <motion.div
-              key="gps-error-grid"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              role="alert"
-              className="flex items-start gap-3 p-4 rounded-[14px] mt-4"
-              style={{
-                background: 'rgba(239,68,68,0.1)',
-                border: '1px solid rgba(239,68,68,0.2)',
-              }}
-            >
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
-              <p className="text-sm text-red-300 font-dm">{gpsError}</p>
-            </motion.div>
-          )}
-
-          {gpsState === 'ok' && (
-            <motion.div
-              key="gps-ok-grid"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              role="status"
-              className="flex items-center gap-3 p-4 rounded-[14px] mt-4"
-              style={{
-                background: 'rgba(34,197,94,0.1)',
-                border: '1px solid rgba(34,197,94,0.2)',
-              }}
-            >
-              <CheckCircle className="w-5 h-5 text-emerald-400" aria-hidden="true" />
-              <p className="text-sm text-emerald-300 font-dm">
-                Ubicación verificada ({distance}m de la obra)
-              </p>
-            </motion.div>
-          )}
+          {renderGpsStatus(gpsState, gpsError, distance, 'grid')}
         </AnimatePresence>
       </div>
 
@@ -743,23 +738,7 @@ export default function LocationSelectPage() {
                 boxShadow: '0 4px 20px rgba(0,212,255,0.3)',
               }}
             >
-              {gpsState === 'loading' ? (
-                <span className="inline-flex items-center gap-3 justify-center">
-                  <span
-                    className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin inline-block shrink-0"
-                    style={{
-                      borderColor: 'rgba(12,22,36,0.5)',
-                      borderTopColor: 'transparent',
-                    }}
-                  />
-                  Verificando ubicación...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2 justify-center">
-                  <MapPin className="w-5 h-5 shrink-0" />
-                  Confirmar y entrar
-                </span>
-              )}
+              {renderConfirmButtonLabel(gpsState, 'gap-2')}
             </button>
           </motion.div>
         )}

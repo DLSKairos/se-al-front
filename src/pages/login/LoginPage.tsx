@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Fingerprint } from 'lucide-react'
@@ -42,7 +42,8 @@ function redirectByRole(role: UserRole, navigate: ReturnType<typeof useNavigate>
 
 // ── Sub-componentes ───────────────────────────────────────────────────────────
 
-function PinDots({ count, total = 6 }: { count: number; total?: number }) {
+function PinDots({ count }: { count: number }) {
+  const total = 6
   return (
     <div className="flex justify-center gap-3 my-2" aria-label="Dígitos ingresados">
       {Array.from({ length: Math.max(4, count, total) }).map((_, i) => (
@@ -127,8 +128,6 @@ export default function LoginPage() {
   // Toggle para el panel de ingreso administradores
   const [showAdminLogin, setShowAdminLogin] = useState(false)
 
-  const pinStatusRef = useRef<PinStatusResponse | null>(null)
-
   // Captura el código/cédula del enlace de activación una sola vez.
   useEffect(() => {
     const code = searchParams.get('code')
@@ -204,7 +203,6 @@ export default function LoginPage() {
         identification_number: cedula.trim(),
       })
       status = res.data
-      pinStatusRef.current = status
     } catch {
       toast.error('Cédula no encontrada')
       setStep('cedula')

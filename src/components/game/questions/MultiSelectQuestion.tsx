@@ -1,17 +1,12 @@
 /**
  * MultiSelectQuestion — lista vertical de tarjetas full-width con icono, texto y radio/check
  *
- * Props nueva API:
+ * Props:
  *   options   Array<{ label: string; value: string; icon?: string }>
  *   multiple  boolean — true = multiselect, false = single select
  *   onAnswer  (value: string | string[]) => void
- *
- * Props legacy QuestionWrapper:
- *   question  object
- *   onAnswer  (questionId, value: string[]) => void
  */
 import { useState } from 'react'
-import TypewriterQuestion from './TypewriterQuestion'
 
 interface Option {
   label: string
@@ -20,40 +15,24 @@ interface Option {
 }
 
 interface MultiSelectQuestionProps {
-  /** Modo nuevo API */
   options?: Option[]
   multiple?: boolean
   typingDone?: boolean
   onAnswer: (value: string | string[]) => void
-
-  /** Modo legacy QuestionWrapper */
-  question?: {
-    id: string
-    question: string
-    icon?: string
-    options?: Option[]
-    minSelections?: number
-    maxSelections?: number
-  }
-  onAnswerLegacy?: (questionId: string, value: string[]) => void
 }
 
 function MultiSelectQuestion({
   options: propOptions,
   multiple = true,
-  typingDone: propTypingDone,
+  typingDone = true,
   onAnswer,
-  question,
-  onAnswerLegacy,
 }: MultiSelectQuestionProps) {
-  const [selected,           setSelected]           = useState<Set<string>>(new Set())
-  const [confirmed,          setConfirmed]          = useState(false)
-  const [internalTypingDone, setInternalTypingDone] = useState(!question)
-  const typingDone = (propTypingDone !== undefined && !question) ? propTypingDone : internalTypingDone
+  const [selected,  setSelected]  = useState<Set<string>>(new Set())
+  const [confirmed, setConfirmed] = useState(false)
 
-  const options       = propOptions ?? question?.options ?? []
-  const minSelections = question?.minSelections ?? 1
-  const maxSelections = question?.maxSelections ?? (multiple ? 99 : 1)
+  const options       = propOptions ?? []
+  const minSelections = 1
+  const maxSelections = multiple ? 99 : 1
 
   const toggleOption = (value: string) => {
     if (confirmed) return
@@ -72,34 +51,13 @@ function MultiSelectQuestion({
     if (selected.size < minSelections || confirmed) return
     setConfirmed(true)
     const values = Array.from(selected)
-
-    if (question) {
-      onAnswerLegacy?.(question.id, values)
-    } else {
-      onAnswer(multiple ? values : (values[0] ?? ''))
-    }
+    onAnswer(multiple ? values : (values[0] ?? ''))
   }
 
   const canConfirm = selected.size >= minSelections
 
   return (
     <div className="flex flex-col items-center gap-4 w-full">
-      {question?.icon && (
-        <div className="text-4xl" aria-hidden="true">{question.icon}</div>
-      )}
-
-      {question && (
-        <div className="w-full max-w-sm">
-          <div className="glass-card-md px-4 py-3">
-            <TypewriterQuestion
-              text={question.question}
-              onDone={() => setInternalTypingDone(true)}
-            />
-          </div>
-          <div className="w-0 h-0 mx-auto speech-triangle-down" aria-hidden="true" />
-        </div>
-      )}
-
       {/* Lista vertical full-width */}
       <div
         className={[

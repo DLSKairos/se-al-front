@@ -37,10 +37,8 @@ function formatTime(iso: string | null) {
 }
 
 function elapsed(entryTime: string) {
-  const diff = Date.now() - new Date(entryTime).getTime()
-  const hours = Math.floor(diff / 3_600_000)
-  const minutes = Math.floor((diff % 3_600_000) / 60_000)
-  return `${hours}h ${minutes.toString().padStart(2, '0')}m`
+  const diffMinutes = Math.floor((Date.now() - new Date(entryTime).getTime()) / 60_000)
+  return formatMinutes(diffMinutes)
 }
 
 function RecordsTab() {

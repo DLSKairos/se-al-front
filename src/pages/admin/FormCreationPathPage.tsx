@@ -7,23 +7,18 @@ import {
   Sparkles,
   FileText,
   Loader2,
-  AlertTriangle,
   Columns2,
   Columns3,
   Square,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { useToast } from '@/components/ui'
 import { BlueprintLibraryModal } from './BlueprintLibraryModal'
 import { formAiApi } from '@/lib/api'
 import { useFormEditorStore } from '@/stores/formEditorStore'
 import type { EditorSection } from '@/types'
 
 type PathOption = 'upload' | 'blueprint' | 'ai' | null
-
-interface Toast {
-  type: 'warning' | 'error'
-  message: string
-}
 
 // ─── Helpers visuales ─────────────────────────────────────
 
@@ -67,11 +62,11 @@ const expandVariants = {
 export default function FormCreationPathPage() {
   const navigate = useNavigate()
   const { setInitialState } = useFormEditorStore()
+  const toast = useToast()
 
   const [selectedPath, setSelectedPath] = useState<PathOption>(null)
   const [isBlueprintOpen, setIsBlueprintOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [toast, setToast] = useState<Toast | null>(null)
 
   // Estado camino 1 — Subir documento
   const [isDraggingOver, setIsDraggingOver] = useState(false)
@@ -91,7 +86,6 @@ export default function FormCreationPathPage() {
       return
     }
     setSelectedPath((prev) => (prev === path ? null : path))
-    setToast(null)
   }
 
   // ─── Camino 1: Subir documento ────────────────────────
@@ -100,7 +94,6 @@ export default function FormCreationPathPage() {
     async (file: File) => {
       if (!file) return
       setIsLoading(true)
-      setToast(null)
 
       try {
         const formData = new FormData()
@@ -111,11 +104,9 @@ export default function FormCreationPathPage() {
         if (import.meta.env.DEV) console.log('[Upload] Respuesta del servidor:', result)
 
         if (result.aiError) {
-          setToast({
-            type: 'warning',
-            message:
-              'La IA no pudo interpretar el documento completamente. Puedes continuar y completar los campos manualmente.',
-          })
+          toast.warning(
+            'La IA no pudo interpretar el documento completamente. Puedes continuar y completar los campos manualmente.'
+          )
         }
 
         const section: EditorSection = {
@@ -134,10 +125,7 @@ export default function FormCreationPathPage() {
         navigate('/admin/formularios/editor')
       } catch (err: unknown) {
         if (import.meta.env.DEV) console.error('[Upload] Error al subir archivo:', err)
-        setToast({
-          type: 'error',
-          message: 'No se pudo procesar el archivo. Verifica que sea PDF, DOCX o XLSX.',
-        })
+        toast.error('No se pudo procesar el archivo. Verifica que sea PDF, DOCX o XLSX.')
       } finally {
         setIsLoading(false)
       }
@@ -171,7 +159,6 @@ export default function FormCreationPathPage() {
   async function handleGenerateWithAI() {
     if (!description.trim()) return
     setIsLoading(true)
-    setToast(null)
 
     try {
       const response = await formAiApi.generateFromDescription({
@@ -182,11 +169,9 @@ export default function FormCreationPathPage() {
       const result = response.data
 
       if (result.aiError) {
-        setToast({
-          type: 'warning',
-          message:
-            'La IA generó una estructura parcial. Puedes continuar y ajustar los campos manualmente.',
-        })
+        toast.warning(
+          'La IA generó una estructura parcial. Puedes continuar y ajustar los campos manualmente.'
+        )
       }
 
       setInitialState({
@@ -197,10 +182,7 @@ export default function FormCreationPathPage() {
 
       navigate('/admin/formularios/editor')
     } catch {
-      setToast({
-        type: 'error',
-        message: 'No se pudo generar el formulario. Intenta con una descripción más detallada.',
-      })
+      toast.error('No se pudo generar el formulario. Intenta con una descripción más detallada.')
     } finally {
       setIsLoading(false)
     }
@@ -258,28 +240,6 @@ export default function FormCreationPathPage() {
           )
         })}
       </div>
-
-      {/* Toast de advertencia / error */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className={`
-              mt-6 w-full max-w-3xl flex items-start gap-3 rounded-xl px-4 py-3 border
-              ${
-                toast.type === 'warning'
-                  ? 'bg-[rgba(245,166,35,0.1)] border-[rgba(245,166,35,0.3)] text-[var(--amber)]'
-                  : 'bg-[rgba(239,68,68,0.1)] border-red-500/30 text-red-400'
-              }
-            `}
-          >
-            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-            <p className="font-['DM_Sans'] text-sm">{toast.message}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── Panel expandible: Subir documento ── */}
       <AnimatePresence>
