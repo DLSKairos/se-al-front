@@ -54,7 +54,7 @@ function SectionOptionsMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-52 z-50">
+        <div className="absolute right-0 top-full mt-1 glass-card-md p-1 w-52 z-50">
           <button
             onClick={() => handle(onToggleObservations)}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] cursor-pointer text-left"

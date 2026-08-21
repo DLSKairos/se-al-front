@@ -17,6 +17,7 @@ import { BlueprintLibraryModal } from './BlueprintLibraryModal'
 import { formAiApi } from '@/lib/api'
 import { useFormEditorStore } from '@/stores/formEditorStore'
 import type { EditorSection } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 type PathOption = 'upload' | 'blueprint' | 'ai' | null
 
@@ -60,6 +61,8 @@ const expandVariants = {
 // ─── Componente principal ─────────────────────────────────
 
 export default function FormCreationPathPage() {
+  usePageTitle('Nuevo formulario')
+
   const navigate = useNavigate()
   const { setInitialState } = useFormEditorStore()
   const toast = useToast()

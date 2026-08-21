@@ -23,6 +23,7 @@ import {
 } from '@/components/ui'
 import { DashboardStats, FormTemplate, SubmissionStatus } from '@/types'
 import { formatDateTime } from '@/lib/utils'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 const PIE_COLORS: Record<string, string> = {
   APPROVED: '#10b981',
@@ -39,6 +40,8 @@ const TOOLTIP_STYLE = {
 }
 
 export default function AdminDashboardPage() {
+  usePageTitle('Dashboard')
+
   const [templateId, setTemplateId] = useState<string>('')
 
   const { data: stats, isLoading, error } = useQuery({

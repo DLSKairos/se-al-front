@@ -17,6 +17,7 @@ import {
   WebAuthnError,
 } from '@/lib/webauthn'
 import type { UserRole } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -99,6 +100,8 @@ function NumPad({
 // ── Componente principal ───────────────────────────────────────────────────────
 
 export default function LoginPage() {
+  usePageTitle('Iniciar sesión')
+
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()

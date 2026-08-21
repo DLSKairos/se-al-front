@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import type { UserRole } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 /**
  * Ruta pública: /auth/callback
@@ -18,6 +19,8 @@ import type { UserRole } from '@/types'
  *  4. Cualquier otro error → /login con mensaje genérico
  */
 export default function OAuthCallbackPage() {
+  usePageTitle('Verificando ingreso')
+
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()

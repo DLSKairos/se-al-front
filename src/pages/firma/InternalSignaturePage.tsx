@@ -13,6 +13,7 @@ import { useReadingTracker } from '@/components/signature/useReadingTracker'
 import { useGeolocation } from '@/components/signature/useGeolocation'
 import VerifyingOverlay from '@/components/ui/VerifyingOverlay'
 import type { FormSubmission, StrokeVector } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Tiempo mínimo de lectura por defecto (segundos) ──────────────────────────
 const DEFAULT_MIN_SECONDS = 30
@@ -344,6 +345,8 @@ export default function InternalSignaturePage() {
       ),
     enabled: !!submissionId,
   })
+
+  usePageTitle(submission?.template?.name ? `Firmar: ${submission.template.name}` : 'Firmar documento')
 
   if (isLoading) return <LoadingSpinner label="Cargando documento..." fullscreen />
   if (error || !submission)

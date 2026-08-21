@@ -10,6 +10,7 @@ import { LoadingSpinner, ErrorMessage } from '@/components/ui'
 import { SOSButton } from '@/components/ui/SOSButton'
 import StoryIntro from '@/components/game/StoryIntro'
 import { frequencyLabel } from '@/pages/operator/PermisosPage'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -145,6 +146,8 @@ function TemplateCard({ template }: TemplateCardProps) {
 // ── Página principal ──────────────────────────────────────────────────────────
 
 export default function OperatorHomePage() {
+  usePageTitle('Inicio')
+
   const { user } = useAuthStore()
   const navigate = useNavigate()
   const firstName = user?.jobTitle ?? 'Operario'

@@ -134,7 +134,7 @@ export function NotificationsDrawer({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-[var(--navy-mid)] border-l border-[rgba(0,212,255,0.15)] z-50 flex flex-col overflow-hidden"
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-(--glass-bg) [backdrop-filter:var(--glass-blur)] [-webkit-backdrop-filter:var(--glass-blur)] border-l border-(--glass-border) shadow-[var(--glass-shadow)] z-50 flex flex-col overflow-hidden"
             aria-label="Panel de notificaciones"
           >
             {/* Header */}

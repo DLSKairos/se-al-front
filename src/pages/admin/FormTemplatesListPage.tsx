@@ -14,6 +14,7 @@ import {
 import { useToast } from '@/components/ui/Toast'
 import { FormTemplate } from '@/types'
 import { formatDate } from '@/lib/utils'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 type ConfirmAction = 'delete' | 'archive' | 'activate'
 
@@ -64,6 +65,8 @@ const CONFIRM_CONFIG: Record<
 }
 
 export default function FormTemplatesListPage() {
+  usePageTitle('Formularios')
+
   const navigate   = useNavigate()
   const qc         = useQueryClient()
   const toast      = useToast()

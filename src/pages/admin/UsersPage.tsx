@@ -24,6 +24,7 @@ import {
 } from '@/components/ui'
 import Combobox from '@/components/ui/Combobox'
 import { User, UserRole, WorkLocation } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Constantes ─────────────────────────────────────────────────────────────
 
@@ -89,6 +90,8 @@ function FieldLabel({ htmlFor, children }: LabelProps) {
 // ── Página principal ────────────────────────────────────────────────────────
 
 export default function UsersPage() {
+  usePageTitle('Usuarios')
+
   const queryClient = useQueryClient()
   const toast = useToast()
 

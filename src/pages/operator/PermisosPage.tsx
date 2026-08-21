@@ -6,6 +6,7 @@ import { QK } from '@/lib/queryKeys'
 import { FormTemplate } from '@/types'
 import { LoadingSpinner, ErrorMessage } from '@/components/ui'
 import { SOSButton } from '@/components/ui/SOSButton'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 export function frequencyLabel(freq: string) {
   const map: Record<string, string> = {
@@ -18,6 +19,8 @@ export function frequencyLabel(freq: string) {
 }
 
 export default function PermisosPage() {
+  usePageTitle('Permisos')
+
   const navigate = useNavigate()
 
   const { data: templates = [], isLoading, error, refetch } = useQuery({

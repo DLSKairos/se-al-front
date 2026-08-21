@@ -13,6 +13,7 @@ import {
   ErrorMessage,
   useToast,
 } from '@/components/ui'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 interface CategoryForm {
   name: string
@@ -22,6 +23,8 @@ interface CategoryForm {
 const emptyForm: CategoryForm = { name: '', is_sst: false }
 
 export default function CategoriesPage() {
+  usePageTitle('Categorías')
+
   const toast = useToast()
   const queryClient = useQueryClient()
 

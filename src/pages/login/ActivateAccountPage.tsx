@@ -13,6 +13,7 @@ import { magicLinkApi, featureFlagsApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import OAuthButtons from '@/components/auth/OAuthButtons'
 import type { MagicLinkPurpose } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Helpers visuales ──────────────────────────────────────────────────────────
 
@@ -291,6 +292,8 @@ function ActivationScreen({
 // ── Componente principal ───────────────────────────────────────────────────────
 
 export default function ActivateAccountPage() {
+  usePageTitle('Activar cuenta')
+
   const [searchParams] = useSearchParams()
   // Fix M9/#7: capturar el token una sola vez y borrarlo de la barra de
   // direcciones para no dejarlo en el historial del navegador.

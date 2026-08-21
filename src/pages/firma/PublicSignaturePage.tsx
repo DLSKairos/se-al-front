@@ -12,6 +12,7 @@ import { useReadingTracker } from '@/components/signature/useReadingTracker'
 import { useGeolocation } from '@/components/signature/useGeolocation'
 import VerifyingOverlay from '@/components/ui/VerifyingOverlay'
 import type { StrokeVector, PublicSignatureView } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Pantallas de error ────────────────────────────────────────────────────
 
@@ -552,6 +553,8 @@ export default function PublicSignaturePage() {
     enabled: !!token,
     retry: false,
   })
+
+  usePageTitle(view ? `Firmar: ${view.document_name}` : 'Firma de documento')
 
   // Determinar si tenemos error de token desde el status code
   useEffect(() => {

@@ -106,8 +106,8 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 z-10 max-h-[90vh] overflow-y-auto">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-(--glass-bg) [backdrop-filter:var(--glass-blur)] [-webkit-backdrop-filter:var(--glass-blur)] border border-(--glass-border) shadow-[var(--glass-shadow)] rounded-t-glass sm:rounded-glass p-6 z-10 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold text-[var(--off-white)] font-['Syne']">

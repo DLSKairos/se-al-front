@@ -20,6 +20,7 @@ import { OrgWithUsage, OrgConfig, PlanTier, AdminUser, FeatureFlags, MagicLinkHi
 import { Button, LoadingSpinner, ErrorMessage, Badge, useToast } from '@/components/ui'
 import { UsageBar } from '@/components/super/UsageBar'
 import { PLAN_OPTIONS } from '@/lib/plans'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -657,6 +658,8 @@ export default function OrgDetailPage() {
     queryFn:  () => superadminApi.getOrganization(id!).then((r) => r.data),
     enabled:  !!id,
   })
+
+  usePageTitle(org ? (org.config?.display_name ?? org.name) : 'Detalle de organización')
 
   if (isLoading) {
     return <LoadingSpinner label="Cargando organización..." />

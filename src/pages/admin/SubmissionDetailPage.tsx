@@ -26,6 +26,7 @@ import type { FormSubmission, FormSubmissionValue, FormSignature } from '@/types
 import { formatDate, formatDateTime } from '@/lib/utils'
 import SignersPanel from '@/components/signature/SignersPanel'
 import RejectSubmissionModal from '@/components/submissions/RejectSubmissionModal'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -215,6 +216,8 @@ export default function SubmissionDetailPage() {
         .then((r) => r.data as SubmissionWithExtras),
     enabled: !!id,
   })
+
+  usePageTitle(submission?.template?.name ? `Respuesta: ${submission.template.name}` : 'Detalle de respuesta')
 
   if (isLoading) return <LoadingSpinner label="Cargando detalle..." />
   if (error || !submission)

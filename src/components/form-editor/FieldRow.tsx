@@ -60,7 +60,7 @@ function OptionsMenu({ onDuplicate, onDelete }: OptionsMenuProps) {
         <div
           ref={menuRef}
           style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
-          className="bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-44"
+          className="glass-card-md p-1 w-44"
         >
           <button
             onClick={() => handle(onDuplicate)}

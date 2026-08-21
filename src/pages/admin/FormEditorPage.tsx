@@ -11,6 +11,7 @@ import { AIAssistPanel } from '@/components/form-editor/AIAssistPanel'
 import { NotificationsDrawer } from '@/components/form-editor/NotificationsDrawer'
 import { SaveFormDrawer } from '@/components/form-editor/SaveFormDrawer'
 import { ConfirmModal } from '@/components/ui'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // Mapea un campo crudo del template (backend) al shape que consume el editor
 function mapField(f: any) {
@@ -105,6 +106,8 @@ export default function FormEditorPage() {
       })
     }
   }, [existingTemplate, location.state])
+
+  usePageTitle(state.name ? `Editar: ${state.name}` : 'Editor de formularios')
 
   function handleBack() {
     if (state.isDirty) {

@@ -157,7 +157,7 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-x-0 bottom-0 z-40 max-h-[60vh] flex flex-col bg-(--navy-mid) border-t border-border rounded-t-2xl overflow-hidden md:static md:inset-auto md:max-h-none md:w-80 md:shrink-0 md:rounded-none md:border-t-0 md:border-l md:z-auto"
+            className="fixed inset-x-0 bottom-0 z-40 max-h-[60vh] flex flex-col bg-(--glass-bg) [backdrop-filter:var(--glass-blur)] [-webkit-backdrop-filter:var(--glass-blur)] border-t border-(--glass-border) shadow-[var(--glass-shadow)] rounded-t-glass overflow-hidden md:static md:inset-auto md:max-h-none md:w-80 md:shrink-0 md:rounded-none md:border-t-0 md:border-l md:shadow-none md:z-auto"
             aria-label="Panel de asistente IA"
           >
           {/* Header */}

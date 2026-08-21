@@ -10,6 +10,7 @@ import {
   ErrorMessage,
   useToast,
 } from '@/components/ui'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 interface ConfigForm {
   is_enabled: boolean
@@ -63,6 +64,8 @@ function ToggleField({
 }
 
 export default function AttendanceConfigPage() {
+  usePageTitle('Configuración de asistencia')
+
   const toast = useToast()
   const queryClient = useQueryClient()
   const [newHoliday, setNewHoliday] = useState('')

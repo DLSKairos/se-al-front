@@ -16,6 +16,7 @@ import RejectSubmissionModal from '@/components/submissions/RejectSubmissionModa
 import { FormSubmission, FormTemplate, FormField, SubmissionStatus } from '@/types'
 import { formatDateTime, downloadFile } from '@/lib/utils'
 import api from '@/lib/api'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -137,6 +138,8 @@ export default function FormSubmissionsPage() {
         .then((r) => r.data),
     enabled: !!routeTemplateId,
   })
+
+  usePageTitle(currentTemplate ? `Respuestas: ${currentTemplate.name}` : 'Respuestas')
 
   const updateFilter = useCallback(
     <K extends keyof SubmissionsFilters>(key: K, value: SubmissionsFilters[K]) => {

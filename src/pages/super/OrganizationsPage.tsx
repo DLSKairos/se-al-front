@@ -7,6 +7,7 @@ import { OrgWithUsage, PlanTier } from '@/types'
 import { Button, LoadingSpinner, ErrorMessage, Badge } from '@/components/ui'
 import { UsageBar } from '@/components/super/UsageBar'
 import { PLAN_LABEL } from '@/lib/plans'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Badge de plan ─────────────────────────────────────────────────────────────
 
@@ -30,6 +31,8 @@ function PlanBadge({ plan }: { plan: PlanTier | undefined }) {
 // ── Página ────────────────────────────────────────────────────────────────────
 
 export default function OrganizationsPage() {
+  usePageTitle('Organizaciones')
+
   const navigate = useNavigate()
 
   const { data: orgs = [], isLoading, error, refetch } = useQuery({

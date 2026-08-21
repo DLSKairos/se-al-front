@@ -15,6 +15,7 @@ import { QK } from '@/lib/queryKeys'
 import { InventarioSession } from '@/types'
 import { LoadingSpinner, ErrorMessage } from '@/components/ui'
 import { BadgeEstado } from '@/components/inventarios/BadgeEstado'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Subcomponentes ────────────────────────────────────────────────────────────
 
@@ -65,6 +66,8 @@ export default function InventarioDetailPage() {
     queryFn: () => inventariosApi.obtenerSesion(id!).then((r) => r.data),
     enabled: !!id,
   })
+
+  usePageTitle(sesion?.tipo_formulario ?? 'Acta de inventario')
 
   if (isLoading) {
     return (

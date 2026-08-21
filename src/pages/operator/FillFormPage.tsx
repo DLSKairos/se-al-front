@@ -14,6 +14,7 @@ import {
 import { DynamicForm } from '@/components/forms/DynamicForm'
 import { GeoField } from '@/components/forms/fields/GeoField'
 import { SOSButton } from '@/components/ui/SOSButton'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Tipos locales ─────────────────────────────────────────────────────────────
 
@@ -94,6 +95,8 @@ export default function FillFormPage() {
         .then((r) => r.data),
     enabled: !!templateId,
   })
+
+  usePageTitle(ctx?.template.name ?? 'Formulario')
 
   // ── Inicializar valores cuando llega el contexto ───────────────────────────
   useEffect(() => {

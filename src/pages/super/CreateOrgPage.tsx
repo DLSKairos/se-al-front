@@ -6,12 +6,15 @@ import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { Organization } from '@/types'
 import { Button, useToast } from '@/components/ui'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 interface CreateOrgPayload {
   name: string
 }
 
 export default function CreateOrgPage() {
+  usePageTitle('Nueva organización')
+
   const navigate = useNavigate()
   const toast = useToast()
   const queryClient = useQueryClient()

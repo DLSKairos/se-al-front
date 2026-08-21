@@ -11,8 +11,11 @@ import {
   useToast,
 } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 export default function OrgSettingsPage() {
+  usePageTitle('Configuración de la organización')
+
   const toast = useToast()
   const queryClient = useQueryClient()
   const [name, setName] = useState('')

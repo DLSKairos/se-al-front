@@ -1,7 +1,10 @@
 import { Bell } from 'lucide-react'
 import { SOSButton } from '@/components/ui/SOSButton'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 export default function AlertasPage() {
+  usePageTitle('Alertas')
+
   return (
     <div
       className="min-h-screen bg-[var(--navy)] flex flex-col pb-24"

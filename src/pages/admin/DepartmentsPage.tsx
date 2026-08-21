@@ -12,6 +12,7 @@ import {
   ErrorMessage,
   useToast,
 } from '@/components/ui'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 interface DepartmentForm {
   name: string
@@ -21,6 +22,8 @@ interface DepartmentForm {
 const emptyForm: DepartmentForm = { name: '', email: '' }
 
 export default function DepartmentsPage() {
+  usePageTitle('Departamentos')
+
   const toast = useToast()
   const queryClient = useQueryClient()
 

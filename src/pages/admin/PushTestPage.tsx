@@ -4,12 +4,15 @@ import { Bell, BellOff, Info, Send, Smartphone, AlertTriangle } from 'lucide-rea
 import api from '@/lib/api'
 import { urlBase64ToUint8Array } from '@/lib/vapid'
 import { Button, useToast } from '@/components/ui'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 type SubscriptionStatus = 'unknown' | 'unsupported' | 'denied' | 'subscribed' | 'not-subscribed'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
 
 export default function PushTestPage() {
+  usePageTitle('Notificaciones push')
+
   const toast = useToast()
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')

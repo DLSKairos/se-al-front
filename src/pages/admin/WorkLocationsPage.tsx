@@ -14,6 +14,7 @@ import {
   useToast,
 } from '@/components/ui'
 import { LocationPicker, type LatLng } from '@/components/ui/LocationPicker'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Geocoding inverso ─────────────────────────────────────────────────────────
 
@@ -104,6 +105,8 @@ const emptyForm: WorkLocationForm = {
 }
 
 export default function WorkLocationsPage() {
+  usePageTitle('Ubicaciones')
+
   const toast = useToast()
   const queryClient = useQueryClient()
 

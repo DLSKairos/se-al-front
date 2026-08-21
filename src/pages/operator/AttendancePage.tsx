@@ -13,6 +13,7 @@ import {
   useToast,
 } from '@/components/ui'
 import { SOSButton } from '@/components/ui/SOSButton'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 function getApiMessage(err: unknown, fallback: string): string {
   const msg = (err as AxiosError<{ message?: string }>)?.response?.data?.message
@@ -54,6 +55,8 @@ function formatMinutes(total: number): string {
 // ── Componente ────────────────────────────────────────────────────────────────
 
 export default function AttendancePage() {
+  usePageTitle('Asistencia')
+
   const toast       = useToast()
   const queryClient = useQueryClient()
 

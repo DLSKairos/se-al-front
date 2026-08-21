@@ -532,12 +532,7 @@ function SelectedPlanetCard({
         type="button"
         onClick={onClose}
         aria-label="Cerrar detalle"
-        className="fixed inset-0 z-40"
-        style={{
-          background: 'rgba(11,15,26,0.5)',
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
-        }}
+        className="game-scrim fixed inset-0 z-40"
       />
 
       {/* Sheet */}

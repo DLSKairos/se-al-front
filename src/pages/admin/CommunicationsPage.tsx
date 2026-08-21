@@ -43,6 +43,7 @@ import type {
   BulkNotificationTarget,
   CreateBulkNotificationDto,
 } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Constantes de estilo (siguiendo UsersPage) ────────────────────────────────
 
@@ -431,6 +432,8 @@ function SentTable({
 // ── Página principal ──────────────────────────────────────────────────────────
 
 export default function CommunicationsPage() {
+  usePageTitle('Comunicaciones')
+
   const toast = useToast()
   const queryClient = useQueryClient()
 

@@ -17,10 +17,13 @@ import { InstallPWAButton } from '@/components/ui/InstallPWAButton'
 import { SOSButton } from '@/components/ui/SOSButton'
 import { registerWebAuthn, checkWebAuthnSupport } from '@/lib/webauthn'
 import { formatDateTime } from '@/lib/utils'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Componente ────────────────────────────────────────────────────────────────
 
 export default function OperatorProfilePage() {
+  usePageTitle('Mi perfil')
+
   const navigate    = useNavigate()
   const toast       = useToast()
   const queryClient = useQueryClient()

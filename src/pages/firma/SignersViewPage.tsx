@@ -7,6 +7,7 @@ import { QK } from '@/lib/queryKeys'
 import SignersPanel from '@/components/signature/SignersPanel'
 import { useAuthStore } from '@/stores/authStore'
 import type { FormSubmission } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 /**
  * Vista móvil grande de gestión de firmantes para el operario.
@@ -25,6 +26,8 @@ export default function SignersViewPage() {
         .then((r) => r.data as FormSubmission),
     enabled: !!submissionId,
   })
+
+  usePageTitle(submission?.template?.name ? `Firmantes · ${submission.template.name}` : 'Firmantes')
 
   if (isLoading) return <LoadingSpinner label="Cargando firmantes..." fullscreen />
   if (error || !submission)

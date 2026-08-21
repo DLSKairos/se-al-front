@@ -96,7 +96,7 @@ export function FieldTypePopover({
         <div
           ref={menuRef}
           style={{ position: 'fixed', top: menuPos.top, left: menuPos.left, zIndex: 9999 }}
-          className="bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.15)] rounded-lg shadow-xl p-1 w-48"
+          className="glass-card-md p-1 w-48"
           role="listbox"
           aria-label="Seleccionar tipo de campo"
         >

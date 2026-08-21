@@ -3,6 +3,7 @@ import { Send, Bot, User, Zap, Radio } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useAuthStore } from '@/stores/authStore'
 import { adminAiApi } from '@/lib/api'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Preguntas rápidas predefinidas ─────────────────────────────────────────
 
@@ -87,6 +88,8 @@ const INITIAL_MESSAGE: Message = {
 }
 
 export default function AdminChatPage() {
+  usePageTitle('Señal IA')
+
   const user = useAuthStore((s) => s.user)
 
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE])

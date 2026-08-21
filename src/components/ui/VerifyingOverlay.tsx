@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ShieldCheck } from 'lucide-react'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -12,14 +13,14 @@ export interface VerifyingOverlayProps {
 
 // ── Subcomponente: barra de progreso indeterminada ────────────────────────────
 
-function IndeterminateBar() {
+function IndeterminateBar({ reduced }: { reduced: boolean }) {
   return (
     <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
       <motion.div
         className="h-full rounded-full"
         style={{ background: 'var(--signal)' }}
-        animate={{ x: ['-100%', '200%'] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+        animate={reduced ? { opacity: [0.4, 1, 0.4] } : { x: ['-100%', '200%'] }}
+        transition={{ duration: reduced ? 1.6 : 1.6, repeat: Infinity, ease: 'easeInOut' }}
       />
     </div>
   )
@@ -27,13 +28,13 @@ function IndeterminateBar() {
 
 // ── Subcomponente: escudo animado (variante partial) ──────────────────────────
 
-function AnimatedShield() {
+function AnimatedShield({ reduced }: { reduced: boolean }) {
   return (
     <motion.div
       className="w-16 h-16 rounded-[18px] flex items-center justify-center mb-4"
       style={{ background: 'rgba(0,212,255,0.12)', border: '1.5px solid rgba(0,212,255,0.3)' }}
-      animate={{ scale: [1, 1.06, 1] }}
-      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+      animate={reduced ? undefined : { scale: [1, 1.06, 1] }}
+      transition={reduced ? undefined : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
     >
       <ShieldCheck className="w-8 h-8" style={{ color: 'var(--signal)' }} />
     </motion.div>
@@ -62,6 +63,8 @@ export default function VerifyingOverlay({
   variant = 'fullscreen',
   message,
 }: VerifyingOverlayProps) {
+  const reduced = useReducedMotion()
+
   // Si el overlay lleva más de 4s visible, mostrar mensaje de tardanza
   const [slow, setSlow] = useState(false)
 
@@ -152,7 +155,7 @@ export default function VerifyingOverlay({
               transition={{ delay: 0.25 }}
               className="w-48"
             >
-              <IndeterminateBar />
+              <IndeterminateBar reduced={reduced} />
             </motion.div>
           </motion.div>
         )}
@@ -177,7 +180,7 @@ export default function VerifyingOverlay({
           exit={{ opacity: 0, transition: { duration: 0.2 } }}
           transition={{ duration: 0.15 }}
         >
-          <AnimatedShield />
+          <AnimatedShield reduced={reduced} />
           <p
             className="font-display font-semibold text-base text-center px-6"
             style={{ color: 'var(--off-white)' }}
@@ -185,7 +188,7 @@ export default function VerifyingOverlay({
             {message ?? 'Registrando tu información de forma segura...'}
           </p>
           <div className="mt-5 w-32">
-            <IndeterminateBar />
+            <IndeterminateBar reduced={reduced} />
           </div>
         </motion.div>
       )}

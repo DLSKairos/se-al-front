@@ -11,6 +11,7 @@ import {
   useToast,
 } from '@/components/ui'
 import { downloadFile } from '@/lib/utils'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 type Tab = 'records' | 'open' | 'export'
 
@@ -397,6 +398,8 @@ function ExportTab() {
 }
 
 export default function AttendanceAdminPage() {
+  usePageTitle('Asistencia')
+
   const [activeTab, setActiveTab] = useState<Tab>('records')
 
   const tabs: { id: Tab; label: string }[] = [

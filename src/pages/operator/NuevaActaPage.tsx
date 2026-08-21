@@ -22,6 +22,7 @@ import type { FotoInventario, TipoFoto } from '@/components/inventarios/GaleriaF
 import type { FirmaData } from '@/components/inventarios/FirmasActa'
 import { useToast } from '@/components/ui'
 import { useBarcodeScanner } from '@/hooks/useBarcodeScanner'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -76,6 +77,8 @@ function itemVacioDesdeFactura(
 // ── Página ────────────────────────────────────────────────────────────────────
 
 export default function NuevaActaPage() {
+  usePageTitle('Nueva acta de inspección')
+
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const toast = useToast()

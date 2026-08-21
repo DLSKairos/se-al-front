@@ -6,6 +6,7 @@ import { QK } from '@/lib/queryKeys'
 import { InventarioSession } from '@/types'
 import { LoadingSpinner, ErrorMessage } from '@/components/ui'
 import { BadgeEstado } from '@/components/inventarios/BadgeEstado'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -64,6 +65,8 @@ function SesionCardSkeleton() {
 // ── Página ────────────────────────────────────────────────────────────────────
 
 export default function InventariosListPage() {
+  usePageTitle('Inventarios')
+
   const navigate = useNavigate()
 
   const {

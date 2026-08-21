@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { haversineDistance } from '@/lib/utils'
 import { QK } from '@/lib/queryKeys'
 import { WorkLocation, AttendanceRecord } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -423,6 +424,8 @@ function SingleLocationView({
 // ── Componente principal ──────────────────────────────────────────────────────
 
 export default function LocationSelectPage() {
+  usePageTitle('Selecciona tu obra')
+
   const navigate = useNavigate()
   const { setWorkLocation, user } = useAuthStore()
 

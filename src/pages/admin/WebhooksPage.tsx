@@ -4,6 +4,7 @@ import { Plus, Pencil, Trash2, Zap, Copy, Check } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { WebhookEndpoint } from '@/types'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import {
   Button,
   Badge,
@@ -97,6 +98,8 @@ function SecretModal({
 }
 
 export default function WebhooksPage() {
+  usePageTitle('Webhooks')
+
   const toast = useToast()
   const queryClient = useQueryClient()
 
