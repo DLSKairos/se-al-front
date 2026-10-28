@@ -5,6 +5,7 @@ import { registerLogoutCallback } from './lib/api'
 import { statusApi } from './lib/api'
 import { AppRouter } from './router'
 import { ToastProvider } from './components/ui/Toast'
+import { PWAInstallGate } from './components/pwa/PWAInstallGate'
 import VerifyingOverlay from './components/ui/VerifyingOverlay'
 import { useAuthStore } from './stores/authStore'
 import { QK } from './lib/queryKeys'
@@ -57,6 +58,7 @@ function SessionVerifier({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <PWAInstallGate />
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
           <SessionVerifier>

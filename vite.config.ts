@@ -97,13 +97,14 @@ export default defineConfig(({ mode }) => {
         lang: 'es',
         categories: ['productivity', 'business'],
         icons: [
-          { src: 'icon-192.png', type: 'image/png', sizes: '192x192', purpose: 'any maskable' },
-          { src: 'icon-512.png', type: 'image/png', sizes: '512x512', purpose: 'any maskable' },
+          { src: 'icon-192.png', type: 'image/png', sizes: '192x192', purpose: 'any' },
+          { src: 'icon-512.png', type: 'image/png', sizes: '512x512', purpose: 'any' },
+          { src: 'icon-maskable-512.png', type: 'image/png', sizes: '512x512', purpose: 'maskable' },
         ],
         start_url: '/',
         display: 'standalone',
-        theme_color: '#0C1624',
-        background_color: '#0C1624',
+        theme_color: '#FFC400',
+        background_color: '#F3F1EA',
       },
       injectManifest: {
         injectionPoint: undefined,
