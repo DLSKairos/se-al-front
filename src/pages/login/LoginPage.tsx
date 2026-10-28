@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Fingerprint } from 'lucide-react'
+import { Fingerprint, Delete, ChevronLeft } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import api, { featureFlagsApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
@@ -18,6 +18,7 @@ import {
 } from '@/lib/webauthn'
 import type { UserRole } from '@/types'
 import { usePageTitle } from '@/hooks/usePageTitle'
+import { useSlowConnection } from '@/hooks/useSlowConnection'
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -46,15 +47,15 @@ function redirectByRole(role: UserRole, navigate: ReturnType<typeof useNavigate>
 function PinDots({ count }: { count: number }) {
   const total = 6
   return (
-    <div className="flex justify-center gap-3 my-2" aria-label="Dígitos ingresados">
+    <div className="flex justify-center gap-4 my-3" role="img" aria-label={`${count} dígitos ingresados`}>
       {Array.from({ length: Math.max(4, count, total) }).map((_, i) => (
         <span
           key={i}
           aria-hidden="true"
-          className={`w-3 h-3 rounded-full transition-all ${
+          className={`w-[18px] h-[18px] rounded-full transition-all duration-150 ${
             i < count
-              ? 'bg-[var(--signal)] scale-110'
-              : 'bg-white/10 border border-white/20'
+              ? 'bg-[var(--brand)] scale-110 shadow-[0_0_0_2px_var(--fg)]'
+              : 'bg-transparent border-2 border-[color:var(--line-strong)]'
           }`}
         />
       ))}
@@ -83,13 +84,13 @@ function NumPad({
             disabled={disabled}
             aria-label={isBack ? 'Borrar' : key}
             onClick={() => isBack ? onBack() : onDigit(key)}
-            className={`w-full h-16 rounded-[14px] font-display font-bold text-xl active:scale-[0.97] transition-all disabled:opacity-40 ${
+            className={`w-full h-[68px] rounded-[16px] font-display font-bold text-[34px] leading-none grid place-items-center active:scale-[0.95] transition-[transform,background-color] duration-100 disabled:opacity-40 ${
               isBack
-                ? 'bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.15)] text-red-400 hover:bg-[rgba(239,68,68,0.15)]'
-                : 'bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.1)] text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] hover:border-[rgba(0,212,255,0.25)]'
+                ? 'bg-transparent text-[var(--fg-muted)] hover:bg-[var(--wash)]'
+                : 'bg-[var(--surface)] border-[1.5px] border-[color:var(--line-strong)] text-[var(--fg)] shadow-[var(--shadow-1)] active:bg-[var(--wash-brand)]'
             }`}
           >
-            {key}
+            {isBack ? <Delete className="w-7 h-7" aria-hidden="true" /> : key}
           </button>
         )
       })}
@@ -119,6 +120,7 @@ export default function LoginPage() {
   const oauthError = (location.state as { oauthError?: string } | null)?.oauthError ?? null
 
   const [step,          setStep]          = useState<Step>('splash')
+  const isSlow = useSlowConnection()
   const [showLiteBanner, setShowLiteBanner] = useState(false)
   const [cedula,        setCedula]        = useState('')
   const [pinDigits,     setPinDigits]     = useState<string[]>([])
@@ -318,41 +320,27 @@ export default function LoginPage() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="fixed inset-0 bg-[var(--navy)] flex flex-col items-center justify-center px-6 overflow-auto">
+    <div className="fixed inset-0 bg-[var(--bg)] flex flex-col items-center justify-center px-6 pt-8 overflow-auto">
 
-      <SplashScreen onDone={() => { setStep('cedula'); setShowLiteBanner(true) }} />
+      <SplashScreen onDone={() => { setStep('cedula'); setShowLiteBanner(isSlow && !sessionStorage.getItem('lite_banner_dismissed')) }} />
 
-      {/* Grid overlay decorativo */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(0,212,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,1) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-      />
+      <div className="hazard fixed inset-x-0 top-0 h-3 z-10" aria-hidden="true" />
 
-      {/* Glow orb */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%)' }}
-      />
-
-      {/* Logo */}
+      {/* Marca */}
       <div className="relative z-10 mb-8 text-center">
-        <div className="flex items-center gap-2.5 mb-2 justify-center">
-          <div className="w-2.5 h-2.5 bg-[var(--signal)] rounded-full animate-pulse-dot" />
-          <span className="font-display font-extrabold text-2xl tracking-[0.15em] text-[var(--off-white)]">
+        <div className="flex items-center gap-3 justify-center">
+          <span className="w-4 h-4 rounded-full bg-[var(--brand)] shadow-[0_0_0_2.5px_var(--fg)]" aria-hidden="true" />
+          <span className="font-display font-extrabold text-[56px] leading-none tracking-[0.08em] text-[var(--fg)]">
             SEÑAL
           </span>
         </div>
-        <p className="font-serif italic font-light text-sm text-[var(--muted)]">
+        <p className="font-body text-base text-[var(--fg-muted)] mt-2">
           Tu operación en movimiento, siempre.
         </p>
       </div>
 
       {/* Wrapper de steps */}
-      <div className="relative z-10 w-full max-w-[340px] flex flex-col gap-4">
+      <div className="relative z-10 w-full max-w-[380px] flex flex-col gap-4">
 
         {/* ── Cédula ── */}
         {step === 'cedula' && (
@@ -371,22 +359,19 @@ export default function LoginPage() {
                 {oauthError && (
                   <div
                     role="alert"
-                    className="rounded-[10px] bg-red-500/10 border border-red-500/25 px-4 py-3"
+                    className="rounded-[14px] bg-red-500/10 border-[1.5px] border-red-500/45 px-4 py-3"
                   >
-                    <p className="text-sm font-dm text-red-300 leading-snug">
+                    <p className="text-base font-body font-medium text-red-400 leading-snug">
                       {oauthError}
                     </p>
                   </div>
                 )}
 
                 <div className="text-center mb-1">
-                  <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-                    Administradores
-                  </p>
-                  <h2 className="font-display font-bold text-lg text-[var(--off-white)]">
+                  <h2 className="font-display font-bold text-3xl leading-tight text-[var(--fg)]">
                     Ingresa con tu cuenta
                   </h2>
-                  <p className="text-xs text-[var(--muted)] font-dm mt-1">
+                  <p className="text-base text-[var(--fg-muted)] font-body mt-1">
                     Vincula tu cuenta corporativa para acceder al panel de administración.
                   </p>
                 </div>
@@ -396,24 +381,9 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowAdminLogin(false)}
-                  className="flex items-center justify-center gap-1.5 text-xs text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0 mt-1"
+                  className="min-h-[48px] inline-flex items-center justify-center gap-1.5 text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors font-body bg-transparent border-none cursor-pointer"
                 >
-                  <svg
-                    aria-hidden="true"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M7.5 2L3.5 6L7.5 10"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                   Volver al ingreso de operarios
                 </button>
               </motion.div>
@@ -430,9 +400,9 @@ export default function LoginPage() {
                 {oauthError && (
                   <div
                     role="alert"
-                    className="rounded-[10px] bg-red-500/10 border border-red-500/25 px-4 py-3 mb-4"
+                    className="rounded-[14px] bg-red-500/10 border-[1.5px] border-red-500/45 px-4 py-3 mb-4"
                   >
-                    <p className="text-sm font-dm text-red-300 leading-snug">
+                    <p className="text-base font-body font-medium text-red-400 leading-snug">
                       {oauthError}
                     </p>
                   </div>
@@ -442,7 +412,7 @@ export default function LoginPage() {
                   <div>
                     <label
                       htmlFor="cedula-input"
-                      className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-2 block"
+                      className="text-lg font-semibold text-[var(--fg)] mb-2 block font-body"
                     >
                       Número de identificación
                     </label>
@@ -455,7 +425,7 @@ export default function LoginPage() {
                       onChange={(e) => setCedula(e.target.value.replace(/\D/g, ''))}
                       placeholder="Ej. 1234567890"
                       autoComplete="username"
-                      className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[14px] px-5 py-4 text-base text-[var(--off-white)] placeholder-[var(--muted)] font-dm outline-none focus:border-[var(--signal)] transition-all"
+                      className="w-full min-h-[64px] bg-[var(--surface)] border-[1.5px] border-[color:var(--line-strong)] rounded-[16px] px-5 text-2xl font-semibold text-[var(--fg)] placeholder:text-[var(--fg-muted)] placeholder:font-normal font-body outline-none focus:border-[color:var(--fg)] focus:ring-4 focus:ring-[color:var(--wash-brand)] transition-[border-color,box-shadow]"
                       required
                     />
                   </div>
@@ -463,7 +433,7 @@ export default function LoginPage() {
                     data-testid="login-submit"
                     type="submit"
                     disabled={!cedula.trim()}
-                    className="btn-primary-gradient w-full py-4 rounded-[14px]"
+                    className="btn-primary-gradient w-full min-h-[60px] rounded-[16px] text-lg"
                   >
                     Continuar
                   </button>
@@ -472,7 +442,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowAdminLogin(true)}
-                    className="text-xs text-center text-[var(--muted)]/70 hover:text-[var(--muted)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0 -mt-1"
+                    className="min-h-[48px] text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] underline underline-offset-4 decoration-[var(--line-strong)] transition-colors font-body bg-transparent border-none cursor-pointer"
                   >
                     Ingreso administradores
                   </button>
@@ -489,12 +459,12 @@ export default function LoginPage() {
               {[0, 1, 2].map((i) => (
                 <span
                   key={i}
-                  className="w-2 h-2 rounded-full bg-[var(--signal)] animate-pulse"
+                  className="w-2 h-2 rounded-full bg-[var(--brand)] animate-pulse"
                   style={{ animationDelay: `${i * 0.2}s` }}
                 />
               ))}
             </div>
-            <p className="text-sm text-center font-dm text-[var(--muted)]">
+            <p className="text-base text-center font-body text-[var(--fg-muted)]">
               Verificando…
             </p>
           </div>
@@ -504,16 +474,13 @@ export default function LoginPage() {
         {step === 'webauthn-register' && (
           <div className="flex flex-col gap-5">
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.15)] flex items-center justify-center">
-                <Fingerprint className="w-8 h-8 text-[var(--signal)]" />
+              <div className="w-20 h-20 mx-auto mb-4 rounded-[22px] bg-[var(--brand)] text-[var(--on-brand)] flex items-center justify-center">
+                <Fingerprint className="w-11 h-11" />
               </div>
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-                Acceso biométrico
-              </p>
-              <h2 className="font-display font-bold text-xl text-[var(--off-white)]">
+              <h2 className="font-display font-bold text-3xl leading-tight text-[var(--fg)]">
                 {biometricFailed ? 'No se pudo activar' : 'Registra tu biométrico'}
               </h2>
-              <p className="text-sm text-[var(--muted)] font-dm mt-2 leading-relaxed">
+              <p className="text-base text-[var(--fg-muted)] font-body mt-2 leading-relaxed">
                 {biometricFailed
                   ? 'No fue posible registrar el biométrico. Crea un PIN para ingresar de forma segura.'
                   : 'Tu dispositivo soporta huella o Face ID. Actívalo para ingresar de forma rápida y segura.'}
@@ -525,7 +492,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={handleWebAuthnRegister}
                 disabled={registeringBiometric}
-                className="btn-primary-gradient w-full py-4 rounded-[14px]"
+                className="btn-primary-gradient w-full min-h-[60px] rounded-[16px] text-lg"
               >
                 {registeringBiometric ? 'Activando…' : 'Activar biométrico'}
               </button>
@@ -536,8 +503,8 @@ export default function LoginPage() {
               onClick={() => { setStep('pin-create'); setCreatePhase('new') }}
               className={
                 biometricFailed
-                  ? 'btn-primary-gradient w-full py-4 rounded-[14px]'
-                  : 'text-sm text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0'
+                  ? 'btn-primary-gradient w-full min-h-[60px] rounded-[16px] text-lg'
+                  : 'min-h-[48px] text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors font-body bg-transparent border-none cursor-pointer'
               }
             >
               {biometricFailed ? 'Crear PIN de acceso' : 'Continuar con PIN'}
@@ -546,7 +513,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => { setStep('cedula'); setBiometricFailed(false) }}
-              className="text-xs text-center text-[var(--muted)]/60 hover:text-[var(--muted)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
+              className="min-h-[48px] inline-flex items-center justify-center gap-1.5 text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors font-body bg-transparent border-none cursor-pointer"
             >
               Cambiar cédula
             </button>
@@ -557,13 +524,10 @@ export default function LoginPage() {
         {step === 'need-activation' && (
           <div className="flex flex-col gap-5 text-center">
             <div>
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-                Primer acceso
-              </p>
-              <h2 className="font-display font-bold text-xl text-[var(--off-white)]">
+              <h2 className="font-display font-bold text-3xl leading-tight text-[var(--fg)]">
                 Necesitas tu enlace de activación
               </h2>
-              <p className="text-sm text-[var(--muted)] font-dm mt-2 leading-relaxed">
+              <p className="text-base text-[var(--fg-muted)] font-body mt-2 leading-relaxed">
                 Para crear tu PIN o registrar tu biométrico por primera vez, abre
                 el enlace de activación que te compartió tu administrador. Por
                 seguridad, no es posible activar la cuenta solo con la cédula.
@@ -572,7 +536,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => { setStep('cedula'); setBiometricFailed(false) }}
-              className="text-sm text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
+              className="min-h-[48px] inline-flex items-center justify-center gap-1.5 text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors font-body bg-transparent border-none cursor-pointer"
             >
               Volver
             </button>
@@ -583,15 +547,12 @@ export default function LoginPage() {
         {step === 'pin' && (
           <div className="flex flex-col gap-5">
             <div className="text-center">
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-                PIN de acceso
-              </p>
-              <h2 className="font-display font-bold text-xl text-[var(--off-white)]">
+              <h2 className="font-display font-bold text-3xl leading-tight text-[var(--fg)]">
                 Ingresa tu PIN
               </h2>
             </div>
             {verifyPin.isError && (
-              <p data-testid="login-error" className="text-sm text-red-400 text-center font-dm">
+              <p data-testid="login-error" className="text-base font-semibold text-red-400 text-center font-body">
                 PIN incorrecto
               </p>
             )}
@@ -605,14 +566,14 @@ export default function LoginPage() {
               type="button"
               onClick={handlePinSubmit}
               disabled={pinDigits.length < 4 || verifyPin.isPending}
-              className="btn-primary-gradient w-full py-4 rounded-[14px]"
+              className="btn-primary-gradient w-full min-h-[60px] rounded-[16px] text-lg"
             >
               {verifyPin.isPending ? 'Verificando…' : 'Entrar'}
             </button>
             <button
               type="button"
               onClick={() => { setStep('cedula'); setPinDigits([]) }}
-              className="text-xs text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
+              className="min-h-[48px] inline-flex items-center justify-center gap-1.5 text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors font-body bg-transparent border-none cursor-pointer"
             >
               Cambiar cédula
             </button>
@@ -623,13 +584,10 @@ export default function LoginPage() {
         {step === 'pin-create' && (
           <div className="flex flex-col gap-5">
             <div className="text-center">
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-                {createPhase === 'new' ? 'Nuevo PIN' : 'Confirmar PIN'}
-              </p>
-              <h2 className="font-display font-bold text-xl text-[var(--off-white)]">
+              <h2 className="font-display font-bold text-3xl leading-tight text-[var(--fg)]">
                 {createPhase === 'new' ? 'Crea tu PIN de acceso' : 'Confirma tu PIN'}
               </h2>
-              <p className="text-xs mt-1 text-[var(--muted)] font-dm">
+              <p className="text-base mt-1 text-[var(--fg-muted)] font-body">
                 {createPhase === 'new'
                   ? 'Mínimo 4 dígitos'
                   : 'Ingresa el mismo PIN para confirmar'}
@@ -648,7 +606,7 @@ export default function LoginPage() {
                 initPin.isPending ||
                 (createPhase === 'new' ? newDigits.length < 4 : confirmDigits.length < 4)
               }
-              className="btn-primary-gradient w-full py-4 rounded-[14px]"
+              className="btn-primary-gradient w-full min-h-[60px] rounded-[16px] text-lg"
             >
               {initPin.isPending
                 ? 'Guardando…'
@@ -660,7 +618,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setCreatePhase('new'); setNewDigits([]); setConfirmDigits([]) }}
-                className="text-xs text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
+                className="min-h-[48px] inline-flex items-center justify-center gap-1.5 text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors font-body bg-transparent border-none cursor-pointer"
               >
                 Volver a ingresar PIN
               </button>
@@ -668,7 +626,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => { setStep('cedula'); setNewDigits([]); setConfirmDigits([]) }}
-              className="text-xs text-center text-[var(--muted)] hover:text-[var(--off-white)] transition-colors font-dm bg-transparent border-none cursor-pointer p-0"
+              className="min-h-[48px] inline-flex items-center justify-center gap-1.5 text-base font-semibold text-center text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors font-body bg-transparent border-none cursor-pointer"
             >
               Cambiar cédula
             </button>

@@ -111,10 +111,10 @@ export default function CategoriesPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+          <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
             Categorías de formularios
           </h1>
-          <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+          <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
             Organiza tus formularios por categorías
           </p>
         </div>
@@ -126,13 +126,13 @@ export default function CategoriesPage() {
 
       <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm font-['DM_Sans']">
+          <table className="w-full text-sm font-body">
             <thead>
               <tr className="border-b border-white/5">
                 {['Nombre', 'SST', 'Acciones'].map((h) => (
                   <th
                     key={h}
-                    className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-4 px-5"
+                    className="text-left font-display font-semibold text-xs text-[var(--muted)] pb-3 pt-4 px-5"
                   >
                     {h}
                   </th>
@@ -143,7 +143,7 @@ export default function CategoriesPage() {
               {categories.map((cat, i) => (
                 <tr
                   key={cat.id}
-                  className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
+                  className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${
                     i % 2 === 1 ? 'bg-white/[0.02]' : ''
                   }`}
                 >
@@ -204,7 +204,7 @@ export default function CategoriesPage() {
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <label className="text-sm text-[var(--muted)] font-body">
               Nombre <span className="text-red-400">*</span>
             </label>
             <input
@@ -213,7 +213,7 @@ export default function CategoriesPage() {
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="Ej: Seguridad Industrial"
               required
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             />
           </div>
 
@@ -228,7 +228,7 @@ export default function CategoriesPage() {
               <div className="w-10 h-5 bg-white/10 rounded-full peer-checked:bg-[var(--signal)] transition-colors" />
               <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5" />
             </div>
-            <span className="text-sm text-[var(--off-white)] font-['DM_Sans']">
+            <span className="text-sm text-[var(--off-white)] font-body">
               Es categoría SST (Seguridad y Salud en el Trabajo)
             </span>
           </label>

@@ -1,6 +1,6 @@
 import { LucideIcon } from 'lucide-react'
 
-type StatVariant = 'default' | 'signal' | 'amber' | 'success'
+type StatVariant = 'default' | 'signal' | 'amber' | 'success' | 'info' | 'danger'
 
 interface StatCardProps {
   title: string
@@ -10,46 +10,34 @@ interface StatCardProps {
 }
 
 const variantColors: Record<StatVariant, string> = {
-  default: 'text-[var(--off-white)]',
-  signal:  'text-[var(--signal)]',
-  amber:   'text-[var(--amber)]',
-  success: 'text-emerald-400',
+  default: 'text-[var(--fg)]',
+  signal:  'text-[var(--fg)]',
+  amber:   'text-[var(--warn-ink)]',
+  success: 'text-[var(--ok-ink)]',
+  info:    'text-[var(--info-ink)]',
+  danger:  'text-[var(--danger-ink)]',
 }
 
-const variantIconBg: Record<StatVariant, string> = {
-  default: 'bg-[var(--signal-dim)]',
-  signal:  'bg-[var(--signal-dim)]',
-  amber:   'bg-[rgba(245,166,35,0.15)]',
-  success: 'bg-emerald-500/15',
+const variantIcon: Record<StatVariant, string> = {
+  default: 'bg-[var(--wash-brand)] text-[var(--fg)]',
+  signal:  'bg-[var(--brand)] text-[var(--on-brand)]',
+  amber:   'bg-[var(--warn)] text-[var(--on-warn)]',
+  success: 'bg-[var(--ok)] text-[var(--on-ok)]',
+  info:    'bg-[var(--info)] text-[var(--on-info)]',
+  danger:  'bg-[var(--danger)] text-[var(--on-danger)]',
 }
 
-const variantIconColor: Record<StatVariant, string> = {
-  default: 'text-[var(--signal)]',
-  signal:  'text-[var(--signal)]',
-  amber:   'text-[var(--amber)]',
-  success: 'text-emerald-400',
-}
-
-export function StatCard({
-  title,
-  value,
-  icon: Icon,
-  variant = 'default',
-}: StatCardProps) {
+export function StatCard({ title, value, icon: Icon, variant = 'default' }: StatCardProps) {
   return (
-    <div className={`glass-card-md flex flex-col gap-3 p-5 stat-glow`}>
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-semibold text-[var(--muted)] font-dm uppercase tracking-wider">
-          {title}
-        </p>
-        {Icon && (
-          <div className={`w-8 h-8 rounded-lg ${variantIconBg[variant]} flex items-center justify-center shrink-0`}>
-            <Icon className={`w-4 h-4 ${variantIconColor[variant]}`} />
-          </div>
-        )}
-      </div>
-      <div>
-        <p className={`text-3xl font-bold font-display ${variantColors[variant]}`}>{value}</p>
+    <div className="glass-card-md flex items-center gap-4 p-4">
+      {Icon && (
+        <div className={`w-12 h-12 rounded-[12px] ${variantIcon[variant]} flex items-center justify-center shrink-0`}>
+          <Icon className="w-6 h-6" aria-hidden="true" />
+        </div>
+      )}
+      <div className="min-w-0">
+        <p className={`text-4xl leading-none font-bold font-display ${variantColors[variant]}`}>{value}</p>
+        <p className="text-sm font-medium text-[var(--fg-muted)] font-body mt-1 truncate">{title}</p>
       </div>
     </div>
   )

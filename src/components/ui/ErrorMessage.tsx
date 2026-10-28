@@ -1,4 +1,4 @@
-import { AlertCircle } from 'lucide-react'
+import { TriangleAlert } from 'lucide-react'
 import { Button } from './Button'
 
 interface ErrorMessageProps {
@@ -14,15 +14,15 @@ export function ErrorMessage({
 }: ErrorMessageProps) {
   return (
     <div data-testid="error-message" className="flex flex-col items-center gap-4 p-8 text-center">
-      <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-        <AlertCircle className="w-6 h-6 text-red-400" />
+      <div className="w-14 h-14 rounded-[16px] bg-[var(--warn)] text-[var(--on-warn)] flex items-center justify-center">
+        <TriangleAlert className="w-7 h-7" aria-hidden="true" />
       </div>
       <div>
-        <h3 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-1">{title}</h3>
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans']">{message}</p>
+        <h3 className="font-display font-bold text-xl text-[var(--fg)] mb-1">{title}</h3>
+        <p className="text-base text-[var(--fg-muted)] font-body">{message}</p>
       </div>
       {onRetry && (
-        <Button variant="secondary" size="sm" onClick={onRetry}>
+        <Button variant="secondary" onClick={onRetry}>
           Reintentar
         </Button>
       )}

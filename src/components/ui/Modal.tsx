@@ -12,12 +12,16 @@ interface ModalProps {
 }
 
 const sizeClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-2xl',
+  sm: 'sm:max-w-sm',
+  md: 'sm:max-w-md',
+  lg: 'sm:max-w-lg',
+  xl: 'sm:max-w-2xl',
 }
 
+/**
+ * Hoja de vidrio líquido. En móvil sube desde abajo (alcance del pulgar);
+ * desde `sm` es un diálogo centrado.
+ */
 export function Modal({
   open,
   onOpenChange,
@@ -29,14 +33,19 @@ export function Modal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay data-testid="modal-overlay" className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-[fadeIn_0.15s_ease]" />
+        <Dialog.Overlay
+          data-testid="modal-overlay"
+          className="fixed inset-0 bg-[rgba(23,22,15,0.5)] z-40 animate-[fadeIn_0.2s_ease]"
+        />
         <Dialog.Content
           data-testid="modal-content"
-          className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full ${sizeClasses[size]} glass-card p-6 animate-[slideUp_0.2s_ease] max-h-[90vh] overflow-y-auto focus:outline-none`}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className={`liquid fixed z-50 w-full inset-x-0 bottom-0 rounded-t-[28px] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] animate-[sheetUp_0.32s_var(--ease-out)] max-h-[92vh] overflow-y-auto focus:outline-none sm:inset-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-[24px] sm:pb-6 sm:animate-[slideUp_0.24s_var(--ease-out)] ${sizeClasses[size]}`}
         >
+          <div className="sm:hidden mx-auto -mt-2 mb-4 h-1.5 w-11 rounded-full bg-[var(--line-strong)]" aria-hidden="true" />
           <div className="mb-5">
             <div className="flex items-start justify-between gap-3">
-              <Dialog.Title className="font-['Syne'] font-semibold text-[var(--off-white)] text-lg">
+              <Dialog.Title className="font-display font-bold text-[var(--fg)] text-2xl leading-tight">
                 {title}
               </Dialog.Title>
               <Dialog.Close asChild>
@@ -44,14 +53,14 @@ export function Modal({
                   type="button"
                   data-testid="modal-close"
                   aria-label="Cerrar"
-                  className="shrink-0 text-[var(--muted)] hover:text-[var(--off-white)] transition-colors"
+                  className="shrink-0 w-11 h-11 -mr-2 -mt-1 grid place-items-center rounded-full text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--wash)] transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-6 h-6" />
                 </button>
               </Dialog.Close>
             </div>
             {description && (
-              <Dialog.Description className="text-sm text-[var(--muted)] mt-1 font-['DM_Sans']">
+              <Dialog.Description className="text-base text-[var(--fg-muted)] mt-1 font-body">
                 {description}
               </Dialog.Description>
             )}

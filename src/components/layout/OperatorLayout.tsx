@@ -54,90 +54,61 @@ function JornadaTab({ isActive }: { isActive: boolean }) {
 
   // ── Render variantes ───────────────────────────────────────────────────
 
+  const label = !hasEntry ? 'Entrada' : !hasExit ? 'Salida' : 'Jornada'
+
+  return (
+    <TabButton
+      label={label}
+      sub={hasEntry && !hasExit ? entryTimeLabel : null}
+      isActive={isActive}
+      onClick={() => navigate('/asistencia')}
+      icon={
+        <span className="relative">
+          <Clock className="w-[26px] h-[26px]" aria-hidden="true" />
+          {!hasEntry && (
+            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--danger)] ring-2 ring-[var(--liquid-edge)] animate-pulse" aria-hidden="true" />
+          )}
+          {hasEntry && !hasExit && (
+            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--ok)] ring-2 ring-[var(--liquid-edge)] animate-pulse" aria-hidden="true" />
+          )}
+          {hasExit && (
+            <CheckCircle className="absolute -top-1.5 -right-2 w-4 h-4 text-[var(--ok)] bg-[var(--surface)] rounded-full" aria-hidden="true" />
+          )}
+        </span>
+      }
+    />
+  )
+}
+
+/** Tab de la barra inferior: objetivo táctil de 64 px con pastilla amarilla cuando está activo. */
+function TabButton({
+  label,
+  sub,
+  icon,
+  isActive,
+  onClick,
+}: {
+  label: string
+  sub?: string | null
+  icon: React.ReactNode
+  isActive: boolean
+  onClick: () => void
+}) {
   return (
     <button
       type="button"
-      onClick={() => navigate('/asistencia')}
-      className="flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg transition-colors min-w-0"
+      onClick={onClick}
       aria-current={isActive ? 'page' : undefined}
+      className={[
+        'relative flex-1 min-w-0 h-16 flex flex-col items-center justify-center gap-0.5 rounded-[20px] transition-[background-color,color,transform] duration-200 ease-[var(--ease-out)] active:scale-[0.94]',
+        isActive
+          ? 'bg-[var(--brand)] text-[var(--on-brand)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_10px_-4px_rgba(168,127,0,0.6)]'
+          : 'text-[var(--fg-muted)] hover:text-[var(--fg)]',
+      ].join(' ')}
     >
-      {/* Icono + indicador de estado */}
-      <div className="relative">
-        <Clock
-          className="w-5 h-5"
-          style={{ color: isActive ? 'var(--signal)' : 'var(--muted)' }}
-        />
-
-        {/* Estado: sin entrada → punto rojo pulsante */}
-        {!hasEntry && (
-          <span
-            className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse"
-            style={{ background: '#ef4444' }}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Estado: en jornada → punto verde */}
-        {hasEntry && !hasExit && (
-          <span
-            className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse"
-            style={{ background: '#22c55e' }}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Estado: completa → check */}
-        {hasExit && (
-          <span className="absolute -top-1 -right-1">
-            <CheckCircle className="w-3 h-3 text-emerald-400" />
-          </span>
-        )}
-      </div>
-
-      {/* Etiqueta */}
-      {!hasEntry && (
-        <span
-          className="text-[10px] font-['DM_Sans'] leading-none font-semibold"
-          style={{ color: isActive ? 'var(--signal)' : 'var(--muted)' }}
-        >
-          Entrada
-        </span>
-      )}
-
-      {hasEntry && !hasExit && (
-        <>
-          <span
-            className="text-[10px] font-['DM_Sans'] leading-none font-semibold"
-            style={{ color: isActive ? 'var(--signal)' : 'var(--muted)' }}
-          >
-            Salida
-          </span>
-          {entryTimeLabel && (
-            <span
-              className="text-[9px] font-['DM_Sans'] leading-none"
-              style={{ color: 'var(--muted)' }}
-            >
-              {entryTimeLabel}
-            </span>
-          )}
-        </>
-      )}
-
-      {hasExit && (
-        <span
-          className="text-[10px] font-['DM_Sans'] leading-none font-semibold"
-          style={{ color: isActive ? 'var(--signal)' : 'var(--muted)' }}
-        >
-          Jornada
-        </span>
-      )}
-
-      {/* Indicador activo */}
-      {isActive ? (
-        <div className="w-1 h-1 rounded-full bg-(--signal) mx-auto mt-1" />
-      ) : (
-        <div className="w-1 h-1" />
-      )}
+      {icon}
+      <span className="text-[12px] min-[360px]:text-[13px] tracking-tight font-body font-bold leading-none max-w-full">{label}</span>
+      {sub && <span className="text-[11px] leading-none font-medium opacity-80 -mt-0.5">{sub}</span>}
     </button>
   )
 }
@@ -151,9 +122,9 @@ interface StaticTab {
 }
 
 const STATIC_TABS: StaticTab[] = [
-  { label: 'Inicio',      icon: Map,      path: '/' },
+  { label: 'Ruta',        icon: Map,      path: '/' },
   { label: 'Permisos',    icon: FileText, path: '/permisos' },
-  { label: 'Inventarios', icon: Package,  path: '/inventarios' },
+  { label: 'Inventario',  icon: Package,  path: '/inventarios' },
   { label: 'Perfil',      icon: User,     path: '/perfil' },
 ]
 
@@ -172,57 +143,27 @@ function OperatorBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[rgba(0,212,255,0.1)]"
-      style={{
-        background: 'var(--glass-bg)',
-        backdropFilter: 'var(--glass-blur)',
-        paddingBottom: 'env(safe-area-inset-bottom, 8px)',
-      }}
+      className="fixed inset-x-0 bottom-0 z-40 px-3 pointer-events-none"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)' }}
       aria-label="Navegación principal"
     >
-      <div className="flex items-center justify-around px-2 h-14">
-        {/* Tab 0: Jornada (siempre la primera) */}
+      <div className="liquid pointer-events-auto mx-auto max-w-md flex items-stretch gap-0.5 min-[360px]:gap-1 p-1 min-[360px]:p-1.5 rounded-[28px]">
         <JornadaTab isActive={pathname === '/asistencia'} />
 
-        {/* Tabs 1-4: resto de navegación */}
         {STATIC_TABS.map((tab) => {
           const isActive =
             pathname === tab.path ||
             (tab.path === '/' && pathname === '/game/world-map') ||
             (tab.path !== '/' && pathname.startsWith(tab.path))
-
           const Icon = tab.icon
-
           return (
-            <button
+            <TabButton
               key={tab.label}
-              type="button"
+              label={tab.label}
+              isActive={isActive}
               onClick={() => navigate(tab.path)}
-              className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-colors"
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <Icon
-                className="w-5 h-5"
-                style={{ color: isActive ? 'var(--signal)' : 'var(--muted)' }}
-              />
-              <span
-                className={[
-                  'text-[10px] font-["DM_Sans"] leading-none',
-                  isActive ? 'font-semibold' : '',
-                ].join(' ')}
-                style={{ color: isActive ? 'var(--signal)' : 'var(--muted)' }}
-              >
-                {tab.label}
-              </span>
-              {isActive ? (
-                <div
-                  className="w-1 h-1 rounded-full mx-auto mt-1"
-                  style={{ background: 'var(--signal)' }}
-                />
-              ) : (
-                <div className="w-1 h-1" />
-              )}
-            </button>
+              icon={<Icon className="w-[26px] h-[26px]" />}
+            />
           )
         })}
       </div>
@@ -271,10 +212,10 @@ export function OperatorLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--navy)] flex flex-col">
+    <div className="min-h-screen bg-[var(--bg)] flex flex-col">
       <SlowConnectionBanner />
       <OperatorNotificationBell />
-      <main className="flex-1 flex flex-col pb-20">
+      <main className="flex-1 flex flex-col pb-32">
         <Outlet />
       </main>
       <OperatorBottomNav />

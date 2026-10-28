@@ -48,13 +48,13 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 // ── Constantes de estilo (siguiendo UsersPage) ────────────────────────────────
 
 const INPUT_CLASS =
-  'w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all placeholder:text-[var(--muted)]'
+  'w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all placeholder:text-[var(--muted)]'
 
 const TEXTAREA_CLASS =
-  'w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all placeholder:text-[var(--muted)] resize-none'
+  'w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all placeholder:text-[var(--muted)] resize-none'
 
 const SELECT_CLASS =
-  'w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] transition-all'
+  'w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] transition-all'
 
 const LABEL_CLASS =
   'block text-xs text-[var(--muted)] font-dm uppercase tracking-wide mb-1.5'
@@ -88,11 +88,11 @@ function NotificationPreview({ title, body }: NotificationPreviewProps) {
     <div
       aria-label="Vista previa de la notificación"
       className="rounded-[var(--radius-glass)] border border-white/[0.08] overflow-hidden"
-      style={{ background: 'linear-gradient(160deg, #162238 0%, #111E30 100%)' }}
+      style={{ background: 'var(--surface)' }}
     >
       <div className="px-4 py-2.5 border-b border-white/5 flex items-center gap-2">
-        <Bell className="w-3.5 h-3.5 text-[var(--signal)]" aria-hidden="true" />
-        <span className="text-xs text-[var(--muted)] font-dm uppercase tracking-wide">
+        <Bell className="w-3.5 h-3.5 text-[var(--accent-ink)]" aria-hidden="true" />
+        <span className="text-xs text-[var(--muted)] font-dm ">
           Vista previa
         </span>
       </div>
@@ -109,7 +109,7 @@ function NotificationPreview({ title, body }: NotificationPreviewProps) {
             <p className="text-xs text-[var(--muted)] mt-0.5 font-dm line-clamp-2">
               {body || 'El mensaje aparecerá aquí...'}
             </p>
-            <p className="text-[10px] text-[var(--muted)]/50 mt-1 font-dm">hace un momento</p>
+            <p className="text-[12px] text-[var(--muted)]/50 mt-1 font-dm">hace un momento</p>
           </div>
         </div>
       ) : (
@@ -169,7 +169,7 @@ function UserMultiSelect({ users, selectedIds, onChange, disabled }: UserMultiSe
             <span
               key={u.id}
               role="listitem"
-              className="inline-flex items-center gap-1 text-xs bg-[rgba(0,212,255,0.12)] text-[var(--signal)] rounded-[var(--radius-badge)] px-2 py-1 font-dm"
+              className="inline-flex items-center gap-1 text-xs bg-[var(--wash-brand)] text-[var(--accent-ink)] rounded-[var(--radius-badge)] px-2 py-1 font-dm"
             >
               {u.name}
               {!disabled && (
@@ -212,7 +212,7 @@ function UserMultiSelect({ users, selectedIds, onChange, disabled }: UserMultiSe
           aria-multiselectable="true"
           aria-label="Lista de usuarios"
           className="absolute top-full left-0 right-0 mt-1 z-30 rounded-[var(--radius-glass-md)] border border-white/[0.08] overflow-hidden shadow-glass"
-          style={{ background: 'linear-gradient(160deg, #162238 0%, #111E30 100%)' }}
+          style={{ background: 'var(--surface)' }}
         >
           {/* Búsqueda */}
           <div className="p-2 border-b border-white/5">
@@ -224,7 +224,7 @@ function UserMultiSelect({ users, selectedIds, onChange, disabled }: UserMultiSe
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Buscar usuarios"
-                className="w-full bg-white/5 border-0 rounded-[var(--radius-btn)] pl-9 pr-3 py-2 text-xs text-[var(--off-white)] font-dm outline-none placeholder:text-[var(--muted)]/60 focus:ring-1 focus:ring-[rgba(0,212,255,0.3)]"
+                className="w-full bg-white/5 border-0 rounded-[var(--radius-btn)] pl-9 pr-3 py-2 text-xs text-[var(--off-white)] font-dm outline-none placeholder:text-[var(--muted)]/60 focus:ring-1 focus:ring-[color:var(--brand)]"
                 autoFocus
               />
             </div>
@@ -246,14 +246,14 @@ function UserMultiSelect({ users, selectedIds, onChange, disabled }: UserMultiSe
                     role="option"
                     aria-selected={checked}
                     onClick={() => toggle(u.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-white/[0.04] transition-colors ${checked ? 'bg-[rgba(0,212,255,0.05)]' : ''}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-white/[0.04] transition-colors ${checked ? 'bg-[var(--wash)]' : ''}`}
                   >
                     <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${checked ? 'bg-[var(--signal)] border-[var(--signal)]' : 'border-white/20'}`}>
-                      {checked && <CheckCircle2 className="w-3 h-3 text-[var(--navy)]" aria-hidden="true" />}
+                      {checked && <CheckCircle2 className="w-3 h-3 text-[var(--on-brand)]" aria-hidden="true" />}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-[var(--off-white)] font-dm truncate">{u.name}</p>
-                      <p className="text-[10px] text-[var(--muted)] font-dm">{u.identification_number}</p>
+                      <p className="text-[12px] text-[var(--muted)] font-dm">{u.identification_number}</p>
                     </div>
                   </button>
                 )
@@ -362,7 +362,7 @@ function SentTable({
               {['Fecha', 'Título', 'Mensaje', 'Creada por'].map((h) => (
                 <th
                   key={h}
-                  className="text-left font-syne font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-5 px-5 whitespace-nowrap"
+                  className="text-left font-syne font-semibold text-xs text-[var(--muted)] pb-3 pt-5 px-5 whitespace-nowrap"
                 >
                   {h}
                 </th>
@@ -385,7 +385,7 @@ function SentTable({
               notifications.map((n, i) => (
                 <tr
                   key={n.id}
-                  className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${i % 2 === 1 ? 'bg-white/[0.02]' : ''}`}
+                  className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${i % 2 === 1 ? 'bg-white/[0.02]' : ''}`}
                 >
                   <td className="py-3 px-5 text-[var(--muted)] whitespace-nowrap">
                     <time dateTime={n.created_at} title={new Date(n.created_at).toLocaleString('es-CO')}>
@@ -462,7 +462,13 @@ export default function CommunicationsPage() {
     queryFn: async ({ pageParam }) => {
       const page = typeof pageParam === 'number' ? pageParam : 1
       const res = await notificationsApi.listSent({ page, limit: SENT_PAGE_SIZE })
-      return res.data as SentPage
+      // El interceptor desenvuelve { success, data }: según el backend llega
+      // { data, total } o directamente el arreglo. Se aceptan ambas formas.
+      const raw = res.data as unknown
+      if (Array.isArray(raw)) return { data: raw as AppNotification[], total: raw.length }
+      const obj = (raw ?? {}) as Partial<SentPage>
+      const data = Array.isArray(obj.data) ? obj.data : []
+      return { data, total: typeof obj.total === 'number' ? obj.total : data.length }
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
@@ -473,7 +479,7 @@ export default function CommunicationsPage() {
   })
 
   const sentNotifications: AppNotification[] =
-    sentQuery.data?.pages.flatMap((p) => p.data) ?? []
+    sentQuery.data?.pages.flatMap((p) => p.data).filter(Boolean) ?? []
 
   // ── Mutación enviar ─────────────────────────────────────────────────────
 
@@ -573,7 +579,7 @@ export default function CommunicationsPage() {
                 aria-describedby="title-hint"
                 className={INPUT_CLASS}
               />
-              <p id="title-hint" className="text-[10px] text-[var(--muted)] mt-1 font-dm">
+              <p id="title-hint" className="text-[12px] text-[var(--muted)] mt-1 font-dm">
                 Maximo {MAX_TITLE} caracteres
               </p>
             </div>
@@ -602,7 +608,7 @@ export default function CommunicationsPage() {
                 aria-describedby="body-hint"
                 className={TEXTAREA_CLASS}
               />
-              <p id="body-hint" className="text-[10px] text-[var(--muted)] mt-1 font-dm">
+              <p id="body-hint" className="text-[12px] text-[var(--muted)] mt-1 font-dm">
                 Maximo {MAX_BODY} caracteres
               </p>
             </div>
@@ -628,7 +634,7 @@ export default function CommunicationsPage() {
                         flex items-center gap-3 p-3 rounded-[var(--radius-btn)] cursor-pointer
                         border transition-all
                         ${form.target === value
-                          ? 'border-[rgba(0,212,255,0.4)] bg-[rgba(0,212,255,0.06)]'
+                          ? 'border-[color:var(--line-strong)] bg-[var(--wash)]'
                           : 'border-white/[0.08] hover:border-white/20'}
                       `}
                     >
@@ -648,7 +654,7 @@ export default function CommunicationsPage() {
                         className="sr-only"
                       />
                       <Icon
-                        className={`w-4 h-4 shrink-0 ${form.target === value ? 'text-[var(--signal)]' : 'text-[var(--muted)]'}`}
+                        className={`w-4 h-4 shrink-0 ${form.target === value ? 'text-[var(--accent-ink)]' : 'text-[var(--muted)]'}`}
                         aria-hidden="true"
                       />
                       <span

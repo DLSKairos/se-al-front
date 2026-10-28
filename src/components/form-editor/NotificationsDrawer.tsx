@@ -11,10 +11,10 @@ import { FormNotification, NotificationTrigger } from '@/types'
 // ── Constantes ─────────────────────────────────────────────────────────────────
 
 const INPUT_CLASS =
-  'bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)] transition-all w-full font-["DM_Sans"]'
+  'bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)] transition-all w-full font-["DM_Sans"]'
 
 const LABEL_CLASS =
-  'text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1.5 font-["DM_Sans"] block'
+  'text-[12px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1.5 font-["DM_Sans"] block'
 
 const TRIGGER_OPTIONS: { value: NotificationTrigger; label: string }[] = [
   { value: 'ON_SUBMIT',  label: 'Al enviar' },
@@ -138,14 +138,14 @@ export function NotificationsDrawer({
             aria-label="Panel de notificaciones"
           >
             {/* Header */}
-            <div className="flex items-center gap-2 px-5 py-4 border-b border-[rgba(0,212,255,0.12)] shrink-0">
-              <Bell size={16} className="text-[var(--signal)]" />
-              <span className="flex-1 text-sm font-semibold text-[var(--off-white)] font-['Syne']">
+            <div className="flex items-center gap-2 px-5 py-4 border-b border-[color:var(--line)] shrink-0">
+              <Bell size={16} className="text-[var(--accent-ink)]" />
+              <span className="flex-1 text-sm font-semibold text-[var(--off-white)] font-display">
                 Notificaciones
               </span>
               <button
                 onClick={onClose}
-                className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] transition-colors"
+                className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[var(--wash)] transition-colors"
                 aria-label="Cerrar panel"
               >
                 <X size={16} />
@@ -158,7 +158,7 @@ export function NotificationsDrawer({
               {!templateId && (
                 <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-16">
                   <Bell size={32} className="text-[var(--muted)]" />
-                  <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+                  <p className="text-sm text-[var(--muted)] font-body">
                     Guarda el formulario primero para configurar notificaciones.
                   </p>
                 </div>
@@ -169,7 +169,7 @@ export function NotificationsDrawer({
                 <>
                   {/* Lista existente */}
                   {isLoading ? (
-                    <div className="flex items-center gap-2 text-sm text-[var(--muted)] font-['DM_Sans']">
+                    <div className="flex items-center gap-2 text-sm text-[var(--muted)] font-body">
                       <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                       Cargando notificaciones...
                     </div>
@@ -182,15 +182,15 @@ export function NotificationsDrawer({
                           className="flex items-start justify-between gap-3 p-3 rounded-lg bg-[var(--navy)] border border-white/5"
                         >
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-[var(--off-white)] font-['DM_Sans']">
+                            <p className="text-sm font-medium text-[var(--off-white)] font-body">
                               {TRIGGER_LABEL[n.trigger] ?? n.trigger}
                             </p>
                             {n.subject && (
-                              <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5 truncate">
+                              <p className="text-xs text-[var(--muted)] font-body mt-0.5 truncate">
                                 {n.subject}
                               </p>
                             )}
-                            <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+                            <p className="text-xs text-[var(--muted)] font-body mt-0.5">
                               {n.recipients.length} destinatario
                               {n.recipients.length !== 1 ? 's' : ''} · {n.channels.join(', ')}
                             </p>
@@ -207,14 +207,14 @@ export function NotificationsDrawer({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+                    <p className="text-sm text-[var(--muted)] font-body">
                       No hay notificaciones configuradas.
                     </p>
                   )}
 
                   {/* Formulario nueva notificación */}
-                  <div className="bg-[var(--navy)] border border-[rgba(0,212,255,0.12)] rounded-xl p-4 flex flex-col gap-4">
-                    <h3 className="text-sm font-semibold text-[var(--off-white)] font-['Syne']">
+                  <div className="bg-[var(--navy)] border border-[color:var(--line)] rounded-xl p-4 flex flex-col gap-4">
+                    <h3 className="text-sm font-semibold text-[var(--off-white)] font-display">
                       Nueva notificación
                     </h3>
 
@@ -285,7 +285,7 @@ export function NotificationsDrawer({
                           {draft.recipients.map((r, i) => (
                             <span
                               key={i}
-                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--signal-dim)] border border-[var(--signal)]/20 text-xs text-[var(--signal)] font-['DM_Sans']"
+                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--signal-dim)] border border-[var(--signal)]/20 text-xs text-[var(--accent-ink)] font-body"
                             >
                               {r.value}
                               <button

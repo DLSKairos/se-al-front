@@ -16,7 +16,7 @@ export function DateField({ field, value, onChange, disabled }: DateFieldProps) 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="w-full px-5 py-4 rounded-[14px] bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] text-[var(--off-white)] font-dm text-base outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_3px_rgba(0,212,255,0.15)] transition-all disabled:opacity-50 disabled:cursor-not-allowed [color-scheme:dark]"
+      className="w-full px-5 py-4 rounded-[14px] bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] text-[var(--off-white)] font-dm text-base outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--brand)_15%,transparent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed [color-scheme:dark]"
     />
   )
 }

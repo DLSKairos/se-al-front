@@ -50,7 +50,7 @@ function ComboboxSkeleton({ label }: { label?: string }) {
       )}
       <div
         className="h-12 w-full rounded-[var(--radius-input)] animate-pulse"
-        style={{ background: 'rgba(255,255,255,0.07)' }}
+        style={{ background: 'color-mix(in srgb,var(--fg) 7%,transparent)' }}
       />
     </div>
   )
@@ -181,7 +181,7 @@ export default function Combobox({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-xs uppercase tracking-wide font-['DM_Sans'] mb-0"
+          className="block text-xs font-body mb-0"
           style={{ color: 'var(--muted)' }}
         >
           {label}
@@ -200,16 +200,16 @@ export default function Combobox({
         className={[
           'w-full flex items-center gap-2 px-4 py-3 rounded-[var(--radius-input)] text-sm text-left',
           'transition-all outline-none',
-          'bg-[rgba(255,255,255,0.05)] border',
+          'bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border',
           error
             ? 'border-red-500/60 focus:border-red-500'
             : open
-            ? 'border-[var(--signal)] shadow-[0_0_0_2px_rgba(0,212,255,0.1)]'
-            : 'border-[rgba(0,212,255,0.15)] hover:border-[rgba(0,212,255,0.3)]',
+            ? 'border-[var(--signal)] shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)]'
+            : 'border-[color:var(--line)] hover:border-[color:var(--line-strong)]',
         ].join(' ')}
       >
         <span
-          className="flex-1 truncate font-['DM_Sans']"
+          className="flex-1 truncate font-body"
           style={{ color: displayText ? 'var(--off-white)' : 'var(--muted)' }}
         >
           {displayText || placeholder}
@@ -240,7 +240,7 @@ export default function Combobox({
 
       {/* Mensaje de error */}
       {error && (
-        <p className="text-xs font-['DM_Sans'] mt-0.5" style={{ color: '#f87171' }}>
+        <p className="text-xs font-body mt-0.5" style={{ color: '#f87171' }}>
           {error}
         </p>
       )}
@@ -251,14 +251,14 @@ export default function Combobox({
           className="absolute left-0 right-0 top-full mt-1 z-50 rounded-[var(--radius-glass-md)] border overflow-hidden"
           style={{
             background: 'var(--navy-mid)',
-            border: '1px solid rgba(0,212,255,0.15)',
+            border: '1px solid color-mix(in srgb,var(--brand) 15%,transparent)',
             boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
           }}
         >
           {/* Campo de búsqueda */}
           <div
             className="flex items-center gap-2 px-3 py-2 border-b"
-            style={{ borderColor: 'rgba(0,212,255,0.1)' }}
+            style={{ borderColor: 'color-mix(in srgb,var(--brand) 10%,transparent)' }}
           >
             <Search className="w-4 h-4 shrink-0" style={{ color: 'var(--muted)' }} />
             <input
@@ -274,7 +274,7 @@ export default function Combobox({
               placeholder="Buscar..."
               aria-autocomplete="list"
               aria-controls={listId}
-              className="flex-1 bg-transparent outline-none text-sm font-['DM_Sans'] placeholder:text-[var(--muted)]"
+              className="flex-1 bg-transparent outline-none text-sm font-body placeholder:text-[var(--muted)]"
               style={{ color: 'var(--off-white)' }}
             />
           </div>
@@ -289,7 +289,7 @@ export default function Combobox({
           >
             {filtered.length === 0 && !hasSuggestOption && (
               <li
-                className="px-4 py-3 text-sm font-['DM_Sans'] text-center"
+                className="px-4 py-3 text-sm font-body text-center"
                 style={{ color: 'var(--muted)' }}
               >
                 Sin resultados
@@ -307,12 +307,12 @@ export default function Combobox({
                   aria-selected={isSelected}
                   onMouseDown={() => selectItem(item.id)}
                   onMouseEnter={() => setActiveIndex(idx)}
-                  className="px-4 py-2.5 text-sm font-['DM_Sans'] cursor-pointer transition-colors flex items-center justify-between gap-2"
+                  className="px-4 py-2.5 text-sm font-body cursor-pointer transition-colors flex items-center justify-between gap-2"
                   style={{
                     background: isActive
-                      ? 'rgba(0,212,255,0.08)'
+                      ? 'color-mix(in srgb,var(--brand) 8%,transparent)'
                       : isSelected
-                      ? 'rgba(0,212,255,0.05)'
+                      ? 'color-mix(in srgb,var(--brand) 5%,transparent)'
                       : 'transparent',
                     color: isSelected ? 'var(--signal)' : 'var(--off-white)',
                   }}
@@ -351,12 +351,12 @@ export default function Combobox({
                 onMouseEnter={() => setActiveIndex(filtered.length)}
                 className="px-4 py-3 text-sm cursor-pointer transition-colors flex items-center gap-2 border-t"
                 style={{
-                  borderColor: 'rgba(255,255,255,0.06)',
+                  borderColor: 'color-mix(in srgb,var(--fg) 6%,transparent)',
                   background:
                     activeIndex === filtered.length
                       ? 'rgba(245,166,35,0.08)'
                       : 'transparent',
-                  color: 'var(--amber)',
+                  color: 'var(--warn-ink)',
                 }}
               >
                 <PlusCircle className="w-4 h-4 shrink-0" />

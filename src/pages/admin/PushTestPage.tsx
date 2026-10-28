@@ -113,10 +113,10 @@ export default function PushTestPage() {
   return (
     <div className="flex flex-col gap-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+        <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
           Notificaciones Push
         </h1>
-        <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+        <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
           Prueba y gestiona las notificaciones push del sistema
         </p>
       </div>
@@ -125,7 +125,7 @@ export default function PushTestPage() {
       {!VAPID_PUBLIC_KEY && (
         <div className="glass-card p-4 flex items-start gap-3 border border-amber-500/30 bg-amber-500/5">
           <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-          <p className="text-sm text-amber-400 font-['DM_Sans']">
+          <p className="text-sm text-amber-400 font-body">
             La variable de entorno <code className="font-mono text-xs">VITE_VAPID_PUBLIC_KEY</code> no está configurada.
             Las notificaciones push no funcionarán hasta que se defina.
           </p>
@@ -135,12 +135,12 @@ export default function PushTestPage() {
       {/* Info */}
       <div className="glass-card p-5 flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <Info className="w-4 h-4 text-[var(--signal)] shrink-0" />
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+          <Info className="w-4 h-4 text-[var(--accent-ink)] shrink-0" />
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
             ¿Qué son las notificaciones push?
           </h2>
         </div>
-        <div className="flex flex-col gap-2 text-sm text-[var(--muted)] font-['DM_Sans'] leading-relaxed">
+        <div className="flex flex-col gap-2 text-sm text-[var(--muted)] font-body leading-relaxed">
           <p>
             Las notificaciones push permiten que SEÑAL envíe alertas a los dispositivos de los
             usuarios incluso cuando la aplicación no está abierta.
@@ -159,12 +159,12 @@ export default function PushTestPage() {
       {/* Estado de suscripción */}
       <div className="glass-card p-5 flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <Smartphone className="w-4 h-4 text-[var(--signal)] shrink-0" />
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+          <Smartphone className="w-4 h-4 text-[var(--accent-ink)] shrink-0" />
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
             Estado de este dispositivo
           </h2>
         </div>
-        <div className={`flex items-center gap-2 text-sm font-['DM_Sans'] font-medium ${status.color}`}>
+        <div className={`flex items-center gap-2 text-sm font-body font-medium ${status.color}`}>
           <StatusIcon className="w-4 h-4" />
           {status.label}
         </div>
@@ -179,13 +179,13 @@ export default function PushTestPage() {
           </Button>
         )}
         {subscriptionStatus === 'denied' && (
-          <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+          <p className="text-xs text-[var(--muted)] font-body">
             Para habilitar las notificaciones, ve a la configuración de tu navegador y concede
             el permiso para este sitio.
           </p>
         )}
         {subscriptionStatus === 'unsupported' && (
-          <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+          <p className="text-xs text-[var(--muted)] font-body">
             Tu navegador actual no soporta notificaciones push. Prueba con Chrome, Edge o Firefox
             en un dispositivo de escritorio o Android.
           </p>
@@ -195,8 +195,8 @@ export default function PushTestPage() {
       {/* Formulario de prueba */}
       <div className="glass-card p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Send className="w-4 h-4 text-[var(--signal)] shrink-0" />
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+          <Send className="w-4 h-4 text-[var(--accent-ink)] shrink-0" />
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
             Enviar notificación de prueba
           </h2>
         </div>
@@ -204,7 +204,7 @@ export default function PushTestPage() {
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="push-title"
-              className="text-sm text-[var(--muted)] font-['DM_Sans']"
+              className="text-sm text-[var(--muted)] font-body"
             >
               Título <span className="text-red-400">*</span>
             </label>
@@ -215,13 +215,13 @@ export default function PushTestPage() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ej: Alerta de sistema"
               required
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             />
           </div>
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="push-body"
-              className="text-sm text-[var(--muted)] font-['DM_Sans']"
+              className="text-sm text-[var(--muted)] font-body"
             >
               Cuerpo del mensaje
             </label>
@@ -231,7 +231,7 @@ export default function PushTestPage() {
               onChange={(e) => setBody(e.target.value)}
               placeholder="Texto descriptivo de la notificación..."
               rows={3}
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all resize-none"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all resize-none"
             />
           </div>
           <div className="flex justify-end">

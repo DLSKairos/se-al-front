@@ -77,7 +77,7 @@ function RecordsTab() {
       {/* Filtros */}
       <div className="glass-card p-4 flex flex-wrap gap-3 items-end">
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-[var(--muted)] font-['DM_Sans']">
+          <label className="text-xs text-[var(--muted)] font-body">
             Buscar usuario
           </label>
           <input
@@ -87,11 +87,11 @@ function RecordsTab() {
               setFilters((f) => ({ ...f, userId: e.target.value, page: 1 }))
             }
             placeholder="Nombre o ID"
-            className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all w-48"
+            className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all w-48"
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-[var(--muted)] font-['DM_Sans']">
+          <label className="text-xs text-[var(--muted)] font-body">
             Desde
           </label>
           <input
@@ -100,11 +100,11 @@ function RecordsTab() {
             onChange={(e) =>
               setFilters((f) => ({ ...f, startDate: e.target.value, page: 1 }))
             }
-            className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+            className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-[var(--muted)] font-['DM_Sans']">
+          <label className="text-xs text-[var(--muted)] font-body">
             Hasta
           </label>
           <input
@@ -113,7 +113,7 @@ function RecordsTab() {
             onChange={(e) =>
               setFilters((f) => ({ ...f, endDate: e.target.value, page: 1 }))
             }
-            className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+            className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
           />
         </div>
         <Button
@@ -135,14 +135,14 @@ function RecordsTab() {
       ) : (
         <div className="glass-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm font-['DM_Sans']">
+            <table className="w-full text-sm font-body">
               <thead>
                 <tr className="border-b border-white/5">
                   {['Usuario', 'Obra', 'Fecha', 'Entrada', 'Salida', 'Almuerzo', 'Total'].map(
                     (h) => (
                       <th
                         key={h}
-                        className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-4 px-4"
+                        className="text-left font-display font-semibold text-xs text-[var(--muted)] pb-3 pt-4 px-4"
                       >
                         {h}
                       </th>
@@ -154,7 +154,7 @@ function RecordsTab() {
                 {records.map((rec, i) => (
                   <tr
                     key={rec.id}
-                    className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
+                    className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${
                       i % 2 === 1 ? 'bg-white/[0.02]' : ''
                     }`}
                   >
@@ -198,7 +198,7 @@ function RecordsTab() {
           {/* Paginación */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-4 py-3 border-t border-white/5">
-              <span className="text-xs text-[var(--muted)] font-['DM_Sans']">
+              <span className="text-xs text-[var(--muted)] font-body">
                 Página {filters.page} de {totalPages}
               </span>
               <div className="flex gap-2">
@@ -253,14 +253,14 @@ function OpenShiftsTab() {
   return (
     <div className="glass-card overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm font-['DM_Sans']">
+        <table className="w-full text-sm font-body">
           <thead>
             <tr className="border-b border-white/5">
               {['Usuario', 'Obra', 'Fecha', 'Entrada', 'Tiempo transcurrido'].map(
                 (h) => (
                   <th
                     key={h}
-                    className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-4 px-4"
+                    className="text-left font-display font-semibold text-xs text-[var(--muted)] pb-3 pt-4 px-4"
                   >
                     {h}
                   </th>
@@ -272,7 +272,7 @@ function OpenShiftsTab() {
             {records.map((rec, i) => (
               <tr
                 key={rec.id}
-                className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
+                className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${
                   i % 2 === 1 ? 'bg-white/[0.02]' : ''
                 }`}
               >
@@ -347,12 +347,12 @@ function ExportTab() {
   return (
     <div className="max-w-md">
       <div className="glass-card p-5">
-        <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base mb-4">
+        <h2 className="font-display font-semibold text-[var(--off-white)] text-base mb-4">
           Exportar registros a Excel
         </h2>
         <form onSubmit={handleExport} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <label className="text-sm text-[var(--muted)] font-body">
               Fecha inicio <span className="text-red-400">*</span>
             </label>
             <input
@@ -360,11 +360,11 @@ function ExportTab() {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               required
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <label className="text-sm text-[var(--muted)] font-body">
               Fecha fin <span className="text-red-400">*</span>
             </label>
             <input
@@ -372,11 +372,11 @@ function ExportTab() {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               required
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <label className="text-sm text-[var(--muted)] font-body">
               Usuario (opcional)
             </label>
             <input
@@ -384,7 +384,7 @@ function ExportTab() {
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               placeholder="ID del usuario"
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             />
           </div>
           <Button type="submit" loading={isExporting} className="w-full">
@@ -411,10 +411,10 @@ export default function AttendanceAdminPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+        <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
           Asistencia
         </h1>
-        <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+        <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
           Consulta y gestiona los registros de asistencia
         </p>
       </div>
@@ -425,9 +425,9 @@ export default function AttendanceAdminPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-['DM_Sans'] rounded-lg transition-colors ${
+            className={`px-4 py-2 text-sm font-body rounded-lg transition-colors ${
               activeTab === tab.id
-                ? 'bg-[var(--signal)] text-[var(--navy)] font-semibold'
+                ? 'bg-[var(--signal)] text-[var(--on-brand)] font-semibold'
                 : 'text-[var(--muted)] hover:text-[var(--off-white)]'
             }`}
           >

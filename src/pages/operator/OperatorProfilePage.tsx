@@ -102,7 +102,7 @@ export default function OperatorProfilePage() {
       {/* Header */}
       <div className="flex items-center gap-3 px-6 pt-4 pb-2">
         <div className="flex-1">
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
+          <p className="text-[12px] font-semibold text-[var(--accent-ink)]">
             Cuenta
           </p>
           <h1 className="font-display font-extrabold text-base text-[var(--off-white)]">
@@ -116,7 +116,7 @@ export default function OperatorProfilePage() {
 
       {/* Avatar section */}
       <div className="flex flex-col items-center py-8 px-6">
-        <div className="w-16 h-16 rounded-full bg-[rgba(0,212,255,0.1)] border-2 border-[var(--signal)] flex items-center justify-center font-display font-bold text-2xl text-[var(--signal)]">
+        <div className="w-16 h-16 rounded-full bg-[var(--wash-brand)] border-2 border-[var(--signal)] flex items-center justify-center font-display font-bold text-2xl text-[var(--accent-ink)]">
           {initial}
         </div>
         <p className="font-display font-bold text-lg text-[var(--off-white)] mt-3">
@@ -130,14 +130,14 @@ export default function OperatorProfilePage() {
       <div className="flex flex-col gap-2 px-6">
         {/* ── Datos del usuario ─────────────────────────────────────────── */}
         <section aria-label="Informacion personal" className="mb-4">
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-3">
+          <p className="text-[12px] font-semibold text-[var(--accent-ink)] mb-3">
             Información
           </p>
           <div className="flex flex-col gap-2">
             <div className="glass p-4 flex items-center gap-3 rounded-[14px]">
               <Building2 className="w-4 h-4 text-[var(--muted)] shrink-0" aria-hidden="true" />
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)]">
+                <p className="text-[12px] font-semibold text-[var(--muted)]">
                   Organización
                 </p>
                 <p className="text-sm text-[var(--off-white)] font-dm truncate">
@@ -150,7 +150,7 @@ export default function OperatorProfilePage() {
 
         {/* ── Obra actual ───────────────────────────────────────────────── */}
         <section aria-label="Obra actual" className="mb-4">
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-3">
+          <p className="text-[12px] font-semibold text-[var(--accent-ink)] mb-3">
             Obra
           </p>
 
@@ -162,8 +162,8 @@ export default function OperatorProfilePage() {
                 border: '1.5px solid rgba(245,166,35,0.3)',
               }}
             >
-              <AlertTriangle className="w-4 h-4 text-[var(--amber)] shrink-0 mt-0.5" aria-hidden="true" />
-              <p className="text-sm text-[var(--amber)] font-dm leading-snug">
+              <AlertTriangle className="w-4 h-4 text-[var(--warn-ink)] shrink-0 mt-0.5" aria-hidden="true" />
+              <p className="text-sm text-[var(--warn-ink)] font-dm leading-snug">
                 No tienes una obra seleccionada. Algunas funciones no estarán disponibles.
               </p>
             </div>
@@ -181,7 +181,7 @@ export default function OperatorProfilePage() {
               aria-hidden="true"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)]">
+              <p className="text-[12px] font-semibold text-[var(--muted)]">
                 {currentLocation ? 'Obra seleccionada' : 'Seleccionar obra'}
               </p>
               <p
@@ -204,8 +204,8 @@ export default function OperatorProfilePage() {
         <section aria-label="Biometria y passkeys">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Fingerprint className="w-4 h-4 text-[var(--signal)]" aria-hidden="true" />
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
+              <Fingerprint className="w-4 h-4 text-[var(--accent-ink)]" aria-hidden="true" />
+              <p className="text-[12px] font-semibold text-[var(--accent-ink)]">
                 Biometria / Passkeys
               </p>
             </div>
@@ -246,7 +246,7 @@ export default function OperatorProfilePage() {
                   key={cred.id}
                   className="glass p-4 flex items-center gap-3 rounded-[14px]"
                 >
-                  <Fingerprint className="w-4 h-4 text-[var(--signal)] shrink-0" aria-hidden="true" />
+                  <Fingerprint className="w-4 h-4 text-[var(--accent-ink)] shrink-0" aria-hidden="true" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-[var(--off-white)] font-dm font-medium truncate">
                       Dispositivo biometrico
@@ -273,7 +273,7 @@ export default function OperatorProfilePage() {
         <button
           type="button"
           onClick={() => { clear(); navigate('/login') }}
-          className="w-full mt-6 py-4 rounded-[14px] border border-[rgba(239,68,68,0.2)] text-red-400 font-display text-[13px] font-bold tracking-[0.1em] uppercase active:scale-[0.97] transition-all flex items-center justify-center gap-2 bg-transparent"
+          className="w-full mt-6 py-4 rounded-[14px] border border-[color:var(--danger)] text-red-400 font-display text-[13px] font-bold active:scale-[0.97] transition-all flex items-center justify-center gap-2 bg-transparent"
         >
           <LogOut className="w-4 h-4" aria-hidden="true" />
           Cerrar sesión

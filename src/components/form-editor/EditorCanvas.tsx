@@ -193,7 +193,7 @@ export function EditorCanvas() {
       {/* Botón agregar sección */}
       <button
         onClick={() => addSection()}
-        className="flex items-center gap-2 text-sm text-[var(--signal)] hover:text-[var(--signal)]/80 px-4 py-3 rounded-xl border border-dashed border-[rgba(0,212,255,0.2)] hover:border-[rgba(0,212,255,0.4)] hover:bg-[rgba(0,212,255,0.04)] transition-all w-full mt-2"
+        className="flex items-center gap-2 text-sm text-[var(--accent-ink)] hover:text-[var(--accent-ink)]/80 px-4 py-3 rounded-xl border border-dashed border-[color:var(--line)] hover:border-[color:var(--line-strong)] hover:bg-[var(--wash)] transition-all w-full mt-2"
         aria-label="Agregar nueva sección"
       >
         <Plus size={15} />
@@ -203,12 +203,12 @@ export function EditorCanvas() {
       {/* DragOverlay — muestra una preview mientras se arrastra */}
       <DragOverlay>
         {activeSection && (
-          <div className="border border-[rgba(0,212,255,0.4)] rounded-xl bg-[var(--navy-mid)] px-4 py-3 text-sm font-semibold text-[var(--off-white)] shadow-xl opacity-90">
+          <div className="border border-[color:var(--line-strong)] rounded-xl bg-[var(--navy-mid)] px-4 py-3 text-sm font-semibold text-[var(--off-white)] shadow-xl opacity-90">
             {activeSection.name}
           </div>
         )}
         {activeField && (
-          <div className="bg-[var(--navy-mid)] border border-[rgba(0,212,255,0.3)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] shadow-xl opacity-90">
+          <div className="bg-[var(--navy-mid)] border border-[color:var(--line-strong)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] shadow-xl opacity-90">
             {activeField.field.label}
           </div>
         )}

@@ -41,7 +41,7 @@ export default function SignatureCanvas({ onConfirm, disabled = false }: Signatu
     ctx.lineWidth = 2.5
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
-    ctx.strokeStyle = '#0C1624'
+    ctx.strokeStyle = '#17160F'
   }, [])
 
   // Al hacer resize, solo reinicializar el canvas si no hay trazos capturados.
@@ -152,9 +152,9 @@ export default function SignatureCanvas({ onConfirm, disabled = false }: Signatu
   return (
     <div className="flex flex-col gap-4">
       {/* Instrucción */}
-      <div className="flex items-center justify-center gap-2 text-[var(--muted)] text-sm font-['DM_Sans']">
+      <div className="flex items-center justify-center gap-2 text-[var(--muted)] text-sm font-body">
         <svg
-          className="w-4 h-4 text-[var(--signal)]"
+          className="w-4 h-4 text-[var(--accent-ink)]"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -172,7 +172,7 @@ export default function SignatureCanvas({ onConfirm, disabled = false }: Signatu
 
       {/* Área de firma */}
       <div
-        className="relative rounded-[var(--radius-input)] overflow-hidden border-2 border-dashed border-[rgba(0,212,255,0.3)]"
+        className="relative rounded-[var(--radius-input)] overflow-hidden border-2 border-dashed border-[color:var(--line-strong)]"
         style={{ background: '#FFFFFF' }}
       >
         <canvas
@@ -191,7 +191,7 @@ export default function SignatureCanvas({ onConfirm, disabled = false }: Signatu
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
             aria-hidden="true"
           >
-            <span className="text-gray-300 text-sm font-['DM_Sans']">
+            <span className="text-gray-300 text-sm font-body">
               Traza tu firma aquí
             </span>
           </div>

@@ -27,10 +27,10 @@ interface Message {
 function UserBubble({ content }: { content: string }) {
   return (
     <div className="flex justify-end items-end gap-2">
-      <div className="max-w-[72%] px-3.5 py-2.5 rounded-[12px_12px_4px_12px] bg-[rgba(0,212,255,0.15)] border border-[rgba(0,212,255,0.25)] text-sm text-[var(--off-white)] font-dm leading-relaxed break-words">
+      <div className="max-w-[72%] px-3.5 py-2.5 rounded-[12px_12px_4px_12px] bg-[var(--wash-brand)] border border-[color:var(--line-strong)] text-sm text-[var(--off-white)] font-dm leading-relaxed break-words">
         {content}
       </div>
-      <div className="w-7 h-7 rounded-full bg-[var(--signal-dim)] border border-white/10 flex items-center justify-center shrink-0 text-[var(--signal)]">
+      <div className="w-7 h-7 rounded-full bg-[var(--signal-dim)] border border-white/10 flex items-center justify-center shrink-0 text-[var(--accent-ink)]">
         <User className="w-3.5 h-3.5" />
       </div>
     </div>
@@ -40,15 +40,15 @@ function UserBubble({ content }: { content: string }) {
 function AssistantBubble({ content }: { content: string }) {
   return (
     <div className="flex justify-start items-end gap-2">
-      <div className="w-7 h-7 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0 text-[var(--amber)]">
+      <div className="w-7 h-7 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0 text-[var(--warn-ink)]">
         <Bot className="w-3.5 h-3.5" />
       </div>
       <div className="glass max-w-[72%] px-3.5 py-2.5 rounded-[12px_12px_12px_4px] text-sm text-[var(--off-white)] font-dm leading-relaxed break-words">
         <ReactMarkdown
           components={{
             p:      ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
-            strong: ({ children }) => <strong className="text-[var(--signal)] font-bold">{children}</strong>,
-            h3:     ({ children }) => <h3 className="text-sm font-bold font-['Syne'] mb-2">{children}</h3>,
+            strong: ({ children }) => <strong className="text-[var(--accent-ink)] font-bold">{children}</strong>,
+            h3:     ({ children }) => <h3 className="text-sm font-bold font-display mb-2">{children}</h3>,
             ul:     ({ children }) => <ul className="my-1 pl-4 list-disc">{children}</ul>,
             li:     ({ children }) => <li className="mb-0.5">{children}</li>,
           }}
@@ -65,7 +65,7 @@ const BOUNCE_DELAYS = ['[animation-delay:0s]', '[animation-delay:0.2s]', '[anima
 function TypingIndicator() {
   return (
     <div className="flex justify-start items-end gap-2">
-      <div className="w-7 h-7 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0 text-[var(--amber)]">
+      <div className="w-7 h-7 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0 text-[var(--warn-ink)]">
         <Bot className="w-3.5 h-3.5" />
       </div>
       <div className="glass-card-md px-4 py-3 rounded-[12px_12px_12px_4px] flex items-center gap-1">
@@ -155,7 +155,7 @@ export default function AdminChatPage() {
       {/* Encabezado */}
       <div className="mb-4 shrink-0">
         <div className="flex items-center gap-2 mb-1">
-          <Radio className="h-5 w-5 text-[var(--signal)] animate-pulse" />
+          <Radio className="h-5 w-5 text-[var(--accent-ink)] animate-pulse" />
           <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
             Señal IA
           </h1>
@@ -186,7 +186,7 @@ export default function AdminChatPage() {
             onClick={() => enviarMensaje(q)}
             disabled={loading}
             title={q}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--navy-mid)] border border-white/10 rounded-full text-[var(--muted)] text-[11px] font-['DM_Sans'] font-medium hover:text-[var(--off-white)] hover:border-white/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed overflow-hidden max-w-full"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--navy-mid)] border border-white/10 rounded-full text-[var(--muted)] text-[12px] font-body font-medium hover:text-[var(--off-white)] hover:border-white/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed overflow-hidden max-w-full"
           >
             <Zap className="w-2.5 h-2.5 shrink-0" />
             <span className="truncate max-w-[200px]">{q}</span>
@@ -209,7 +209,7 @@ export default function AdminChatPage() {
           disabled={loading}
           rows={1}
           aria-label="Pregunta al asistente"
-          className="flex-1 resize-none bg-transparent border-none outline-none text-[var(--off-white)] text-sm font-['DM_Sans'] leading-relaxed py-1 placeholder:text-[var(--muted)] overflow-y-auto"
+          className="flex-1 resize-none bg-transparent border-none outline-none text-[var(--off-white)] text-sm font-body leading-relaxed py-1 placeholder:text-[var(--muted)] overflow-y-auto"
         />
         <button
           type="submit"

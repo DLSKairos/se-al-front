@@ -50,7 +50,7 @@ function OptionsMenu({ onDuplicate, onDelete }: OptionsMenuProps) {
         ref={triggerRef}
         onClick={openMenu}
         onMouseDown={(e) => e.stopPropagation()}
-        className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] opacity-0 group-hover:opacity-100 transition-all"
+        className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[var(--wash)] opacity-0 group-hover:opacity-100 transition-all"
         aria-label="Opciones del campo"
       >
         <MoreVertical size={14} />
@@ -64,7 +64,7 @@ function OptionsMenu({ onDuplicate, onDelete }: OptionsMenuProps) {
         >
           <button
             onClick={() => handle(onDuplicate)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] cursor-pointer text-left"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[var(--wash)] cursor-pointer text-left"
           >
             <Copy size={13} className="text-[var(--muted)]" />
             Duplicar campo
@@ -172,8 +172,8 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
     <div
       className={`flex flex-col group px-3 py-2 rounded-lg border transition-all ${
         isDragging
-          ? 'opacity-50 border-[rgba(0,212,255,0.3)] bg-[rgba(0,212,255,0.04)]'
-          : 'border-transparent hover:border-[rgba(0,212,255,0.10)] hover:bg-[rgba(0,212,255,0.04)]'
+          ? 'opacity-50 border-[color:var(--line-strong)] bg-[var(--wash)]'
+          : 'border-transparent hover:border-[color:var(--line)] hover:bg-[var(--wash)]'
       }`}
     >
       {/* Fila principal */}
@@ -181,7 +181,7 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
         {/* Drag handle */}
         <button
           {...dragHandleProps}
-          className="text-[var(--muted)] group-hover:text-[var(--signal)] cursor-grab active:cursor-grabbing shrink-0 transition-colors"
+          className="text-[var(--muted)] group-hover:text-[var(--accent-ink)] cursor-grab active:cursor-grabbing shrink-0 transition-colors"
           aria-label="Reordenar campo"
           tabIndex={0}
         >
@@ -205,14 +205,14 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
           onChange={(e) => setLabel(e.target.value)}
           onBlur={commitLabel}
           onKeyDown={handleLabelKeyDown}
-          className="bg-transparent border-none outline-none text-sm text-[var(--off-white)] flex-1 min-w-0 font-['DM_Sans'] placeholder:text-[var(--muted)]"
+          className="bg-transparent border-none outline-none text-sm text-[var(--off-white)] flex-1 min-w-0 font-body placeholder:text-[var(--muted)]"
           placeholder="Etiqueta del campo"
           aria-label="Nombre del campo"
         />
 
         {/* Tipo selector */}
         <FieldTypePopover currentType={field.type} onChange={handleTypeChange}>
-          <div className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--signal)] px-2 py-1 rounded transition-colors cursor-pointer shrink-0">
+          <div className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--accent-ink)] px-2 py-1 rounded transition-colors cursor-pointer shrink-0">
             <DynamicIcon name={FIELD_TYPE_ICON_NAMES[field.type]} size={12} />
             <span className="hidden sm:inline">{FIELD_TYPE_LABELS[field.type]}</span>
           </div>
@@ -233,7 +233,7 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
           onChange={(e) => setHelpText(e.target.value)}
           onBlur={commitHelpText}
           onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
-          className="bg-transparent border-none outline-none text-xs text-[var(--muted)] w-full font-['DM_Sans'] placeholder:text-[var(--muted)]/50 focus:text-[var(--off-white)] transition-colors"
+          className="bg-transparent border-none outline-none text-xs text-[var(--muted)] w-full font-body placeholder:text-[var(--muted)]/50 focus:text-[var(--off-white)] transition-colors"
           placeholder="Descripción o pregunta para el operario (opcional)"
           aria-label="Descripción del campo"
         />
@@ -253,7 +253,7 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
               {options.map((opt, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-['DM_Sans'] bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.18)] text-[var(--off-white)]"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-body bg-[var(--wash-brand)] border border-[color:var(--line)] text-[var(--off-white)]"
                 >
                   {opt}
                   <button
@@ -272,7 +272,7 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
           {/* Input para nueva opción */}
           <div
             className="flex items-center gap-1.5 rounded-md px-2 py-1"
-            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(0,212,255,0.12)' }}
+            style={{ background: 'color-mix(in srgb,var(--fg) 4%,transparent)', border: '1px solid color-mix(in srgb,var(--brand) 12%,transparent)' }}
           >
             <input
               ref={newOptionRef}
@@ -281,14 +281,14 @@ export function FieldRow({ field, sectionId, dragHandleProps, isDragging }: Fiel
               onChange={(e) => setNewOption(e.target.value)}
               onKeyDown={handleOptionKeyDown}
               placeholder="Escribe una opción y presiona Enter…"
-              className="flex-1 bg-transparent border-none outline-none text-xs text-[var(--off-white)] font-['DM_Sans'] placeholder:text-[var(--muted)] min-w-0"
+              className="flex-1 bg-transparent border-none outline-none text-xs text-[var(--off-white)] font-body placeholder:text-[var(--muted)] min-w-0"
               aria-label="Agregar nueva opción"
             />
             <button
               type="button"
               onClick={addOption}
               disabled={!newOption.trim()}
-              className="shrink-0 text-[var(--signal)] hover:text-[var(--signal)]/70 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
+              className="shrink-0 text-[var(--accent-ink)] hover:text-[var(--accent-ink)]/70 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
               aria-label="Agregar opción"
             >
               <Plus size={13} />

@@ -55,10 +55,10 @@ export default function OrgSettingsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+        <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
           Configuración de la organización
         </h1>
-        <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+        <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
           Ajusta los datos generales de tu organización
         </p>
       </div>
@@ -67,15 +67,15 @@ export default function OrgSettingsPage() {
       <div className="glass-card p-5 flex flex-col gap-4">
         <div className="flex items-center gap-3 mb-1">
           <div className="w-10 h-10 rounded-xl bg-[var(--signal-dim)] flex items-center justify-center">
-            <Building2 className="w-5 h-5 text-[var(--signal)]" />
+            <Building2 className="w-5 h-5 text-[var(--accent-ink)]" />
           </div>
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
             Información general
           </h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-[var(--muted)] font-['DM_Sans'] uppercase tracking-wider">
+            <span className="text-xs text-[var(--muted)] font-body ">
               ID de la organización
             </span>
             <span className="text-sm text-[var(--off-white)] font-mono bg-white/5 px-3 py-1.5 rounded-lg select-all">
@@ -83,10 +83,10 @@ export default function OrgSettingsPage() {
             </span>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-[var(--muted)] font-['DM_Sans'] uppercase tracking-wider">
+            <span className="text-xs text-[var(--muted)] font-body ">
               Fecha de creación
             </span>
-            <span className="text-sm text-[var(--off-white)] font-['DM_Sans']">
+            <span className="text-sm text-[var(--off-white)] font-body">
               {formatDate(org.created_at)}
             </span>
           </div>
@@ -95,14 +95,14 @@ export default function OrgSettingsPage() {
 
       {/* Formulario editable */}
       <div className="glass-card p-5">
-        <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base mb-4">
+        <h2 className="font-display font-semibold text-[var(--off-white)] text-base mb-4">
           Datos editables
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="org-name"
-              className="text-sm text-[var(--muted)] font-['DM_Sans']"
+              className="text-sm text-[var(--muted)] font-body"
             >
               Nombre de la organización <span className="text-red-400">*</span>
             </label>
@@ -113,7 +113,7 @@ export default function OrgSettingsPage() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Nombre de tu empresa"
               required
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             />
           </div>
           <div className="flex justify-end pt-2">

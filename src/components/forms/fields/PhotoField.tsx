@@ -60,7 +60,7 @@ export function PhotoField({ field, value = [], onChange, disabled }: PhotoField
                 <button
                   type="button"
                   onClick={() => handleRemove(i)}
-                  className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-500/80 transition-colors"
+                  className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/60 text-[#FFFFFF] hover:bg-red-500/80 transition-colors"
                   aria-label={`Eliminar foto ${i + 1}`}
                 >
                   <X className="w-3 h-3" aria-hidden="true" />
@@ -78,7 +78,7 @@ export function PhotoField({ field, value = [], onChange, disabled }: PhotoField
               aria-label="Agregar foto"
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
-              <span className="text-[10px] font-['DM_Sans']">Agregar</span>
+              <span className="text-[12px] font-body">Agregar</span>
             </button>
           )}
         </div>
@@ -92,13 +92,13 @@ export function PhotoField({ field, value = [], onChange, disabled }: PhotoField
           className="flex flex-col items-center gap-3 px-4 py-8 rounded-[var(--radius-input)] border border-dashed border-white/20 bg-[var(--navy-mid)] text-[var(--muted)] hover:border-[var(--signal-dim)] hover:text-[var(--off-white)] transition-all"
         >
           <Camera className="w-8 h-8" aria-hidden="true" />
-          <span className="text-sm font-['DM_Sans']">Tomar foto o seleccionar</span>
-          <span className="text-xs font-['DM_Sans'] opacity-60">Puedes agregar varias fotos</span>
+          <span className="text-sm font-body">Tomar foto o seleccionar</span>
+          <span className="text-xs font-body opacity-60">Puedes agregar varias fotos</span>
         </button>
       )}
 
       {value.length === 0 && disabled && (
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans'] text-center py-4">Sin fotos</p>
+        <p className="text-sm text-[var(--muted)] font-body text-center py-4">Sin fotos</p>
       )}
     </div>
   )

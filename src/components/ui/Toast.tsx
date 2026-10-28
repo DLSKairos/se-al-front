@@ -23,16 +23,11 @@ const icons: Record<ToastType, React.ElementType> = {
   warning: AlertCircle,
 }
 
-const toastClasses: Record<ToastType, string> = {
-  success: 'border-l-4 border-l-emerald-500 border-r-0 border-t-0 border-b-0',
-  error:   'border-l-4 border-l-red-500 border-r-0 border-t-0 border-b-0',
-  warning: 'border-l-4 border-l-amber-500 border-r-0 border-t-0 border-b-0',
-}
-
+// Cada estado es un pictograma sólido de color ISO: el color nunca viaja solo.
 const iconClasses: Record<ToastType, string> = {
-  success: 'text-emerald-400',
-  error:   'text-red-400',
-  warning: 'text-amber-400',
+  success: 'bg-[var(--ok)] text-[var(--on-ok)]',
+  error:   'bg-[var(--danger)] text-[var(--on-danger)]',
+  warning: 'bg-[var(--warn)] text-[var(--on-warn)]',
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -60,24 +55,31 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={ctx}>
       {children}
-      <div className="fixed bottom-24 right-4 z-[9999] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+      <div
+        className="fixed inset-x-4 z-[9999] mx-auto flex flex-col gap-2 max-w-md pointer-events-none"
+        style={{ top: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}
+        role="status"
+        aria-live="polite"
+      >
         {toasts.map((toast) => {
           const Icon = icons[toast.type]
           return (
             <div
               key={toast.id}
               data-testid="toast-message"
-              className={`glass flex items-center gap-3 px-4 py-3 rounded-[14px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] pointer-events-auto animate-[slideUp_0.2s_ease] ${toastClasses[toast.type]}`}
+              className={`toast-${toast.type} liquid flex items-center gap-3 pl-2.5 pr-2 py-2.5 rounded-[20px] pointer-events-auto animate-[fadeUp_0.3s_var(--ease-out)]`}
             >
-              <Icon className={`w-4 h-4 shrink-0 ${iconClasses[toast.type]}`} />
-              <p className="text-sm text-[var(--off-white)] font-dm flex-1">{toast.message}</p>
+              <span className={`w-9 h-9 rounded-[12px] grid place-items-center shrink-0 ${iconClasses[toast.type]}`}>
+                <Icon className="w-5 h-5" aria-hidden="true" />
+              </span>
+              <p className="text-base font-medium text-[var(--fg)] font-body flex-1 leading-snug">{toast.message}</p>
               <button
                 type="button"
                 aria-label="Cerrar"
                 onClick={() => remove(toast.id)}
-                className="shrink-0 text-[var(--off-white)]/60 hover:text-[var(--off-white)] transition-colors"
+                className="shrink-0 w-10 h-10 grid place-items-center rounded-full text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--wash)] transition-colors"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           )

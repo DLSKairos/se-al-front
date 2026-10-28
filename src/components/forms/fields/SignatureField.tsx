@@ -23,8 +23,8 @@ export function SignatureField({ field, value, onChange, disabled }: SignatureFi
     if (!canvas) return
 
     const pad = new SignaturePad(canvas, {
-      backgroundColor: 'rgba(22, 34, 56, 0)',
-      penColor: '#00D4FF',
+      backgroundColor: 'color-mix(in srgb,var(--surface) 0%,transparent)',
+      penColor: 'var(--brand)',
       minWidth: 1,
       maxWidth: 2.5,
     })
@@ -80,7 +80,7 @@ export function SignatureField({ field, value, onChange, disabled }: SignatureFi
         {isEmpty && !disabled && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none select-none">
             <PenLine className="w-6 h-6 text-[var(--muted)]" aria-hidden="true" />
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans']">Firma aqui</p>
+            <p className="text-xs text-[var(--muted)] font-body">Firma aqui</p>
           </div>
         )}
         <canvas
@@ -94,7 +94,7 @@ export function SignatureField({ field, value, onChange, disabled }: SignatureFi
         <button
           type="button"
           onClick={handleClear}
-          className="self-end flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-['DM_Sans'] hover:bg-red-500/20 transition-colors"
+          className="self-end flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-body hover:bg-red-500/20 transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
           Limpiar firma

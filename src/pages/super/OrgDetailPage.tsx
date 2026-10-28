@@ -13,6 +13,7 @@ import {
   ToggleLeft,
   ToggleRight,
   Users,
+  TriangleAlert,
 } from 'lucide-react'
 import { superadminApi, featureFlagsApi, magicLinkApi } from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
@@ -33,10 +34,10 @@ const FEATURE_FLAG_LABELS: Record<keyof FeatureFlags, string> = {
 }
 
 const INPUT_CLASS =
-  'w-full bg-white/5 border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] placeholder-[var(--muted)] font-["DM_Sans"] outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all disabled:opacity-50 aria-[invalid=true]:border-red-500/50'
+  'w-full bg-white/5 border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] placeholder-[var(--muted)] font-["DM_Sans"] outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all disabled:opacity-50 aria-[invalid=true]:border-red-500/50'
 
 const SELECT_CLASS =
-  'w-full bg-white/5 border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-["DM_Sans"] outline-none focus:border-[var(--signal)] transition-all disabled:opacity-50'
+  'w-full bg-white/5 border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-["DM_Sans"] outline-none focus:border-[var(--signal)] transition-all disabled:opacity-50'
 
 // ── Sección Plan y límites ────────────────────────────────────────────────────
 
@@ -110,7 +111,7 @@ function PlanSection({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">Nombre visible (display name)</label>
+            <label className="text-xs font-medium text-[var(--muted)] font-body">Nombre visible (display name)</label>
             <input
               type="text"
               value={form.display_name}
@@ -122,7 +123,7 @@ function PlanSection({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">Plan</label>
+            <label className="text-xs font-medium text-[var(--muted)] font-body">Plan</label>
             <div className="relative">
               <select
                 value={form.plan}
@@ -140,7 +141,7 @@ function PlanSection({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">Máx. usuarios</label>
+            <label className="text-xs font-medium text-[var(--muted)] font-body">Máx. usuarios</label>
             <input
               type="number"
               min={1}
@@ -151,7 +152,7 @@ function PlanSection({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">Máx. sedes</label>
+            <label className="text-xs font-medium text-[var(--muted)] font-body">Máx. sedes</label>
             <input
               type="number"
               min={1}
@@ -162,19 +163,19 @@ function PlanSection({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">Color primario (hex)</label>
+            <label className="text-xs font-medium text-[var(--muted)] font-body">Color primario (hex)</label>
             <input
               type="text"
               value={form.primary_color}
               onChange={setField('primary_color')}
-              placeholder="#00D4FF"
+              placeholder="var(--brand)"
               maxLength={20}
               className={INPUT_CLASS}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">URL de logo</label>
+            <label className="text-xs font-medium text-[var(--muted)] font-body">URL de logo</label>
             <input
               type="url"
               value={form.logo_url}
@@ -187,7 +188,7 @@ function PlanSection({
 
         {/* Uso en vivo */}
         <div className="mt-2 p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-3">
-          <p className="text-xs text-[var(--muted)] font-['DM_Sans'] uppercase tracking-wider">
+          <p className="text-xs text-[var(--muted)] font-body ">
             Uso actual
           </p>
           <UsageBar
@@ -289,20 +290,20 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor={adminSelectId} className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+          <label htmlFor={adminSelectId} className="text-xs font-medium text-[var(--muted)] font-body">
             Administrador destinatario
           </label>
           {loadingAdmins ? (
             <div className="h-11 rounded-[var(--radius-input)] bg-white/5 animate-pulse" />
           ) : orgAdmins.length === 0 ? (
             <div className="flex flex-col gap-4">
-              <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+              <p className="text-sm text-[var(--muted)] font-body">
                 Esta organización no tiene administradores registrados. Crea uno para poder generar el magic link.
               </p>
               <form onSubmit={handleCreateSubmit} className="flex flex-col gap-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                    <label className="text-xs font-medium text-[var(--muted)] font-body">
                       Nombre completo
                     </label>
                     <input
@@ -317,7 +318,7 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                    <label className="text-xs font-medium text-[var(--muted)] font-body">
                       Número de cédula
                     </label>
                     <input
@@ -332,7 +333,7 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                    <label className="text-xs font-medium text-[var(--muted)] font-body">
                       Email
                     </label>
                     <input
@@ -346,7 +347,7 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']">
+                    <label className="text-xs font-medium text-[var(--muted)] font-body">
                       Cargo <span className="normal-case text-[var(--muted)]">(opcional)</span>
                     </label>
                     <input
@@ -397,8 +398,8 @@ function MagicLinkSection({ orgId }: { orgId: string }) {
 
         {/* Advertencia si el usuario no tiene email */}
         {noEmail && (
-          <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm font-['DM_Sans']">
-            <span className="shrink-0">⚠</span>
+          <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm font-body">
+            <TriangleAlert className="w-4 h-4 shrink-0" aria-hidden="true" />
             <span>
               Este administrador no tiene email registrado. El magic link no podrá ser enviado por correo.
             </span>
@@ -456,18 +457,18 @@ function MagicLinkHistory({ orgId }: { orgId: string }) {
           <LoadingSpinner label="Cargando historial..." />
         </div>
       ) : history.length === 0 ? (
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans'] text-center py-4">
+        <p className="text-sm text-[var(--muted)] font-body text-center py-4">
           No se han generado magic links para esta organización.
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm font-['DM_Sans']">
+          <table className="w-full text-sm font-body">
             <thead>
               <tr className="border-b border-white/5">
                 {['Destinatario', 'Propósito', 'Estado', 'Creado', 'Reenviar'].map((h) => (
                   <th
                     key={h}
-                    className="text-left py-2 pr-4 text-xs text-[var(--muted)] uppercase tracking-wider"
+                    className="text-left py-2 pr-4 text-xs text-[var(--muted)] "
                   >
                     {h}
                   </th>
@@ -568,7 +569,7 @@ function FeatureFlagsSection() {
           <LoadingSpinner label="Cargando flags..." />
         </div>
       ) : !flags ? (
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans'] text-center py-4">
+        <p className="text-sm text-[var(--muted)] font-body text-center py-4">
           No se pudieron cargar los feature flags.
         </p>
       ) : (
@@ -580,7 +581,7 @@ function FeatureFlagsSection() {
             return (
               <div key={flag} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                 <div>
-                  <p className="text-sm text-[var(--off-white)] font-['DM_Sans']">
+                  <p className="text-sm text-[var(--off-white)] font-body">
                     {FEATURE_FLAG_LABELS[flag] ?? flag}
                   </p>
                   <p className="text-xs text-[var(--muted)] font-mono">{flag}</p>
@@ -593,7 +594,7 @@ function FeatureFlagsSection() {
                   disabled={isPending}
                   onClick={() => setFlagMutation.mutate({ flag, enabled: !enabled })}
                   className={`shrink-0 transition-colors disabled:opacity-50 ${
-                    enabled ? 'text-[var(--signal)]' : 'text-[var(--muted)]'
+                    enabled ? 'text-[var(--accent-ink)]' : 'text-[var(--muted)]'
                   }`}
                 >
                   {enabled ? (
@@ -628,14 +629,14 @@ function SectionCard({
     <div className="glass-card rounded-2xl p-6 flex flex-col gap-5">
       <div className="flex items-start gap-3">
         <div className="w-9 h-9 rounded-xl bg-[var(--signal)]/10 flex items-center justify-center shrink-0">
-          <Icon className="w-4.5 h-4.5 text-[var(--signal)]" />
+          <Icon className="w-4.5 h-4.5 text-[var(--accent-ink)]" />
         </div>
         <div>
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
             {title}
           </h2>
           {description && (
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+            <p className="text-xs text-[var(--muted)] font-body mt-0.5">
               {description}
             </p>
           )}
@@ -695,10 +696,10 @@ export default function OrgDetailPage() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex-1 min-w-0">
-          <h1 className="font-['Syne'] font-bold text-2xl text-[var(--off-white)] truncate">
+          <h1 className="font-display font-bold text-2xl text-[var(--off-white)] truncate">
             {org.config?.display_name ?? org.name}
           </h1>
-          <p className="text-sm text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+          <p className="text-sm text-[var(--muted)] font-body mt-0.5">
             Detalle de organización
           </p>
         </div>
@@ -707,23 +708,23 @@ export default function OrgDetailPage() {
       {/* Resumen de info */}
       <div className="glass-card rounded-2xl p-5 flex items-start gap-4">
         <div className="w-12 h-12 rounded-2xl bg-[var(--signal)]/10 flex items-center justify-center shrink-0">
-          <Building2 className="w-6 h-6 text-[var(--signal)]" />
+          <Building2 className="w-6 h-6 text-[var(--accent-ink)]" />
         </div>
         <div className="flex-1 min-w-0 flex flex-col gap-1">
-          <p className="font-['Syne'] font-semibold text-lg text-[var(--off-white)] truncate">
+          <p className="font-display font-semibold text-lg text-[var(--off-white)] truncate">
             {org.config?.display_name ?? org.name}
           </p>
           {org.name !== (org.config?.display_name ?? org.name) && (
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+            <p className="text-xs text-[var(--muted)] font-body">
               Nombre técnico: {org.name}
             </p>
           )}
           <div className="flex items-center gap-2 flex-wrap mt-1">
-            <span className="text-xs text-[var(--muted)] font-['DM_Sans'] flex items-center gap-1">
+            <span className="text-xs text-[var(--muted)] font-body flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5 shrink-0" />
               Registrada el {formattedDate}
             </span>
-            <span className="text-xs text-[var(--muted)] font-['DM_Sans'] flex items-center gap-1">
+            <span className="text-xs text-[var(--muted)] font-body flex items-center gap-1">
               <Users className="w-3.5 h-3.5 shrink-0" />
               {org.usage.current_users} / {org.usage.max_users} usuarios
             </span>

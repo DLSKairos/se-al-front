@@ -8,9 +8,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts'
 import { FileText, CheckCircle, Clock, XCircle } from 'lucide-react'
 import api from '@/lib/api'
@@ -26,15 +23,16 @@ import { formatDateTime } from '@/lib/utils'
 import { usePageTitle } from '@/hooks/usePageTitle'
 
 const PIE_COLORS: Record<string, string> = {
-  APPROVED: '#10b981',
-  SUBMITTED: '#f59e0b',
-  REJECTED:  '#ef4444',
-  DRAFT:     '#6b7280',
+  APPROVED: 'var(--ok)',
+  SUBMITTED: 'var(--info)',
+  PENDING_SIGNATURES: 'var(--warn)',
+  REJECTED:  'var(--danger)',
+  DRAFT:     'var(--fg-muted)',
 }
 
 const TOOLTIP_STYLE = {
   background: 'var(--navy-mid)',
-  border: '1px solid rgba(255,255,255,0.1)',
+  border: '1px solid color-mix(in srgb,var(--fg) 10%,transparent)',
   borderRadius: 8,
   color: 'var(--off-white)',
 }
@@ -68,7 +66,7 @@ export default function AdminDashboardPage() {
     .map(([key, value]) => ({
       name:  key,
       value,
-      color: PIE_COLORS[key] ?? '#6b7280',
+      color: PIE_COLORS[key] ?? 'var(--fg-muted)',
     }))
     .filter((d) => d.value > 0)
 
@@ -77,10 +75,10 @@ export default function AdminDashboardPage() {
       {/* Encabezado */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+          <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
             Dashboard
           </h1>
-          <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+          <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
             Resumen de actividad de tu organización
           </p>
         </div>
@@ -90,7 +88,7 @@ export default function AdminDashboardPage() {
           value={templateId}
           onChange={(e) => setTemplateId(e.target.value)}
           aria-label="Filtrar por formulario"
-          className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+          className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
         >
           <option value="">Todos los formularios</option>
           {templates.map((t) => (
@@ -116,16 +114,16 @@ export default function AdminDashboardPage() {
           variant="success"
         />
         <StatCard
-          title="Pendientes"
+          title="Enviados"
           value={stats.by_status.SUBMITTED ?? 0}
           icon={Clock}
-          variant="amber"
+          variant="info"
         />
         <StatCard
           title="Rechazados"
           value={stats.by_status.REJECTED ?? 0}
           icon={XCircle}
-          variant="default"
+          variant="danger"
         />
       </div>
 
@@ -133,14 +131,14 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Tendencia mensual */}
         <div className="lg:col-span-2 glass-card p-5 min-w-0">
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
+          <h2 className="font-display font-semibold text-[var(--off-white)] mb-4 text-sm">
             Tendencia mensual
           </h2>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={stats.trend}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="rgba(240,244,248,0.05)"
+                stroke="color-mix(in srgb,var(--fg) 5%,transparent)"
               />
               <XAxis
                 dataKey="month"
@@ -161,29 +159,28 @@ export default function AdminDashboardPage() {
 
         {/* Donut por estado */}
         <div className="glass-card p-5 min-w-0">
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
+          <h2 className="font-display font-semibold text-[var(--off-white)] mb-4 text-sm">
             Por estado
           </h2>
           {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
-                  dataKey="value"
-                >
-                  {pieData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={TOOLTIP_STYLE} />
-              </PieChart>
-            </ResponsiveContainer>
+            <ul className="flex flex-col gap-3">
+              {[...pieData].sort((x, y) => y.value - x.value).map((d) => {
+                const total = pieData.reduce((n, x) => n + x.value, 0)
+                return (
+                  <li key={d.name} className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <SubmissionStatusBadge status={d.name as SubmissionStatus} />
+                      <span className="font-display font-bold text-xl text-[var(--fg)] tabular-nums">{d.value} envíos</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-[var(--wash-strong)] overflow-hidden" aria-hidden="true">
+                      <div className="h-full rounded-full" style={{ width: `${(d.value / total) * 100}%`, background: d.color }} />
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
           ) : (
-            <div className="h-[200px] flex items-center justify-center text-[var(--muted)] text-sm font-['DM_Sans']">
+            <div className="h-[200px] flex items-center justify-center text-[var(--fg-muted)] text-base font-body">
               Sin datos
             </div>
           )}
@@ -192,18 +189,18 @@ export default function AdminDashboardPage() {
 
       {/* Tabla de actividad reciente */}
       <div className="glass-card p-5 min-w-0">
-        <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
+        <h2 className="font-display font-semibold text-[var(--off-white)] mb-4 text-sm">
           Actividad reciente
         </h2>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm font-['DM_Sans']">
+          <table className="w-full text-sm font-body">
             <thead>
               <tr className="border-b border-white/5">
                 {['Usuario', 'Formulario', 'Obra', 'Fecha', 'Estado'].map(
                   (h) => (
                     <th
                       key={h}
-                      className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pr-4"
+                      className="text-left font-display font-semibold text-xs text-[var(--muted)] pb-3 pr-4"
                     >
                       {h}
                     </th>
@@ -215,7 +212,7 @@ export default function AdminDashboardPage() {
               {stats.recent.map((item, i) => (
                 <tr
                   key={item.id}
-                  className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
+                  className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${
                     i % 2 === 1 ? 'bg-white/[0.02]' : ''
                   }`}
                 >

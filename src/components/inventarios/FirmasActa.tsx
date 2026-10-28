@@ -33,7 +33,7 @@ function BloqueFirma({ titulo, data, onChange }: BloqueFirmaProps) {
 
     const pad = new SignaturePad(canvas, {
       backgroundColor: 'rgba(0,0,0,0)',
-      penColor: '#00D4FF',
+      penColor: 'var(--brand)',
       minWidth: 1,
       maxWidth: 2.5,
     })
@@ -77,7 +77,7 @@ function BloqueFirma({ titulo, data, onChange }: BloqueFirmaProps) {
   return (
     <div className="flex flex-col gap-3 flex-1 min-w-0">
       <div className="flex flex-col gap-1">
-        <p className="text-[10px] uppercase tracking-widest text-white/30 font-['DM_Sans']">
+        <p className="text-[12px] text-[var(--fg-muted)] font-body">
           {titulo}
         </p>
         <input
@@ -85,14 +85,14 @@ function BloqueFirma({ titulo, data, onChange }: BloqueFirmaProps) {
           value={data.nombre}
           placeholder="Nombre y cargo"
           onChange={e => onChange({ ...data, nombre: e.target.value })}
-          className="w-full bg-[var(--navy)] border border-white/10 rounded-[var(--radius-input)] px-3 py-2 text-[var(--off-white)] placeholder-white/20 text-sm font-['DM_Sans'] focus:outline-none focus:border-[var(--signal)]/50 transition-colors"
+          className="w-full bg-[var(--navy)] border border-white/10 rounded-[var(--radius-input)] px-3 py-2 text-[var(--off-white)] placeholder-white/20 text-sm font-body focus:outline-none focus:border-[var(--signal)]/50 transition-colors"
         />
       </div>
 
       {/* Canvas o imagen de firma */}
       {!modoFirma && data.firma_url ? (
         <div className="flex flex-col gap-2">
-          <div className="relative rounded-[var(--radius-input)] overflow-hidden border border-emerald-500/30 bg-white">
+          <div className="relative rounded-[var(--radius-input)] overflow-hidden border border-emerald-500/30 bg-[#FFFFFF]">
             <img
               src={data.firma_url}
               alt={`Firma de ${titulo}`}
@@ -102,7 +102,7 @@ function BloqueFirma({ titulo, data, onChange }: BloqueFirmaProps) {
           <button
             type="button"
             onClick={refirmar}
-            className="self-end flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-btn)] bg-[var(--navy-light)] border border-white/10 text-white/50 text-xs font-['DM_Sans'] hover:border-white/20 hover:text-white/70 transition-colors"
+            className="self-end flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-btn)] bg-[var(--navy-light)] border border-white/10 text-[var(--fg-muted)] text-xs font-body hover:border-white/20 hover:text-white/70 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
             Re-firmar
@@ -116,8 +116,8 @@ function BloqueFirma({ titulo, data, onChange }: BloqueFirmaProps) {
           >
             {isEmpty && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 pointer-events-none">
-                <PenLine className="w-5 h-5 text-white/20" aria-hidden="true" />
-                <p className="text-[11px] text-white/20 font-['DM_Sans']">Firma aquí</p>
+                <PenLine className="w-5 h-5 text-[var(--fg-muted)]" aria-hidden="true" />
+                <p className="text-[12px] text-[var(--fg-muted)] font-body">Firma aquí</p>
               </div>
             )}
             <canvas
@@ -130,7 +130,7 @@ function BloqueFirma({ titulo, data, onChange }: BloqueFirmaProps) {
             <button
               type="button"
               onClick={limpiarFirma}
-              className="self-end flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-btn)] bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-['DM_Sans'] hover:bg-red-500/20 transition-colors"
+              className="self-end flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-btn)] bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-body hover:bg-red-500/20 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
               Limpiar firma
@@ -146,8 +146,8 @@ export function FirmasActa({ firmaDeposito, firmaAgencia, onFirmaDeposito, onFir
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-2">
-        <PenLine className="w-4 h-4 text-white/40" aria-hidden="true" />
-        <h3 className="text-sm font-['Syne'] font-semibold text-[var(--off-white)]">
+        <PenLine className="w-4 h-4 text-[var(--fg-muted)]" aria-hidden="true" />
+        <h3 className="text-sm font-display font-semibold text-[var(--off-white)]">
           Firmas de cierre
         </h3>
       </div>

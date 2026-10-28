@@ -28,9 +28,9 @@ interface AdminSidebarProps {
 }
 
 const linkBase =
-  "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-btn)] text-sm font-['DM_Sans'] transition-all duration-150 text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-secondary/50"
+  "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-btn)] text-sm font-body transition-all duration-150 text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-secondary/50"
 const linkActive =
-  'text-[var(--signal)] bg-[var(--signal-dim)] font-medium'
+  'text-[var(--accent-ink)] bg-[var(--signal-dim)] font-medium'
 
 export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
   const navigate = useNavigate()
@@ -58,9 +58,9 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/5 shrink-0">
-        <Radio className="h-6 w-6 text-[var(--signal)] shrink-0 animate-pulse" />
+        <Radio className="h-6 w-6 text-[var(--fg)] shrink-0" />
         {!collapsed && (
-          <span className="font-display font-bold text-[var(--off-white)] text-base tracking-wide">
+          <span className="font-display font-bold text-[var(--off-white)] text-base ">
             SEÑAL
           </span>
         )}
@@ -91,7 +91,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
 
         {/* Seccion Formularios */}
         {!collapsed && (
-          <p className="text-[10px] font-semibold text-[var(--muted)] uppercase tracking-widest px-3 pt-4 pb-1">
+          <p className="text-[12px] font-semibold text-[var(--muted)] px-3 pt-4 pb-1">
             Formularios
           </p>
         )}
@@ -102,7 +102,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
           title={collapsed ? 'Crear formulario' : undefined}
         >
           <Plus className="w-4 h-4 shrink-0" />
-          {!collapsed && <span className="text-[var(--signal)]">Crear formulario</span>}
+          {!collapsed && <span className="text-[var(--accent-ink)]">Crear formulario</span>}
         </NavLink>
 
         {visibleTemplates.map((t) => (
@@ -133,7 +133,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
 
         {/* Seccion Configuracion */}
         {!collapsed && (
-          <p className="text-[10px] font-semibold text-[var(--muted)] uppercase tracking-widest px-3 pt-4 pb-1">
+          <p className="text-[12px] font-semibold text-[var(--muted)] px-3 pt-4 pb-1">
             Configuración
           </p>
         )}
@@ -161,7 +161,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
 
         {/* Seccion Sistema */}
         {!collapsed && (
-          <p className="text-[10px] font-semibold text-[var(--muted)] uppercase tracking-widest px-3 pt-4 pb-1">
+          <p className="text-[12px] font-semibold text-[var(--muted)] px-3 pt-4 pb-1">
             Sistema
           </p>
         )}
@@ -188,7 +188,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
       {/* Footer: rol + logout */}
       <div className="border-t border-white/5 p-3 shrink-0">
         {!collapsed && user && (
-          <p className="text-[10px] text-[var(--muted)] uppercase tracking-wider mb-2 px-1 truncate">
+          <p className="text-[12px] text-[var(--muted)] mb-2 px-1 truncate">
             {user.role}
           </p>
         )}

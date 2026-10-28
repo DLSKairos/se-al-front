@@ -5,9 +5,9 @@ interface LoadingSpinnerProps {
 }
 
 const sizeClasses = {
-  sm: 'w-4 h-4',
-  md: 'w-8 h-8',
-  lg: 'w-12 h-12',
+  sm: 'w-4 h-4 border-2',
+  md: 'w-9 h-9 border-[3px]',
+  lg: 'w-14 h-14 border-4',
 }
 
 export function LoadingSpinner({
@@ -18,18 +18,16 @@ export function LoadingSpinner({
   const spinner = (
     <div role="status" aria-label={label} className="flex flex-col items-center gap-3">
       <div
-        className={`${sizeClasses[size]} border-2 border-[var(--signal-dim)] border-t-[var(--signal)] rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-[var(--line)] border-t-[var(--brand)] rounded-full animate-spin`}
         aria-hidden="true"
       />
-      {label && (
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans']">{label}</p>
-      )}
+      {label && <p className="text-base text-[var(--fg-muted)] font-body">{label}</p>}
     </div>
   )
 
   if (fullscreen) {
     return (
-      <div data-testid="loading-spinner" className="fixed inset-0 flex items-center justify-center bg-[var(--navy)]/80 backdrop-blur-sm z-50">
+      <div data-testid="loading-spinner" className="fixed inset-0 flex items-center justify-center bg-[var(--bg)] z-50">
         {spinner}
       </div>
     )

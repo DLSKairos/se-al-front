@@ -101,7 +101,7 @@ export function BlueprintLibraryModal({ isOpen, onClose }: BlueprintLibraryModal
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar template por nombre..."
-          className="w-full bg-[rgba(0,0,0,0.2)] border border-[rgba(0,212,255,0.15)] rounded-lg pl-9 pr-4 py-2.5 font-['DM_Sans'] text-sm text-[var(--off-white)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[rgba(0,212,255,0.5)] transition-colors"
+          className="w-full bg-[rgba(23,22,15,0.2)] border border-[color:var(--line)] rounded-lg pl-9 pr-4 py-2.5 font-body text-sm text-[var(--off-white)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[color:var(--brand)] transition-colors"
         />
       </div>
 
@@ -112,11 +112,11 @@ export function BlueprintLibraryModal({ isOpen, onClose }: BlueprintLibraryModal
             key={value}
             onClick={() => setCategory(value)}
             className={`
-              px-3 py-1 rounded-full text-xs font-['DM_Sans'] border transition-all duration-150 cursor-pointer
+              px-3 py-1 rounded-full text-xs font-body border transition-all duration-150 cursor-pointer
               ${
                 category === value
-                  ? 'border-[var(--signal)] text-[var(--signal)] bg-[rgba(0,212,255,0.1)]'
-                  : 'border-[rgba(0,212,255,0.15)] text-[var(--muted)] hover:border-[rgba(0,212,255,0.35)] hover:text-[var(--off-white)]'
+                  ? 'border-[var(--signal)] text-[var(--accent-ink)] bg-[var(--wash-brand)]'
+                  : 'border-[color:var(--line)] text-[var(--muted)] hover:border-[color:var(--line-strong)] hover:text-[var(--off-white)]'
               }
             `}
           >
@@ -127,25 +127,25 @@ export function BlueprintLibraryModal({ isOpen, onClose }: BlueprintLibraryModal
 
       {/* Error al usar blueprint */}
       {useError && (
-        <div className="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-lg bg-[rgba(239,68,68,0.1)] border border-red-500/30">
+        <div className="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-lg bg-[var(--wash)] border border-red-500/30">
           <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-          <p className="font-['DM_Sans'] text-sm text-red-400">{useError}</p>
+          <p className="font-body text-sm text-red-400">{useError}</p>
         </div>
       )}
 
       {/* Estado de carga */}
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <Loader2 className="w-7 h-7 text-[var(--signal)] animate-spin" />
-          <p className="font-['DM_Sans'] text-sm text-[var(--muted)]">Cargando templates...</p>
+          <Loader2 className="w-7 h-7 text-[var(--accent-ink)] animate-spin" />
+          <p className="font-body text-sm text-[var(--muted)]">Cargando templates...</p>
         </div>
       )}
 
       {/* Error de query */}
       {isError && !isLoading && (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <AlertTriangle className="w-7 h-7 text-[var(--amber)]" />
-          <p className="font-['DM_Sans'] text-sm text-[var(--muted)]">
+          <AlertTriangle className="w-7 h-7 text-[var(--warn-ink)]" />
+          <p className="font-body text-sm text-[var(--muted)]">
             No se pudieron cargar los templates.
           </p>
         </div>
@@ -155,7 +155,7 @@ export function BlueprintLibraryModal({ isOpen, onClose }: BlueprintLibraryModal
       {!isLoading && !isError && blueprints?.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
           <LayoutTemplate className="w-8 h-8 text-[var(--muted)]" />
-          <p className="font-['DM_Sans'] text-sm text-[var(--muted)]">
+          <p className="font-body text-sm text-[var(--muted)]">
             No hay templates disponibles con ese filtro.
           </p>
         </div>
@@ -190,22 +190,22 @@ function BlueprintCard({ blueprint, isLoading, onUse }: BlueprintCardProps) {
   const fieldCount = blueprint.fields?.length ?? 0
 
   return (
-    <div className="bg-[rgba(22,34,56,0.6)] border border-[rgba(0,212,255,0.12)] rounded-xl p-4 flex flex-col gap-3 hover:border-[rgba(0,212,255,0.35)] transition-all duration-200">
+    <div className="bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] border border-[color:var(--line)] rounded-xl p-4 flex flex-col gap-3 hover:border-[color:var(--line-strong)] transition-all duration-200">
       {/* Encabezado de la tarjeta */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="font-['Syne'] font-semibold text-[var(--off-white)] text-sm truncate">
+            <h4 className="font-display font-semibold text-[var(--off-white)] text-sm truncate">
               {blueprint.name}
             </h4>
             {blueprint.is_global && (
-              <span className="shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-['DM_Sans'] font-semibold bg-[rgba(0,212,255,0.15)] text-[var(--signal)] border border-[rgba(0,212,255,0.3)]">
+              <span className="shrink-0 px-1.5 py-0.5 rounded-full text-[12px] font-body font-semibold bg-[var(--wash-brand)] text-[var(--accent-ink)] border border-[color:var(--line-strong)]">
                 SEÑAL
               </span>
             )}
           </div>
           {blueprint.description && (
-            <p className="font-['DM_Sans'] text-xs text-[var(--muted)] mt-1 line-clamp-2">
+            <p className="font-body text-xs text-[var(--muted)] mt-1 line-clamp-2">
               {blueprint.description}
             </p>
           )}
@@ -214,7 +214,7 @@ function BlueprintCard({ blueprint, isLoading, onUse }: BlueprintCardProps) {
 
       {/* Pie de la tarjeta */}
       <div className="flex items-center justify-between mt-auto pt-1">
-        <span className="font-['DM_Sans'] text-xs text-[var(--muted)]">
+        <span className="font-body text-xs text-[var(--muted)]">
           {fieldCount} {fieldCount === 1 ? 'campo' : 'campos'}
         </span>
         <Button

@@ -11,7 +11,7 @@ export default function AlertasPage() {
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
       <div className="px-6 pt-4 pb-2">
-        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
+        <p className="text-[12px] font-semibold text-[var(--accent-ink)]">
           Notificaciones
         </p>
         <h1 className="font-display font-extrabold text-base text-[var(--off-white)]">
@@ -20,7 +20,7 @@ export default function AlertasPage() {
       </div>
 
       <div className="flex flex-col items-center justify-center flex-1 px-6 py-16 gap-5">
-        <div className="w-20 h-20 rounded-full bg-[rgba(0,212,255,0.06)] border border-[rgba(0,212,255,0.1)] flex items-center justify-center">
+        <div className="w-20 h-20 rounded-full bg-[var(--wash)] border border-[color:var(--line)] flex items-center justify-center">
           <Bell className="w-8 h-8 text-[var(--muted)]" />
         </div>
         <div className="text-center">

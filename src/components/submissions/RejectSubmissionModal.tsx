@@ -78,7 +78,7 @@ export default function RejectSubmissionModal({
         {/* Aviso visual */}
         <div className="flex items-start gap-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
           <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
-          <p className="text-sm text-red-300 font-['DM_Sans']">
+          <p className="text-sm text-red-300 font-body">
             El formulario pasará al estado <strong>Rechazado</strong>. El operario recibirá
             una notificación con el motivo que escribas.
           </p>
@@ -88,7 +88,7 @@ export default function RejectSubmissionModal({
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor={reasonId}
-            className="text-sm font-medium text-[var(--off-white)] font-['DM_Sans']"
+            className="text-sm font-medium text-[var(--off-white)] font-body"
           >
             Motivo del rechazo
             <span className="text-red-400 ml-1" aria-hidden="true">*</span>
@@ -110,7 +110,7 @@ export default function RejectSubmissionModal({
             aria-required="true"
             aria-invalid={showError}
             aria-describedby={showError ? errorId : undefined}
-            className="w-full resize-none bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] placeholder-[var(--muted)] font-['DM_Sans'] outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all disabled:opacity-50 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:focus:shadow-[0_0_0_2px_rgba(239,68,68,0.1)]"
+            className="w-full resize-none bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] placeholder-[var(--muted)] font-body outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all disabled:opacity-50 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--danger)_10%,transparent)]"
           />
 
           {/* Contador + error */}
@@ -119,7 +119,7 @@ export default function RejectSubmissionModal({
               <p
                 id={errorId}
                 role="alert"
-                className="text-xs text-red-400 font-['DM_Sans']"
+                className="text-xs text-red-400 font-body"
               >
                 El motivo debe tener al menos {MIN_CHARS} caracteres
               </p>
@@ -127,7 +127,7 @@ export default function RejectSubmissionModal({
               <span />
             )}
             <span
-              className={`text-xs font-['DM_Sans'] tabular-nums ${
+              className={`text-xs font-body tabular-nums ${
                 charCount < MIN_CHARS ? 'text-[var(--muted)]' : 'text-emerald-400'
               }`}
             >

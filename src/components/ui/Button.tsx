@@ -12,21 +12,24 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary:   'text-[var(--navy)] font-semibold disabled:opacity-50 active:scale-[0.97]',
-  secondary: 'bg-[rgba(22,34,56,0.5)] text-[var(--off-white)] border border-[rgba(0,212,255,0.15)] hover:border-[rgba(0,212,255,0.4)] disabled:opacity-50 active:scale-[0.97]',
-  danger:    'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 disabled:opacity-50 active:scale-[0.97]',
-  ghost:     'text-[var(--muted)] hover:text-[var(--signal)] hover:bg-[rgba(0,212,255,0.08)] disabled:opacity-50 active:scale-[0.97]',
+  primary:
+    'bg-[var(--brand)] text-[var(--on-brand)] font-bold hover:bg-[var(--brand-press)] ' +
+    'shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_1px_2px_rgba(23,22,15,0.3),0_8px_18px_-8px_rgba(168,127,0,0.7)]',
+  secondary:
+    'bg-[var(--surface)] text-[var(--fg)] font-semibold border-[1.5px] border-[color:var(--line-strong)] ' +
+    'hover:bg-[var(--wash)] shadow-[var(--shadow-1)]',
+  danger:
+    'bg-[var(--danger)] text-[var(--on-danger)] font-bold hover:brightness-95 ' +
+    'shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(23,22,15,0.3)]',
+  ghost:
+    'text-[var(--fg-muted)] font-semibold hover:text-[var(--fg)] hover:bg-[var(--wash)]',
 }
 
+// Mínimos táctiles pensados para guantes: 44 / 52 / 60 px
 const sizeClasses: Record<Size, string> = {
-  sm: 'px-3 py-2 text-xs rounded-[var(--radius-btn)]',
-  md: 'px-4 py-2 text-sm rounded-[var(--radius-btn)]',
-  lg: 'px-6 py-2.5 text-base rounded-[var(--radius-btn)]',
-}
-
-const primaryStyle = {
-  background: 'linear-gradient(135deg, #00D4FF, #0096b3)',
-  boxShadow: '0 0 24px rgba(0,212,255,0.4)',
+  sm: 'min-h-[44px] px-4 text-[15px] rounded-[var(--radius-btn)]',
+  md: 'min-h-[52px] px-5 text-base rounded-[var(--radius-btn)]',
+  lg: 'min-h-[60px] px-7 text-lg rounded-[14px]',
 }
 
 export function Button({
@@ -36,21 +39,19 @@ export function Button({
   children,
   className = '',
   disabled,
-  style,
   testId,
   ...props
 }: ButtonProps) {
   return (
     <button
       data-testid={testId}
-      className={`inline-flex items-center justify-center gap-2 font-['DM_Sans'] transition-all duration-150 cursor-pointer disabled:cursor-not-allowed ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 font-body tracking-[0.01em] select-none transition-[transform,background-color,box-shadow,filter] duration-150 ease-[var(--ease-out)] active:scale-[0.97] disabled:opacity-45 disabled:active:scale-100 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       disabled={disabled || loading}
-      style={variant === 'primary' ? { ...primaryStyle, ...style } : style}
       {...props}
     >
       {loading && (
         <span
-          className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"
+          className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
           aria-hidden="true"
         />
       )}

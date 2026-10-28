@@ -1,11 +1,18 @@
 /**
- * WorldMap — Universo Operativo
- * Diseño cósmico con planetas interactivos y constelaciones.
+ * WorldMap — Ruta de la jornada
+ *
+ * Cada formulario es una estación sobre un camino de obra. La forma de la
+ * estación dice su estado, como un cartel ISO 7010:
+ *   cuadrado verde  = inspección terminada (condición segura)
+ *   círculo amarillo = la siguiente a hacer
+ *   círculo claro    = pendiente
+ * El camino solo gira a 90° y 45°, como un diagrama de rutas.
  * Los templates se cargan dinámicamente desde GET /form-templates.
  */
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { Check, X, Route as RouteIcon, ChevronRight } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -14,36 +21,46 @@ import {
   computeWorldStatus,
   markWorldComplete,
 } from '@/db/gameProgress'
+import { TemplateIcon } from '@/components/ui/TemplateIcon'
+import { SOSButton } from '@/components/ui/SOSButton'
 import CircleTransition from './CircleTransition'
 import { FormTemplate } from '@/types/index'
 
-// ─── Datos de diseño ──────────────────────────────────────────────────────────
+// ─── Geometría de la ruta ─────────────────────────────────────────────────────
 
-type PlanetPos = { x: number; y: number; size: number }
+const W = 360            // ancho lógico
+const ROW = 200          // alto entre estaciones
+const PAD_TOP = 70
+const PAD_BOTTOM = 90
+const X_LEFT = 100
+const X_RIGHT = 260
+const STATION = 80       // diámetro lógico de una estación
 
-const BASE_POSITIONS: PlanetPos[] = [
-  { x: 28, y: 22, size: 132 },
-  { x: 72, y: 38, size: 108 },
-  { x: 24, y: 62, size: 116 },
-  { x: 70, y: 80, size: 124 },
-  { x: 45, y: 48, size: 100 },
-]
+function stationX(i: number) {
+  return i % 2 === 0 ? X_LEFT : X_RIGHT
+}
+function stationY(i: number) {
+  return PAD_TOP + i * ROW
+}
 
-const HUES = [70, 280, 145, 45, 200, 320]
-
-const SCATTERED_STARS = [
-  { x: 50, y: 8,  r: 1,   o: 0.7 },
-  { x: 88, y: 12, r: 1.2, o: 0.5 },
-  { x: 8,  y: 38, r: 0.8, o: 0.6 },
-  { x: 92, y: 55, r: 1,   o: 0.7 },
-  { x: 48, y: 50, r: 0.9, o: 0.4 },
-  { x: 12, y: 78, r: 1.1, o: 0.6 },
-  { x: 50, y: 92, r: 1,   o: 0.5 },
-  { x: 38, y: 30, r: 0.7, o: 0.4 },
-  { x: 60, y: 68, r: 0.8, o: 0.5 },
-]
+/** Tramo entre dos estaciones: baja, gira a 45°, y vuelve a bajar. */
+function segmentPath(i: number) {
+  const x1 = stationX(i), y1 = stationY(i)
+  const x2 = stationX(i + 1), y2 = stationY(i + 1)
+  const dx = Math.abs(x2 - x1)
+  const lead = (ROW - dx) / 2
+  return `M ${x1} ${y1} V ${y1 + lead} L ${x2} ${y1 + lead + dx} V ${y2}`
+}
 
 // ─── Componente principal ─────────────────────────────────────────────────────
+
+type StationDatum = {
+  template: FormTemplate
+  index: number
+  status: 'complete' | 'current' | 'locked'
+  isCompleted: boolean
+  isNext: boolean
+}
 
 export default function WorldMap() {
   const navigate = useNavigate()
@@ -52,7 +69,6 @@ export default function WorldMap() {
   const cedula = user?.sub ?? 'anon'
   const obraId = workLocationId ?? '0'
 
-  // Cargar todos los templates (no sólo activos) para el mapa
   const { data: templates = [], isLoading } = useQuery({
     queryKey: QK.templates.active(),
     queryFn: () =>
@@ -64,7 +80,6 @@ export default function WorldMap() {
   const [covering, setCovering] = useState(false)
   const [destination, setDestination] = useState<string | null>(null)
 
-  // Cargar progreso al montar
   useEffect(() => {
     setCompletedIds(getCompletedWorlds(cedula, obraId))
   }, [cedula, obraId])
@@ -80,6 +95,14 @@ export default function WorldMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Cerrar la hoja con Escape
+  useEffect(() => {
+    if (!selected) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelected(null) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [selected])
+
   const navigateTo = (path: string) => {
     setDestination(path)
     setCovering(true)
@@ -90,564 +113,325 @@ export default function WorldMap() {
   }
 
   const completedCount = completedIds.length
-  const progressPct =
-    templates.length > 0 ? (completedCount / templates.length) * 100 : 0
+  const total = templates.length
+  const firstPendingIdx = templates.findIndex((t) => !completedIds.includes(t.id))
 
-  const userName = localStorage.getItem('nombre_trabajador') || user?.sub || 'Operario'
-
-  // Enriquecer templates con pos, hue, estado
-  const planetsData = templates.map((template, index) => ({
+  const stations: StationDatum[] = templates.map((template, index) => ({
     template,
-    pos: BASE_POSITIONS[index % BASE_POSITIONS.length],
-    hue: HUES[index % HUES.length],
     index,
     status: computeWorldStatus(template.id, cedula, obraId),
     isCompleted: completedIds.includes(template.id),
+    isNext: index === firstPendingIdx,
   }))
 
-  const selectedData = planetsData.find((p) => p.template.id === selected) ?? null
+  const selectedData = stations.find((p) => p.template.id === selected) ?? null
+  const userName = localStorage.getItem('nombre_trabajador') || 'Compañero'
+  const allDone = total > 0 && completedCount >= total
 
   return (
-    <div className="bg-cosmos relative min-h-full overflow-hidden pb-20" style={{ color: 'var(--cream)' }}>
-      {/* Estrellas fugaces decorativas */}
-      <div
-        className="pointer-events-none absolute left-0 top-32 h-px w-24"
-        style={{
-          background: 'linear-gradient(to right, transparent, var(--cream), transparent)',
-          animation: 'game-shooting-star 7s linear infinite',
-        }}
-      />
-      <div
-        className="pointer-events-none absolute left-0 top-[60%] h-px w-32"
-        style={{
-          background: 'linear-gradient(to right, transparent, var(--amber), transparent)',
-          animation: 'game-shooting-star 9s linear infinite 3s',
-        }}
-      />
-
-      {/* Contenedor principal con max-width centrado */}
-      <div className="relative mx-auto max-w-md px-5 pt-6">
-
-        {/* Header */}
-        <header className="relative z-10 mb-2">
-          <p
-            className="font-sub text-xs uppercase tracking-widest"
-            style={{ color: 'var(--amber)' }}
-          >
-            SEÑAL
-          </p>
-          <h1 className="text-cosmos-heading text-3xl leading-none">
-            Universo Operativo
+    <div className="route-bg min-h-full pb-32" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <div className="mx-auto max-w-md px-5 pt-16">
+        <header className="mb-2">
+          <h1 className="font-display font-extrabold text-[44px] leading-[0.95] text-[var(--fg)]">
+            Ruta de la jornada
           </h1>
-          <p className="mt-1 text-sm" style={{ color: 'rgba(250,244,232,0.6)' }}>
-            {userName}
-          </p>
+          <p className="mt-2 text-lg text-[var(--fg-muted)]">{userName}</p>
 
-          {/* Barra de progreso global */}
-          <div className="mt-3 flex items-center gap-3">
+          <div className="liquid mt-4 rounded-[20px] p-4">
+            <div className="flex items-baseline justify-between mb-2.5">
+              <span className="font-display font-bold text-2xl text-[var(--fg)]">
+                {allDone ? '¡Ruta completa!' : `${completedCount} de ${total} inspecciones`}
+              </span>
+              <span className="font-display font-bold text-2xl text-[var(--fg)]">
+                {total > 0 ? Math.round((completedCount / total) * 100) : 0}%
+              </span>
+            </div>
             <div
-              className="flex-1 h-1.5 rounded-full overflow-hidden"
-              style={{ background: 'rgba(255,255,255,0.08)' }}
+              className="h-3.5 rounded-full bg-[var(--wash-strong)] overflow-hidden"
               role="progressbar"
               aria-valuenow={completedCount}
-              aria-valuemax={templates.length}
+              aria-valuemax={total}
               aria-label="Progreso del día"
             >
               <div
-                className="h-full rounded-full transition-[width] duration-700"
-                style={{
-                  width: `${progressPct}%`,
-                  background: 'linear-gradient(to right, var(--amber), var(--terracotta))',
-                }}
+                className="hazard h-full rounded-full transition-[width] duration-700 ease-[var(--ease-out)]"
+                style={{ width: `${total > 0 ? (completedCount / total) * 100 : 0}%` }}
               />
             </div>
-            <span
-              className="font-sub text-[10px] uppercase tracking-widest shrink-0"
-              style={{ color: 'rgba(250,244,232,0.5)' }}
-            >
-              {completedCount}/{templates.length}
-            </span>
           </div>
         </header>
 
-        {/* Mapa de estrellas */}
         {isLoading ? (
           <LoadingState />
-        ) : templates.length === 0 ? (
+        ) : total === 0 ? (
           <EmptyState />
         ) : (
-          <StarMap
-            planets={planetsData}
-            selected={selected}
-            onSelect={setSelected}
-          />
-        )}
-
-        {/* Card inferior del planeta seleccionado */}
-        {selectedData && (
-          <SelectedPlanetCard
-            data={selectedData}
-            onClose={() => setSelected(null)}
-            onNavigate={(path) => {
-              setSelected(null)
-              navigateTo(path)
-            }}
-          />
+          <RouteMap stations={stations} selected={selected} onSelect={setSelected} />
         )}
       </div>
 
-      {/* Transición de salida */}
-      {covering && (
-        <CircleTransition direction="out" onDone={handleCoverDone} />
+      {selectedData && (
+        <StationSheet
+          data={selectedData}
+          onClose={() => setSelected(null)}
+          onNavigate={(path) => {
+            setSelected(null)
+            navigateTo(path)
+          }}
+        />
       )}
+
+      <SOSButton />
+
+      {covering && <CircleTransition direction="out" onDone={handleCoverDone} />}
     </div>
   )
 }
 
-// ─── Mapa de estrellas ────────────────────────────────────────────────────────
+// ─── Mapa de la ruta ──────────────────────────────────────────────────────────
 
-type PlanetDatum = {
-  template: FormTemplate
-  pos: PlanetPos
-  hue: number
-  index: number
-  status: 'complete' | 'current' | 'locked'
-  isCompleted: boolean
-}
-
-function StarMap({
-  planets,
+function RouteMap({
+  stations,
   selected,
   onSelect,
 }: {
-  planets: PlanetDatum[]
+  stations: StationDatum[]
   selected: string | null
   onSelect: (id: string) => void
 }) {
-  const W = 360
-  const H = 520
+  const H = PAD_TOP + (stations.length - 1) * ROW + PAD_BOTTOM
 
   return (
-    <div
-      className="relative mx-auto mt-4 w-full"
-      style={{ aspectRatio: `${W} / ${H}` }}
-    >
-      {/* Nebulosas de fondo */}
-      <div
-        className="nebula"
-        style={{
-          left: '10%',
-          top: '15%',
-          width: '55%',
-          height: '40%',
-          background:
-            'radial-gradient(circle, rgba(196,80,10,0.5), transparent 70%)',
-        }}
-      />
-      <div
-        className="nebula"
-        style={{
-          right: '5%',
-          top: '55%',
-          width: '60%',
-          height: '45%',
-          background:
-            'radial-gradient(circle, rgba(100,60,200,0.45), transparent 70%)',
-          animationDelay: '5s',
-        }}
-      />
-
-      {/* SVG: líneas de constelación + estrellas dispersas */}
+    <div className="relative mx-auto mt-4 w-full" style={{ aspectRatio: `${W} / ${H}` }}>
       <svg
         className="absolute inset-0 h-full w-full"
         viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="none"
         aria-hidden="true"
       >
-        {/* Líneas entre planetas consecutivos */}
-        {planets.slice(0, -1).map((p, i) => {
-          const a = p.pos
-          const b = planets[i + 1].pos
-          const x1 = (a.x / 100) * W
-          const y1 = (a.y / 100) * H
-          const x2 = (b.x / 100) * W
-          const y2 = (b.y / 100) * H
-          const isActive = !p.isCompleted || !planets[i + 1].isCompleted
+        {stations.slice(0, -1).map((s, i) => {
+          const next = stations[i + 1]
+          const done = s.isCompleted && next.isCompleted
+          const active = s.isCompleted && !next.isCompleted || s.isNext
+          const d = segmentPath(i)
           return (
-            <line
-              key={i}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke={isActive ? 'var(--amber)' : 'rgba(255,255,255,0.18)'}
-              strokeWidth={isActive ? 1.5 : 1}
-              strokeDasharray="3 5"
-              strokeLinecap="round"
-              style={
-                isActive
-                  ? { filter: 'drop-shadow(0 0 4px var(--amber))' }
-                  : undefined
-              }
-              className="constellation-line"
-              strokeDashoffset={100}
-            />
+            <g key={s.template.id} strokeLinejoin="round" strokeLinecap="butt" fill="none">
+              <path d={d} strokeWidth={22} stroke={done ? 'var(--ok)' : active ? 'var(--fg)' : 'var(--surface-3)'} />
+              <path
+                d={d}
+                strokeWidth={3}
+                stroke={done ? 'rgba(255,255,255,0.85)' : active ? 'var(--brand)' : 'var(--line-strong)'}
+                strokeDasharray="14 14"
+                className={active && !done ? 'route-flow' : undefined}
+              />
+            </g>
           )
         })}
-
-        {/* Estrellas dispersas */}
-        {SCATTERED_STARS.map((s, i) => (
-          <circle
-            key={i}
-            cx={(s.x / 100) * W}
-            cy={(s.y / 100) * H}
-            r={s.r}
-            fill="var(--cream)"
-            opacity={s.o}
-          />
-        ))}
+        {/* Meta */}
+        <g transform={`translate(${stationX(stations.length - 1)} ${stationY(stations.length - 1) + 150})`}>
+          <rect x={-30} y={-15} width={60} height={30} rx={4} fill="var(--fg)" />
+          <text x={0} y={7} textAnchor="middle" fontFamily="Barlow Condensed" fontWeight={800} fontSize={20} fill="var(--bg)" letterSpacing={2}>
+            META
+          </text>
+        </g>
       </svg>
 
-      {/* Planetas */}
-      {planets.map((p) => (
-        <PlanetButton
-          key={p.template.id}
-          data={p}
-          isSelected={selected === p.template.id}
-          onSelect={() => onSelect(p.template.id)}
+      {stations.map((s) => (
+        <StationButton
+          key={s.template.id}
+          data={s}
+          H={H}
+          isSelected={selected === s.template.id}
+          onSelect={() => onSelect(s.template.id)}
         />
       ))}
     </div>
   )
 }
 
-// ─── Botón planeta ────────────────────────────────────────────────────────────
+// ─── Estación ─────────────────────────────────────────────────────────────────
 
-function PlanetButton({
+function StationButton({
   data,
+  H,
   isSelected,
   onSelect,
 }: {
-  data: PlanetDatum
+  data: StationDatum
+  H: number
   isSelected: boolean
   onSelect: () => void
 }) {
-  const { template, pos, hue, index, isCompleted } = data
-  const locked = false // todos disponibles por ahora
-  const fieldsCount = template.fields?.length ?? 1
-  const completedCount = isCompleted ? fieldsCount : 0
-  const pct = fieldsCount > 0 ? (completedCount / fieldsCount) * 100 : 0
-  const inProgress = !isCompleted && !locked
+  const { template, index, isCompleted, isNext } = data
+  const x = stationX(index)
+  const y = stationY(index)
+  const left = x < W / 2
 
-  // Tamaño relativo al contenedor de 360 unidades lógicas
-  const sizePct = (pos.size / 360) * 100
-  const emoji = template.icon ?? '📋'
+  // Forma = estado
+  const shape = isCompleted
+    ? 'rounded-[22%] bg-[var(--ok)] text-[var(--on-ok)] border-[3px] border-[var(--fg)]'
+    : isNext
+    ? 'rounded-full bg-[var(--brand)] text-[var(--on-brand)] border-[4px] border-[var(--fg)]'
+    : 'rounded-[34%] bg-[var(--surface)] text-[var(--fg)] border-[3px] border-[var(--fg)]'
 
   return (
     <button
       type="button"
       onClick={onSelect}
-      className="group absolute focus:outline-none"
+      className="group absolute focus-visible:outline-offset-4"
       style={{
-        left: `${pos.x}%`,
-        top: `${pos.y}%`,
-        width: `${sizePct}%`,
+        left: `${(x / W) * 100}%`,
+        top: `${(y / H) * 100}%`,
+        width: `${(STATION / W) * 100}%`,
         aspectRatio: '1 / 1',
         transform: 'translate(-50%, -50%)',
-        transition: 'transform 0.3s ease',
-        animation: `game-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 120}ms both`,
       }}
-      aria-label={template.name}
+      aria-label={`${template.name}${isCompleted ? ', completada' : isNext ? ', siguiente' : ', pendiente'}`}
+      aria-pressed={isSelected}
     >
-      {/* Anillo de órbita con luna giratoria */}
-      <div
-        className="orbit-ring"
-        style={{
-          inset: '-14%',
-          animation: `game-orbit-ring ${20 + index * 4}s linear infinite${
-            index % 2 ? ' reverse' : ''
-          }`,
-        }}
-      >
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: '8px',
-            height: '8px',
-            top: '-4px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'var(--amber)',
-            boxShadow: '0 0 8px var(--amber)',
-          }}
-        />
-      </div>
-
-      {/* Anillos de pulso — planeta activo */}
-      {inProgress && (
-        <>
-          <div
-            className="pointer-events-none absolute inset-0 rounded-full border"
-            style={{
-              borderColor: 'var(--amber)',
-              animation: 'game-pulse-ring 2.5s ease-out infinite',
-            }}
-          />
-          <div
-            className="pointer-events-none absolute inset-0 rounded-full border"
-            style={{
-              borderColor: 'var(--amber)',
-              animation: 'game-pulse-ring 2.5s ease-out infinite 1.25s',
-            }}
-          />
-        </>
-      )}
-
-      {/* Cuerpo del planeta */}
-      <div
-        className="relative h-full w-full rounded-full"
-        style={{
-          transform: isSelected ? 'scale(1.1)' : undefined,
-          transition: 'transform 0.3s ease',
-          animation: `game-drift ${7 + index}s ease-in-out infinite`,
-          animationDelay: `${index * 0.7}s`,
-        }}
-      >
-        {/* Gradiente de superficie */}
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: isCompleted
-              ? 'radial-gradient(circle at 30% 28%, #4ade80, #22c55e 60%, #15803d)'
-              : `radial-gradient(circle at 30% 28%, hsl(${hue} 70% 75%), hsl(${hue} 60% 45%) 60%, hsl(${hue} 50% 20%))`,
-            boxShadow: `inset -10px -12px 24px rgba(0,0,0,0.4), 0 0 40px hsl(${hue} 60% 50% / 0.4), 0 14px 36px rgba(0,0,0,0.5)`,
-          }}
-        />
-
-        {/* Textura de superficie */}
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            mixBlendMode: 'overlay',
-            opacity: 0.4,
-            background:
-              'radial-gradient(ellipse at 65% 70%, rgba(0,0,0,0.5), transparent 50%), radial-gradient(circle at 20% 60%, rgba(255,255,255,0.2), transparent 30%)',
-          }}
-        />
-
-        {/* Emoji */}
-        <div className="absolute inset-0 grid place-items-center">
-          <span
-            style={{ fontSize: `${pos.size * 0.32}px` }}
-            className="drop-shadow-lg select-none"
-          >
-            {emoji}
-          </span>
-        </div>
-
-        {/* Arco de progreso */}
-        {pct > 0 && (
-          <svg
-            className="absolute inset-0"
-            style={{ transform: 'rotate(-90deg)' }}
-            viewBox="0 0 100 100"
-            aria-hidden="true"
-          >
-            <circle
-              cx="50"
-              cy="50"
-              r="48"
-              fill="none"
-              stroke="var(--amber)"
-              strokeWidth="2.5"
-              strokeDasharray={`${(pct / 100) * 301.6} 301.6`}
-              strokeLinecap="round"
-              style={{ filter: 'drop-shadow(0 0 4px var(--amber))' }}
-            />
-          </svg>
-        )}
-
-        {/* Anillo de selección */}
-        {isSelected && (
-          <div
-            className="pointer-events-none absolute rounded-full border-2"
-            style={{
-              inset: '-8px',
-              borderColor: 'var(--amber)',
-              boxShadow: '0 0 30px var(--amber)',
-            }}
-          />
-        )}
-      </div>
-
-      {/* Etiqueta del planeta */}
-      <div
-        className="absolute left-1/2 text-center"
-        style={{
-          top: 'calc(100% + 8px)',
-          transform: 'translateX(-50%)',
-          width: 'max-content',
-          maxWidth: '140px',
-        }}
-      >
-        <p
-          className="font-sub text-[10px] font-bold uppercase tracking-widest"
-          style={{ color: 'var(--cream)' }}
-        >
-          {template.name}
-        </p>
-      </div>
+      <StationInner
+        shape={shape}
+        icon={template.icon}
+        isCompleted={isCompleted}
+        isNext={isNext}
+        isSelected={isSelected}
+        index={index}
+        name={template.name}
+        left={left}
+      />
     </button>
   )
 }
 
-// ─── Card de planeta seleccionado (bottom sheet) ──────────────────────────────
+function StationInner({
+  shape,
+  icon,
+  isCompleted,
+  isNext,
+  isSelected,
+  index,
+  name,
+  left,
+}: {
+  shape: string
+  icon?: string | null
+  isCompleted: boolean
+  isNext: boolean
+  isSelected: boolean
+  index: number
+  name: string
+  left: boolean
+}) {
+  return (
+    <span
+      className="relative block w-full h-full"
+      style={{ animation: `game-pop 0.5s var(--ease-out) ${index * 90}ms both` }}
+    >
+      {isNext && (
+        <span className="absolute inset-0 rounded-full border-[3px] border-[var(--brand)] pointer-events-none" style={{ animation: 'game-pulse-ring 2.2s ease-out infinite' }} aria-hidden="true" />
+      )}
+      <span
+        className={`relative grid place-items-center w-full h-full transition-transform duration-200 ease-[var(--ease-out)] shadow-[inset_0_2px_0_rgba(255,255,255,0.45),0_10px_20px_-8px_rgba(23,22,15,0.55)] group-active:scale-95 ${shape} ${isSelected ? 'scale-110' : ''}`}
+      >
+        {isCompleted ? (
+          <Check className="w-1/2 h-1/2" strokeWidth={3.5} aria-hidden="true" />
+        ) : (
+          <TemplateIcon icon={icon} className="w-1/2 h-1/2" />
+        )}
+      </span>
+      <span
+        className={`absolute top-1/2 -translate-y-1/2 w-[9.5rem] font-display font-bold text-[20px] leading-[1.05] text-[var(--fg)] ${
+          left ? 'left-[calc(100%+0.75rem)] text-left' : 'right-[calc(100%+0.75rem)] text-right'
+        }`}
+      >
+        <span className="line-clamp-3">{name}</span>
+        {isNext && (
+          <span className="mt-1 inline-block rounded-[6px] bg-[var(--fg)] text-[var(--bg)] px-2 py-0.5 text-[13px] font-body font-bold ">
+            SIGUIENTE
+          </span>
+        )}
+      </span>
+    </span>
+  )
+}
 
-function SelectedPlanetCard({
+// ─── Hoja de la estación seleccionada (vidrio líquido) ───────────────────────
+
+function StationSheet({
   data,
   onClose,
   onNavigate,
 }: {
-  data: PlanetDatum
+  data: StationDatum
   onClose: () => void
   onNavigate: (path: string) => void
 }) {
-  const { template, hue, isCompleted, status } = data
-  const fieldsCount = template.fields?.length ?? 1
-  const completedCount = isCompleted ? fieldsCount : 0
-  const pct = fieldsCount > 0 ? (completedCount / fieldsCount) * 100 : 0
-  const emoji = template.icon ?? '📋'
-
-  const buttonLabel =
-    status === 'complete'
-      ? 'Revisar'
-      : completedCount === 0
-      ? 'Iniciar misión'
-      : 'Continuar'
+  const { template, isCompleted, status } = data
+  const fieldsCount = template.fields?.length ?? 0
+  const label = status === 'complete' ? 'Completada' : 'Iniciar inspección'
 
   return (
     <>
-      {/* Backdrop para cerrar al tocar fuera */}
       <button
         type="button"
         onClick={onClose}
         aria-label="Cerrar detalle"
-        className="game-scrim fixed inset-0 z-40"
+        className="fixed inset-0 z-40 bg-[rgba(23,22,15,0.45)] animate-[fadeIn_0.2s_ease]"
       />
 
-      {/* Sheet */}
       <div
         key={template.id}
-        className="card-glass fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md overflow-hidden rounded-t-3xl p-5 pb-8"
-        style={{
-          background: `linear-gradient(135deg, hsl(${hue} 60% 35% / 0.55), rgba(14,18,33,0.95))`,
-          boxShadow: '0 -20px 50px rgba(0,0,0,0.5)',
-          animation: 'game-slide-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both',
-        }}
+        role="dialog"
+        aria-label={template.name}
+        className="liquid fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md rounded-t-[28px] p-6 animate-game-slide-up"
+        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
       >
-        {/* Drag handle */}
-        <div
-          className="mx-auto mb-3 h-1 w-10 rounded-full"
-          style={{ background: 'rgba(250,244,232,0.3)' }}
-        />
+        <div className="mx-auto -mt-2 mb-4 h-1.5 w-11 rounded-full bg-[var(--line-strong)]" aria-hidden="true" />
 
-        {/* Botón cerrar */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 grid place-items-center rounded-full text-lg font-bold leading-none transition-colors"
-          style={{
-            width: '32px',
-            height: '32px',
-            background: 'rgba(250,244,232,0.1)',
-            color: 'rgba(250,244,232,0.8)',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(250,244,232,0.2)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(250,244,232,0.1)'
-          }}
+          className="absolute right-4 top-4 w-11 h-11 grid place-items-center rounded-full text-[var(--fg-muted)] hover:bg-[var(--wash)] hover:text-[var(--fg)] transition-colors"
           aria-label="Cerrar"
         >
-          ×
+          <X className="w-6 h-6" />
         </button>
 
-        {/* Contenido */}
-        <div className="flex items-start gap-3 pr-8">
-          <div style={{ fontSize: '2.25rem' }}>{emoji}</div>
+        <div className="flex items-start gap-4 pr-10">
+          <span
+            className={`shrink-0 w-16 h-16 grid place-items-center text-[34px] border-[3px] border-[var(--fg)] ${
+              isCompleted ? 'rounded-[22%] bg-[var(--ok)] text-[var(--on-ok)]' : 'rounded-full bg-[var(--brand)]'
+            }`}
+            aria-hidden="true"
+          >
+            {isCompleted ? <Check className="w-9 h-9" strokeWidth={3.5} /> : <TemplateIcon icon={template.icon} className="w-9 h-9" />}
+          </span>
           <div className="flex-1 min-w-0">
-            <h2
-              className="font-sub text-xl font-bold leading-tight truncate"
-              style={{ color: 'var(--cream)' }}
-            >
+            <h2 className="font-display font-extrabold text-[30px] leading-[1] text-[var(--fg)]">
               {template.name}
             </h2>
             {template.description && (
-              <p
-                className="mt-1 text-xs leading-relaxed"
-                style={{ color: 'rgba(250,244,232,0.7)' }}
-              >
-                {template.description}
-              </p>
+              <p className="mt-1.5 text-lg leading-snug text-[var(--fg-muted)]">{template.description}</p>
             )}
           </div>
         </div>
 
-        {/* Barra de progreso */}
-        <div className="mt-4">
-          <div
-            className="mb-1 flex items-center justify-between text-[11px]"
-            style={{ color: 'rgba(250,244,232,0.6)' }}
-          >
-            <span>
-              {completedCount}/{fieldsCount} campos
-            </span>
-            <span
-              className="font-bold"
-              style={{ color: 'var(--amber)' }}
-            >
-              {isCompleted ? 'Completo' : `${Math.round(pct)}%`}
-            </span>
-          </div>
-          <div
-            className="h-1.5 overflow-hidden rounded-full"
-            style={{ background: 'rgba(255,255,255,0.1)' }}
-          >
-            <div
-              className="h-full rounded-full transition-[width] duration-500"
-              style={{
-                width: `${Math.max(pct, isCompleted ? 100 : 0)}%`,
-                background: 'linear-gradient(to right, var(--amber), var(--terracotta))',
-              }}
-            />
-          </div>
-        </div>
+        <p className="mt-4 text-base font-semibold text-[var(--fg-muted)]">
+          {fieldsCount > 0 ? `${fieldsCount} ${fieldsCount === 1 ? 'pregunta' : 'preguntas'}` : 'Registro rápido'}
+        </p>
 
-        {/* CTA o badge de completado */}
         {status === 'complete' ? (
-          <div className="mt-5 flex items-center justify-center gap-2">
-            <div
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
-              style={{
-                background: 'rgba(74,222,128,0.15)',
-                border: '1px solid rgba(74,222,128,0.4)',
-                color: '#4ade80',
-              }}
-            >
-              <span>✨</span>
-              <span>Misión completada</span>
-            </div>
+          <div className="mt-4 flex items-center justify-center gap-2 min-h-[60px] rounded-[16px] bg-[var(--ok)] text-[var(--on-ok)] font-display font-bold text-2xl">
+            <Check className="w-7 h-7" strokeWidth={3.5} aria-hidden="true" />
+            {label}
           </div>
         ) : (
           <button
             type="button"
-            className="btn-3d btn-3d-primary mt-5 w-full"
+            className="btn-3d mt-4 w-full"
             onClick={() => onNavigate(`/game/level/${template.id}`)}
           >
-            {buttonLabel} →
+            {label}
+            <ChevronRight className="w-6 h-6" aria-hidden="true" />
           </button>
         )}
       </div>
@@ -659,33 +443,28 @@ function SelectedPlanetCard({
 
 function LoadingState() {
   return (
-    <div
-      className="flex flex-col items-center justify-center gap-4 mt-16"
-      aria-live="polite"
-    >
-      <div
-        className="w-10 h-10 rounded-full border-2 border-t-transparent animate-spin"
-        style={{ borderColor: 'var(--amber)', borderTopColor: 'transparent' }}
-      />
-      <p className="text-sm" style={{ color: 'rgba(250,244,232,0.5)' }}>
-        Cargando universo...
-      </p>
+    <div className="mt-10 flex flex-col gap-10" aria-live="polite" aria-label="Cargando la ruta">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className={`flex items-center gap-4 ${i % 2 ? 'flex-row-reverse' : ''}`}>
+          <div className="w-20 h-20 rounded-full bg-[var(--wash-strong)] animate-pulse" />
+          <div className="h-6 w-36 rounded-md bg-[var(--wash-strong)] animate-pulse" />
+        </div>
+      ))}
     </div>
   )
 }
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 mt-16 text-center px-6">
-      <span style={{ fontSize: '3rem' }}>🌌</span>
-      <p
-        className="font-sub font-bold text-lg"
-        style={{ color: 'var(--cream)' }}
-      >
-        Sin misiones disponibles
+    <div className="mt-10 flex flex-col items-center gap-4 text-center px-4">
+      <span className="w-20 h-20 rounded-[22px] bg-[var(--brand)] text-[var(--on-brand)] grid place-items-center">
+        <RouteIcon className="w-10 h-10" aria-hidden="true" />
+      </span>
+      <p className="font-display font-extrabold text-3xl text-[var(--fg)] leading-tight">
+        No hay inspecciones hoy
       </p>
-      <p className="text-sm" style={{ color: 'rgba(250,244,232,0.5)' }}>
-        No hay formularios activos asignados en este momento.
+      <p className="text-lg text-[var(--fg-muted)]">
+        Cuando tu administrador active formularios para tu obra, aparecerán aquí como estaciones de la ruta.
       </p>
     </div>
   )

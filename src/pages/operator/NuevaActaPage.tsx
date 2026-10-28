@@ -520,12 +520,12 @@ export default function NuevaActaPage() {
           type="button"
           onClick={() => navigate('/inventarios')}
           aria-label="Volver a inventarios"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-[var(--navy-light)] border border-white/10 text-white/60 hover:text-[var(--off-white)] transition-colors shrink-0"
+          className="flex items-center justify-center w-9 h-9 rounded-full bg-[var(--navy-light)] border border-white/10 text-[var(--fg-muted)] hover:text-[var(--off-white)] transition-colors shrink-0"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </button>
         <div>
-          <h1 className="font-['Syne'] font-bold text-base text-[var(--off-white)]">
+          <h1 className="font-display font-bold text-base text-[var(--off-white)]">
             Nueva Acta de Inspección
           </h1>
         </div>
@@ -560,10 +560,10 @@ export default function NuevaActaPage() {
               type="button"
               onClick={handleCabeceraSiguiente}
               disabled={isCabeceraBusy}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-[var(--radius-btn)] font-['Syne'] font-semibold text-[var(--navy)] text-sm transition-all duration-150 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-[var(--radius-btn)] font-display font-semibold text-[var(--on-brand)] text-sm transition-all duration-150 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
               style={{
-                background: 'linear-gradient(135deg, #00D4FF, #0096b3)',
-                boxShadow: '0 0 20px rgba(0,212,255,0.3)',
+                background: 'var(--brand)',
+                boxShadow: '0 6px 16px -6px color-mix(in srgb,var(--brand) 70%,transparent)',
               }}
             >
               {isCabeceraBusy ? 'Guardando...' : 'Siguiente'}
@@ -586,10 +586,10 @@ export default function NuevaActaPage() {
             <button
               type="button"
               onClick={handleItemsSiguiente}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-[var(--radius-btn)] font-['Syne'] font-semibold text-[var(--navy)] text-sm transition-all duration-150 active:scale-[0.97]"
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-[var(--radius-btn)] font-display font-semibold text-[var(--on-brand)] text-sm transition-all duration-150 active:scale-[0.97]"
               style={{
-                background: 'linear-gradient(135deg, #00D4FF, #0096b3)',
-                boxShadow: '0 0 20px rgba(0,212,255,0.3)',
+                background: 'var(--brand)',
+                boxShadow: '0 6px 16px -6px color-mix(in srgb,var(--brand) 70%,transparent)',
               }}
             >
               Siguiente
@@ -608,7 +608,7 @@ export default function NuevaActaPage() {
             />
 
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] uppercase tracking-widest text-white/30 font-['DM_Sans']">
+              <label className="text-[12px] text-[var(--fg-muted)] font-body">
                 Observaciones
               </label>
               <textarea
@@ -616,7 +616,7 @@ export default function NuevaActaPage() {
                 onChange={(e) => setObservaciones(e.target.value)}
                 placeholder="Observaciones generales del acta..."
                 rows={4}
-                className="w-full bg-[var(--navy)] border border-white/10 rounded-[var(--radius-input)] px-3 py-2.5 text-[var(--off-white)] placeholder-white/20 text-sm font-['DM_Sans'] focus:outline-none focus:border-[var(--signal)]/50 transition-colors resize-none"
+                className="w-full bg-[var(--navy)] border border-white/10 rounded-[var(--radius-input)] px-3 py-2.5 text-[var(--off-white)] placeholder-white/20 text-sm font-body focus:outline-none focus:border-[var(--signal)]/50 transition-colors resize-none"
               />
             </div>
 
@@ -631,10 +631,10 @@ export default function NuevaActaPage() {
               type="button"
               onClick={handleCompletarActa}
               disabled={isCompletarBusy}
-              className="flex items-center justify-center gap-2 w-full py-4 rounded-[var(--radius-btn)] font-['Syne'] font-semibold text-[var(--navy)] text-sm transition-all duration-150 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 w-full py-4 rounded-[var(--radius-btn)] font-display font-semibold text-[var(--on-brand)] text-sm transition-all duration-150 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
               style={{
-                background: 'linear-gradient(135deg, #00D4FF, #0096b3)',
-                boxShadow: '0 0 24px rgba(0,212,255,0.4)',
+                background: 'var(--brand)',
+                boxShadow: '0 6px 16px -6px color-mix(in srgb,var(--brand) 70%,transparent)',
               }}
             >
               {isCompletarBusy ? 'Guardando...' : 'Completar Acta'}

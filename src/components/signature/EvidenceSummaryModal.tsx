@@ -57,19 +57,19 @@ export default function EvidenceSummaryModal({
       icon: MapPin,
       label: 'Ubicación',
       value: position ? formatCoords(position) : 'No disponible',
-      color: position ? 'text-[var(--signal)]' : 'text-[var(--amber)]',
+      color: position ? 'text-[var(--accent-ink)]' : 'text-[var(--warn-ink)]',
     },
     {
       icon: Clock,
       label: 'Fecha y hora',
       value: `${formattedDate}, ${formattedTime}`,
-      color: 'text-[var(--signal)]',
+      color: 'text-[var(--accent-ink)]',
     },
     {
       icon: Smartphone,
       label: 'Dispositivo',
       value: getDeviceLabel(),
-      color: 'text-[var(--signal)]',
+      color: 'text-[var(--accent-ink)]',
     },
   ]
 
@@ -85,7 +85,7 @@ export default function EvidenceSummaryModal({
         {/* Icono de escudo */}
         <div className="flex justify-center">
           <div className="w-16 h-16 rounded-full bg-[var(--signal-dim)] flex items-center justify-center">
-            <ShieldCheck className="w-8 h-8 text-[var(--signal)]" />
+            <ShieldCheck className="w-8 h-8 text-[var(--accent-ink)]" />
           </div>
         </div>
 
@@ -100,8 +100,8 @@ export default function EvidenceSummaryModal({
                 <Icon className={`w-4 h-4 ${color}`} />
               </div>
               <div>
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans']">{label}</p>
-                <p className="text-sm text-[var(--off-white)] font-['DM_Sans'] break-words">
+                <p className="text-xs text-[var(--muted)] font-body">{label}</p>
+                <p className="text-sm text-[var(--off-white)] font-body break-words">
                   {value}
                 </p>
               </div>
@@ -109,7 +109,7 @@ export default function EvidenceSummaryModal({
           ))}
         </div>
 
-        <p className="text-xs text-[var(--muted)] font-['DM_Sans'] text-center">
+        <p className="text-xs text-[var(--muted)] font-body text-center">
           Al confirmar, tu firma queda registrada bajo la Ley 527 de 1999 de Colombia.
         </p>
 

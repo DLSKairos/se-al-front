@@ -197,10 +197,10 @@ export default function FormCreationPathPage() {
     <div className="min-h-screen bg-[var(--navy)] px-4 py-12 flex flex-col items-center">
       {/* Encabezado */}
       <div className="text-center mb-10 max-w-xl">
-        <h1 className="font-['Syne'] font-bold text-3xl text-[var(--off-white)] mb-2">
+        <h1 className="font-display font-bold text-3xl text-[var(--off-white)] mb-2">
           ¿Cómo quieres crear este formulario?
         </h1>
-        <p className="font-['DM_Sans'] text-[var(--muted)] text-base">
+        <p className="font-body text-[var(--muted)] text-base">
           Elige el punto de partida
         </p>
       </div>
@@ -215,28 +215,28 @@ export default function FormCreationPathPage() {
               onClick={() => handleSelectPath(id)}
               className={`
                 text-left rounded-xl p-6 transition-all duration-200 cursor-pointer
-                bg-[rgba(22,34,56,0.75)] border
+                bg-[color-mix(in_srgb,var(--surface)_75%,transparent)] border
                 ${
                   isSelected
-                    ? 'border-[var(--signal)] shadow-[0_0_20px_rgba(0,212,255,0.2)]'
-                    : 'border-[rgba(0,212,255,0.15)] hover:border-[rgba(0,212,255,0.5)] hover:shadow-[0_0_12px_rgba(0,212,255,0.1)]'
+                    ? 'border-[var(--signal)] shadow-[0_0_20px_color-mix(in_srgb,var(--brand)_20%,transparent)]'
+                    : 'border-[color:var(--line)] hover:border-[color:var(--line-strong)] hover:shadow-[0_0_12px_color-mix(in_srgb,var(--brand)_10%,transparent)]'
                 }
               `}
             >
               <div
                 className={`
                   w-10 h-10 rounded-lg flex items-center justify-center mb-4 transition-colors
-                  ${isSelected ? 'bg-[rgba(0,212,255,0.2)]' : 'bg-[rgba(0,212,255,0.08)]'}
+                  ${isSelected ? 'bg-[var(--wash-brand)]' : 'bg-[var(--wash-brand)]'}
                 `}
               >
                 <Icon
-                  className={`w-5 h-5 ${isSelected ? 'text-[var(--signal)]' : 'text-[var(--muted)]'}`}
+                  className={`w-5 h-5 ${isSelected ? 'text-[var(--accent-ink)]' : 'text-[var(--muted)]'}`}
                 />
               </div>
-              <h3 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base mb-1">
+              <h3 className="font-display font-semibold text-[var(--off-white)] text-base mb-1">
                 {title}
               </h3>
-              <p className="font-['DM_Sans'] text-[var(--muted)] text-sm leading-relaxed">
+              <p className="font-body text-[var(--muted)] text-sm leading-relaxed">
                 {desc}
               </p>
             </button>
@@ -256,12 +256,12 @@ export default function FormCreationPathPage() {
             transition={{ duration: 0.22, ease: 'easeInOut' }}
             className="w-full max-w-3xl overflow-hidden"
           >
-            <div className="bg-[rgba(22,34,56,0.75)] border border-[rgba(0,212,255,0.15)] rounded-xl p-6">
+            <div className="bg-[color-mix(in_srgb,var(--surface)_75%,transparent)] border border-[color:var(--line)] rounded-xl p-6">
               {isLoading ? (
                 /* Estado de carga */
                 <div className="flex flex-col items-center justify-center py-12 gap-4">
-                  <Loader2 className="w-8 h-8 text-[var(--signal)] animate-spin" />
-                  <p className="font-['DM_Sans'] text-[var(--muted)] text-sm">
+                  <Loader2 className="w-8 h-8 text-[var(--accent-ink)] animate-spin" />
+                  <p className="font-body text-[var(--muted)] text-sm">
                     SEÑAL IA está leyendo tu documento...
                   </p>
                 </div>
@@ -277,8 +277,8 @@ export default function FormCreationPathPage() {
                     cursor-pointer transition-all duration-200
                     ${
                       isDraggingOver
-                        ? 'border-[var(--signal)] bg-[rgba(0,212,255,0.08)]'
-                        : 'border-[rgba(0,212,255,0.25)] hover:border-[rgba(0,212,255,0.5)] hover:bg-[rgba(0,212,255,0.04)]'
+                        ? 'border-[var(--signal)] bg-[var(--wash-brand)]'
+                        : 'border-[color:var(--line-strong)] hover:border-[color:var(--line-strong)] hover:bg-[var(--wash)]'
                     }
                   `}
                   role="button"
@@ -289,13 +289,13 @@ export default function FormCreationPathPage() {
                   }}
                 >
                   <FileText className="w-10 h-10 text-[var(--muted)]" />
-                  <p className="font-['DM_Sans'] text-[var(--off-white)] text-sm text-center">
+                  <p className="font-body text-[var(--off-white)] text-sm text-center">
                     Arrastra tu archivo aquí o{' '}
-                    <span className="text-[var(--signal)] underline underline-offset-2">
+                    <span className="text-[var(--accent-ink)] underline underline-offset-2">
                       haz clic para seleccionar
                     </span>
                   </p>
-                  <p className="font-['DM_Sans'] text-[var(--muted)] text-xs">
+                  <p className="font-body text-[var(--muted)] text-xs">
                     PDF, DOCX o XLSX — máx. 20 MB
                   </p>
                 </div>
@@ -326,12 +326,12 @@ export default function FormCreationPathPage() {
             transition={{ duration: 0.22, ease: 'easeInOut' }}
             className="w-full max-w-3xl overflow-hidden"
           >
-            <div className="bg-[rgba(22,34,56,0.75)] border border-[rgba(0,212,255,0.15)] rounded-xl p-6 flex flex-col gap-5">
+            <div className="bg-[color-mix(in_srgb,var(--surface)_75%,transparent)] border border-[color:var(--line)] rounded-xl p-6 flex flex-col gap-5">
               {/* Textarea de descripción */}
               <div>
                 <label
                   htmlFor="ai-description"
-                  className="block font-['DM_Sans'] text-sm text-[var(--muted)] mb-2"
+                  className="block font-body text-sm text-[var(--muted)] mb-2"
                 >
                   Describe el formulario que necesitas
                 </label>
@@ -341,7 +341,7 @@ export default function FormCreationPathPage() {
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
                   placeholder="Ej: Permiso de trabajo en alturas para contratistas externos, con verificación de EPP por sección, geolocalización de la obra y firmas del trabajador y supervisor"
-                  className="w-full bg-[rgba(0,0,0,0.2)] border border-[rgba(0,212,255,0.15)] rounded-lg px-4 py-3 font-['DM_Sans'] text-sm text-[var(--off-white)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[rgba(0,212,255,0.5)] resize-none transition-colors"
+                  className="w-full bg-[rgba(23,22,15,0.2)] border border-[color:var(--line)] rounded-lg px-4 py-3 font-body text-sm text-[var(--off-white)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[color:var(--brand)] resize-none transition-colors"
                 />
               </div>
 
@@ -349,7 +349,7 @@ export default function FormCreationPathPage() {
               <div className="flex flex-wrap gap-6 items-center">
                 {/* Selector de columnas */}
                 <div>
-                  <p className="font-['DM_Sans'] text-xs text-[var(--muted)] mb-2">
+                  <p className="font-body text-xs text-[var(--muted)] mb-2">
                     Columnas por sección
                   </p>
                   <div className="flex gap-2">
@@ -358,11 +358,11 @@ export default function FormCreationPathPage() {
                         key={value}
                         onClick={() => setAiColumns(value)}
                         className={`
-                          flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-['DM_Sans'] transition-all duration-150 cursor-pointer
+                          flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-body transition-all duration-150 cursor-pointer
                           ${
                             aiColumns === value
-                              ? 'border-[var(--signal)] text-[var(--signal)] bg-[rgba(0,212,255,0.1)]'
-                              : 'border-[rgba(0,212,255,0.15)] text-[var(--muted)] hover:border-[rgba(0,212,255,0.35)]'
+                              ? 'border-[var(--signal)] text-[var(--accent-ink)] bg-[var(--wash-brand)]'
+                              : 'border-[color:var(--line)] text-[var(--muted)] hover:border-[color:var(--line-strong)]'
                           }
                         `}
                       >
@@ -381,7 +381,7 @@ export default function FormCreationPathPage() {
                     onClick={() => setObservationsPerSection((v) => !v)}
                     className={`
                       relative w-9 h-5 rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--signal)]
-                      ${observationsPerSection ? 'bg-[var(--signal)]' : 'bg-[rgba(255,255,255,0.12)]'}
+                      ${observationsPerSection ? 'bg-[var(--signal)]' : 'bg-[color-mix(in_srgb,var(--fg)_12%,transparent)]'}
                     `}
                   >
                     <span
@@ -391,7 +391,7 @@ export default function FormCreationPathPage() {
                       `}
                     />
                   </button>
-                  <span className="font-['DM_Sans'] text-sm text-[var(--muted)]">
+                  <span className="font-body text-sm text-[var(--muted)]">
                     Observaciones por sección
                   </span>
                 </div>

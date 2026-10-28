@@ -28,7 +28,7 @@ function Bubble({ message }: { message: Message }) {
   if (message.role === 'user') {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[85%] px-3 py-2 rounded-xl rounded-tr-sm text-sm bg-[rgba(0,212,255,0.1)] text-[var(--off-white)] font-['DM_Sans']">
+        <div className="max-w-[85%] px-3 py-2 rounded-xl rounded-tr-sm text-sm bg-[var(--wash-brand)] text-[var(--off-white)] font-body">
           {message.content}
         </div>
       </div>
@@ -38,7 +38,7 @@ function Bubble({ message }: { message: Message }) {
   if (message.role === 'error') {
     return (
       <div className="flex justify-start">
-        <div className="max-w-[85%] px-3 py-2 rounded-xl rounded-tl-sm text-sm bg-[var(--navy-light)] border border-[var(--amber)]/30 text-[var(--amber)] font-['DM_Sans'] flex items-start gap-2">
+        <div className="max-w-[85%] px-3 py-2 rounded-xl rounded-tl-sm text-sm bg-[var(--navy-light)] border border-[var(--amber)]/30 text-[var(--warn-ink)] font-body flex items-start gap-2">
           <AlertTriangle size={14} className="mt-0.5 shrink-0" />
           <span>{message.content}</span>
         </div>
@@ -48,7 +48,7 @@ function Bubble({ message }: { message: Message }) {
 
   return (
     <div className="flex justify-start">
-      <div className="max-w-[85%] px-3 py-2 rounded-xl rounded-tl-sm text-sm bg-[var(--navy-light)] text-[var(--off-white)] font-['DM_Sans']">
+      <div className="max-w-[85%] px-3 py-2 rounded-xl rounded-tl-sm text-sm bg-[var(--navy-light)] text-[var(--off-white)] font-body">
         {message.content}
       </div>
     </div>
@@ -161,14 +161,14 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
             aria-label="Panel de asistente IA"
           >
           {/* Header */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-[rgba(0,212,255,0.12)]">
-            <Sparkles size={16} className="text-[var(--signal)]" />
-            <span className="text-sm font-semibold text-[var(--signal)] font-['Syne'] tracking-wide flex-1">
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-[color:var(--line)]">
+            <Sparkles size={16} className="text-[var(--accent-ink)]" />
+            <span className="text-sm font-semibold text-[var(--accent-ink)] font-display flex-1">
               SEÑALIA
             </span>
             <button
               onClick={onClose}
-              className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] transition-colors"
+              className="p-1 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[var(--wash)] transition-colors"
               aria-label="Cerrar panel de IA"
             >
               <X size={15} />
@@ -194,8 +194,8 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
           </div>
 
           {/* Input */}
-          <div className="px-3 py-3 border-t border-[rgba(0,212,255,0.12)]">
-            <div className="flex items-end gap-2 bg-[var(--navy)] rounded-xl border border-[rgba(0,212,255,0.15)] px-3 py-2 focus-within:border-[var(--signal)] transition-colors">
+          <div className="px-3 py-3 border-t border-[color:var(--line)]">
+            <div className="flex items-end gap-2 bg-[var(--navy)] rounded-xl border border-[color:var(--line)] px-3 py-2 focus-within:border-[var(--signal)] transition-colors">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -203,22 +203,22 @@ export function AIAssistPanel({ isOpen, onClose }: AIAssistPanelProps) {
                 placeholder="Escribe una instrucción..."
                 rows={2}
                 disabled={sending}
-                className="flex-1 bg-transparent resize-none outline-none text-sm text-[var(--off-white)] placeholder:text-[var(--muted)] font-['DM_Sans'] disabled:opacity-50"
+                className="flex-1 bg-transparent resize-none outline-none text-sm text-[var(--off-white)] placeholder:text-[var(--muted)] font-body disabled:opacity-50"
                 aria-label="Instrucción para la IA"
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || sending}
-                className="p-1.5 rounded-lg text-[var(--navy)] disabled:opacity-40 transition-all shrink-0"
+                className="p-1.5 rounded-lg text-[var(--on-brand)] disabled:opacity-40 transition-all shrink-0"
                 style={{
-                  background: 'linear-gradient(135deg, #00D4FF, #0096b3)',
+                  background: 'var(--brand)',
                 }}
                 aria-label="Enviar instrucción"
               >
                 <Send size={13} />
               </button>
             </div>
-            <p className="text-[10px] text-[var(--muted)] mt-1.5 text-center font-['DM_Sans']">
+            <p className="text-[12px] text-[var(--muted)] mt-1.5 text-center font-body">
               Enter para enviar · Shift+Enter nueva línea
             </p>
           </div>

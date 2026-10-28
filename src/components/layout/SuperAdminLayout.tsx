@@ -10,7 +10,7 @@ export function SuperAdminLayout() {
   return (
     <div className="min-h-screen bg-[var(--navy)] flex flex-col">
       <header className="h-14 flex items-center gap-4 px-6 border-b border-[var(--glass-border)] glass-card-md rounded-none">
-        <Radio className="h-5 w-5 text-[var(--signal)] animate-pulse shrink-0" />
+        <Radio className="h-5 w-5 text-[var(--accent-ink)] animate-pulse shrink-0" />
         <span className="font-display font-bold text-[var(--off-white)]">SEÑAL Super Admin</span>
 
         <div className="flex-1" />
@@ -22,7 +22,7 @@ export function SuperAdminLayout() {
           className={({ isActive }) =>
             `flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-btn)] text-sm font-dm transition-colors ${
               isActive
-                ? 'text-[var(--signal)] bg-[var(--signal-dim)]'
+                ? 'text-[var(--accent-ink)] bg-[var(--signal-dim)]'
                 : 'text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-secondary/50'
             }`
           }

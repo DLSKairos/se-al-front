@@ -32,11 +32,11 @@ function AnimatedShield({ reduced }: { reduced: boolean }) {
   return (
     <motion.div
       className="w-16 h-16 rounded-[18px] flex items-center justify-center mb-4"
-      style={{ background: 'rgba(0,212,255,0.12)', border: '1.5px solid rgba(0,212,255,0.3)' }}
+      style={{ background: 'color-mix(in srgb,var(--brand) 12%,transparent)', border: '1.5px solid color-mix(in srgb,var(--brand) 30%,transparent)' }}
       animate={reduced ? undefined : { scale: [1, 1.06, 1] }}
       transition={reduced ? undefined : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
     >
-      <ShieldCheck className="w-8 h-8" style={{ color: 'var(--signal)' }} />
+      <ShieldCheck className="w-8 h-8" style={{ color: 'var(--accent-ink)' }} />
     </motion.div>
   )
 }
@@ -108,12 +108,12 @@ export default function VerifyingOverlay({
                 style={{ color: 'var(--off-white)' }}
               >
                 SE
-                <span style={{ color: 'var(--signal)' }}>Ñ</span>
+                <span style={{ color: 'var(--accent-ink)' }}>Ñ</span>
                 AL
               </span>
               <span
-                className="font-dm text-[11px] tracking-[0.3em] uppercase mt-1"
-                style={{ color: 'var(--signal)' }}
+                className="font-dm text-[12px] mt-1"
+                style={{ color: 'var(--accent-ink)' }}
               >
                 Kairos
               </span>
@@ -172,7 +172,7 @@ export default function VerifyingOverlay({
           key="verifying-partial"
           className="absolute inset-0 z-50 flex flex-col items-center justify-center rounded-inherit"
           style={{
-            background: 'rgba(12,22,36,0.88)',
+            background: 'color-mix(in srgb,var(--surface) 88%,transparent)',
             backdropFilter: 'blur(6px)',
           }}
           initial={{ opacity: 0 }}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Send, Lock } from 'lucide-react'
+import { Send, Lock, X } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -230,16 +230,24 @@ export default function FillFormPage() {
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
       {/* Header */}
-      <div className="px-5 pt-8 pb-4 shrink-0">
+      <div className="px-5 pt-16 pb-4 shrink-0">
         <div className="flex items-center justify-between mb-3">
           <div className="flex-1 min-w-0">
-            <div className="font-display text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--signal)]">
-              Formulario
-            </div>
-            <div className="text-sm font-display font-semibold text-[var(--off-white)] truncate mt-0.5">
+            <h1 className="font-display font-extrabold text-[32px] leading-[1] text-[var(--fg)] line-clamp-2">
               {template.name}
-            </div>
+            </h1>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (!window.confirm('¿Salir sin enviar? Se perderán las respuestas.')) return
+              navigate('/')
+            }}
+            className="ml-3 w-12 h-12 shrink-0 grid place-items-center rounded-full bg-[var(--wash)] text-[var(--fg)] active:scale-95 transition"
+            aria-label="Salir del formulario"
+          >
+            <X className="w-6 h-6" />
+          </button>
           {is_readonly && (
             <div
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 shrink-0 ml-3"
@@ -257,9 +265,7 @@ export default function FillFormPage() {
         {/* Geo display */}
         {hasGeoField && (
           <div className="px-5 pt-2 pb-4">
-            <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-2">
-              Ubicación GPS
-            </p>
+            <p className="text-base font-semibold text-[var(--fg-muted)] mb-2">GPS de la obra</p>
             {geoError ? (
               <p className="text-xs text-amber-400 font-dm">
                 No se pudo obtener el GPS. El formulario se enviará sin coordenadas.
@@ -315,7 +321,7 @@ export default function FillFormPage() {
         </div>
       )}
 
-      <SOSButton />
+      <SOSButton atEdge />
     </div>
   )
 }

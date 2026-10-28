@@ -7,7 +7,7 @@ import {
   type MouseEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Bell,
@@ -60,8 +60,8 @@ const TYPE_CONFIG: Record<NotificationType, TypeConfig> = {
   },
   MAGIC_LINK_SENT: {
     Icon: Link2,
-    color: 'text-[var(--signal)]',
-    bg: 'bg-[rgba(0,212,255,0.12)]',
+    color: 'text-[var(--accent-ink)]',
+    bg: 'bg-[var(--wash-brand)]',
   },
   SYSTEM_ALERT: {
     Icon: AlertTriangle,
@@ -108,8 +108,8 @@ function NotificationCard({ notification: n, onTap, large = false }: Notificatio
           flex items-start gap-5 p-5 rounded-[var(--radius-glass)] cursor-pointer transition-all
           active:scale-[0.97] select-none min-h-[80px]
           ${n.read
-            ? 'bg-[rgba(255,255,255,0.03)] border border-white/5'
-            : 'bg-[rgba(0,212,255,0.06)] border border-[rgba(0,212,255,0.18)]'
+            ? 'bg-[color-mix(in_srgb,var(--fg)_3%,transparent)] border border-white/5'
+            : 'bg-[var(--wash)] border border-[color:var(--line)]'
           }
         `}
       >
@@ -121,7 +121,7 @@ function NotificationCard({ notification: n, onTap, large = false }: Notificatio
         {/* Contenido */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <p className={`font-['Syne'] font-semibold text-base leading-snug ${n.read ? 'text-[var(--off-white)]/80' : 'text-[var(--off-white)]'}`}>
+            <p className={`font-display font-semibold text-base leading-snug ${n.read ? 'text-[var(--off-white)]/80' : 'text-[var(--off-white)]'}`}>
               {n.title}
             </p>
             {!n.read && (
@@ -131,10 +131,10 @@ function NotificationCard({ notification: n, onTap, large = false }: Notificatio
               />
             )}
           </div>
-          <p className="text-sm text-[var(--muted)] mt-1 font-['DM_Sans'] line-clamp-2">
+          <p className="text-sm text-[var(--muted)] mt-1 font-body line-clamp-2">
             {n.body}
           </p>
-          <p className="text-xs text-[var(--muted)]/60 mt-2 font-['DM_Sans']">
+          <p className="text-xs text-[var(--muted)]/60 mt-2 font-body">
             {relativeTime(n.created_at)}
           </p>
         </div>
@@ -153,7 +153,7 @@ function NotificationCard({ notification: n, onTap, large = false }: Notificatio
       className={`
         flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors
         hover:bg-white/[0.03] select-none
-        ${n.read ? '' : 'bg-[rgba(0,212,255,0.04)]'}
+        ${n.read ? '' : 'bg-[var(--wash)]'}
       `}
     >
       {/* Icono pequeño */}
@@ -164,7 +164,7 @@ function NotificationCard({ notification: n, onTap, large = false }: Notificatio
       {/* Texto */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start gap-1.5">
-          <p className={`text-sm font-semibold font-['DM_Sans'] leading-snug flex-1 ${n.read ? 'text-[var(--off-white)]/70' : 'text-[var(--off-white)]'}`}>
+          <p className={`text-sm font-semibold font-body leading-snug flex-1 ${n.read ? 'text-[var(--off-white)]/70' : 'text-[var(--off-white)]'}`}>
             {n.title}
           </p>
           {!n.read && (
@@ -174,10 +174,10 @@ function NotificationCard({ notification: n, onTap, large = false }: Notificatio
             />
           )}
         </div>
-        <p className="text-xs text-[var(--muted)] mt-0.5 font-['DM_Sans'] line-clamp-2">
+        <p className="text-xs text-[var(--muted)] mt-0.5 font-body line-clamp-2">
           {n.body}
         </p>
-        <p className="text-xs text-[var(--muted)]/50 mt-0.5 font-['DM_Sans']">
+        <p className="text-xs text-[var(--muted)]/50 mt-0.5 font-body">
           {relativeTime(n.created_at)}
         </p>
       </div>
@@ -218,7 +218,7 @@ function UnreadBadge({ count }: { count: number }) {
   return (
     <span
       aria-label={`${count > 99 ? '99+' : count} notificaciones sin leer`}
-      className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-[var(--signal)] text-[var(--navy)] text-[9px] font-bold font-['DM_Sans'] px-1 leading-none shadow-[0_0_0_2px_var(--navy-mid)]"
+      className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-[var(--signal)] text-[var(--on-brand)] text-[12px] font-bold font-body px-1 leading-none shadow-[0_0_0_2px_var(--navy-mid)]"
     >
       {count > 99 ? '99+' : count}
     </span>
@@ -301,16 +301,16 @@ function OperatorDrawer({ open, onClose }: OperatorDrawerProps) {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 320, damping: 32 }}
             className="fixed inset-x-0 bottom-0 top-0 z-50 flex flex-col bg-[var(--navy)] max-w-full"
-            style={{ background: 'linear-gradient(180deg, #111E30 0%, #0C1624 100%)' }}
+            style={{ background: 'var(--surface)' }}
           >
             {/* Cabecera */}
             <div className="flex items-center justify-between px-5 pt-safe-top pb-4 pt-6 border-b border-white/5">
               <div>
-                <h2 className="text-xl font-bold text-[var(--off-white)] font-['Syne']">
+                <h2 className="text-xl font-bold text-[var(--off-white)] font-display">
                   Notificaciones
                 </h2>
                 {unreadCount > 0 && (
-                  <p className="text-sm text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+                  <p className="text-sm text-[var(--muted)] font-body mt-0.5">
                     {unreadCount} sin leer
                   </p>
                 )}
@@ -322,7 +322,7 @@ function OperatorDrawer({ open, onClose }: OperatorDrawerProps) {
                     onClick={() => markAllAsRead()}
                     disabled={isMarkingAll}
                     aria-label="Marcar todas como leídas"
-                    className="flex items-center gap-2 text-sm text-[var(--signal)] font-['DM_Sans'] font-medium px-3 py-2 rounded-[var(--radius-btn)] hover:bg-[rgba(0,212,255,0.08)] transition-colors min-h-[48px] disabled:opacity-50"
+                    className="flex items-center gap-2 text-sm text-[var(--accent-ink)] font-body font-medium px-3 py-2 rounded-[var(--radius-btn)] hover:bg-[var(--wash)] transition-colors min-h-[48px] disabled:opacity-50"
                   >
                     <CheckCheck className="w-4 h-4" aria-hidden="true" />
                     Todas leídas
@@ -352,17 +352,17 @@ function OperatorDrawer({ open, onClose }: OperatorDrawerProps) {
               ) : isError ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-4">
                   <AlertTriangle className="w-12 h-12 text-amber-400/60" aria-hidden="true" />
-                  <p className="text-[var(--muted)] text-center font-['DM_Sans']">
+                  <p className="text-[var(--muted)] text-center font-body">
                     No se pudieron cargar las notificaciones
                   </p>
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                   <Inbox className="w-16 h-16 text-[var(--muted)]/40" aria-hidden="true" />
-                  <p className="text-[var(--off-white)]/60 text-lg text-center font-['DM_Sans']">
+                  <p className="text-[var(--off-white)]/60 text-lg text-center font-body">
                     No tienes notificaciones
                   </p>
-                  <p className="text-[var(--muted)] text-sm text-center font-['DM_Sans']">
+                  <p className="text-[var(--muted)] text-sm text-center font-body">
                     Te avisaremos cuando haya algo importante
                   </p>
                 </div>
@@ -384,7 +384,7 @@ function OperatorDrawer({ open, onClose }: OperatorDrawerProps) {
                       type="button"
                       onClick={() => fetchNextPage()}
                       disabled={isFetchingNextPage}
-                      className="w-full py-4 text-sm text-[var(--signal)] font-['DM_Sans'] font-medium text-center rounded-[var(--radius-btn)] hover:bg-[rgba(0,212,255,0.06)] transition-colors disabled:opacity-50 min-h-[48px]"
+                      className="w-full py-4 text-sm text-[var(--accent-ink)] font-body font-medium text-center rounded-[var(--radius-btn)] hover:bg-[var(--wash)] transition-colors disabled:opacity-50 min-h-[48px]"
                     >
                       {isFetchingNextPage ? 'Cargando...' : 'Cargar más'}
                     </button>
@@ -486,18 +486,18 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
           style={{
             top: pos.top,
             right: pos.right,
-            background: 'linear-gradient(160deg, #162238 0%, #0E1A2C 100%)',
+            background: 'var(--surface)',
           }}
         >
           {/* Cabecera */}
           <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
             <div className="flex items-center gap-2.5">
-              <Bell className="w-4 h-4 text-[var(--signal)]" aria-hidden="true" />
-              <h2 className="text-sm font-semibold text-[var(--off-white)] font-['Syne'] tracking-wide">
+              <Bell className="w-4 h-4 text-[var(--accent-ink)]" aria-hidden="true" />
+              <h2 className="text-sm font-semibold text-[var(--off-white)] font-display ">
                 Notificaciones
               </h2>
               {unreadCount > 0 && (
-                <span className="text-[10px] font-medium text-[var(--navy)] bg-[var(--signal)] rounded-full px-1.5 py-0.5 leading-none font-['DM_Sans']">
+                <span className="text-[12px] font-medium text-[var(--on-brand)] bg-[var(--signal)] rounded-full px-1.5 py-0.5 leading-none font-body">
                   {unreadCount}
                 </span>
               )}
@@ -508,7 +508,7 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
                 onClick={() => markAllAsRead()}
                 disabled={isMarkingAll}
                 aria-label="Marcar todas como leídas"
-                className="flex items-center gap-1.5 text-xs text-[var(--signal)]/80 hover:text-[var(--signal)] font-['DM_Sans'] px-2 py-1 rounded-md hover:bg-[rgba(0,212,255,0.08)] transition-all disabled:opacity-40"
+                className="flex items-center gap-1.5 text-xs text-[var(--accent-ink)]/80 hover:text-[var(--accent-ink)] font-body px-2 py-1 rounded-md hover:bg-[var(--wash)] transition-all disabled:opacity-40"
               >
                 <CheckCheck className="w-3 h-3" aria-hidden="true" />
                 Marcar todas
@@ -529,14 +529,14 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
             ) : isError ? (
               <div className="flex flex-col items-center justify-center py-10 gap-3">
                 <AlertTriangle className="w-8 h-8 text-amber-400/60" aria-hidden="true" />
-                <p className="text-sm text-[var(--muted)] text-center font-['DM_Sans']">
+                <p className="text-sm text-[var(--muted)] text-center font-body">
                   Error al cargar notificaciones
                 </p>
               </div>
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <Inbox className="w-10 h-10 text-[var(--muted)]/40" aria-hidden="true" />
-                <p className="text-sm text-[var(--muted)] text-center font-['DM_Sans']">
+                <p className="text-sm text-[var(--muted)] text-center font-body">
                   No tienes notificaciones
                 </p>
               </div>
@@ -553,7 +553,7 @@ function AdminDropdown({ open, onClose, anchorRef }: AdminDropdownProps) {
                     type="button"
                     onClick={() => fetchNextPage()}
                     disabled={isFetchingNextPage}
-                    className="w-full py-3 text-xs text-[var(--signal)] font-['DM_Sans'] text-center hover:bg-white/[0.02] transition-colors disabled:opacity-50"
+                    className="w-full py-3 text-xs text-[var(--accent-ink)] font-body text-center hover:bg-white/[0.02] transition-colors disabled:opacity-50"
                   >
                     {isFetchingNextPage ? 'Cargando...' : 'Cargar más'}
                   </button>
@@ -619,7 +619,7 @@ export default function NotificationBell() {
           relative w-9 h-9 flex items-center justify-center rounded-full transition-all
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--signal)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--navy-mid)]
           ${open
-            ? 'bg-[rgba(0,212,255,0.12)] text-[var(--signal)]'
+            ? 'bg-[var(--wash-brand)] text-[var(--accent-ink)]'
             : 'text-[var(--off-white)]/60 hover:text-[var(--off-white)] hover:bg-white/[0.06]'
           }
         `}

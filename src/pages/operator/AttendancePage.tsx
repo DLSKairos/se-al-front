@@ -31,6 +31,7 @@ function calcWorkedTime(entryTimeISO: string, serviceDateISO: string): string {
   const serviceDate = new Date(serviceDateISO).getTime()
   const entryMs     = serviceDate + entryTime
   const diffMs      = Math.max(0, Date.now() - entryMs)
+  if (Number.isNaN(diffMs)) return '—'
   const minutes     = Math.floor(diffMs / 60000)
   const hours       = Math.floor(minutes / 60)
   const mins        = minutes % 60
@@ -150,7 +151,7 @@ export default function AttendancePage() {
       {/* Header */}
       <div className="flex items-center px-6 pt-4 pb-2 shrink-0">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
+          <p className="text-[12px] font-semibold text-[var(--accent-ink)]">
             Registro
           </p>
           <h1 className="font-display font-bold text-base text-[var(--off-white)]">
@@ -167,7 +168,7 @@ export default function AttendancePage() {
           <div className="flex-1 flex flex-col items-center justify-center px-6">
             <div className="w-full max-w-[320px] flex flex-col items-center">
               {/* Reloj digital */}
-              <div className="font-display font-extrabold text-[56px] text-[var(--signal)] leading-none my-6 tabular-nums">
+              <div className="font-display font-extrabold text-[56px] text-[var(--accent-ink)] leading-none my-6 tabular-nums">
                 {now.toLocaleTimeString('es-CO', {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -209,7 +210,7 @@ export default function AttendancePage() {
           <div className="flex-1 flex flex-col items-center justify-center px-6">
             <div className="w-full max-w-[320px] flex flex-col items-center">
               {/* Reloj digital */}
-              <div className="font-display font-extrabold text-[56px] text-[var(--signal)] leading-none my-6 tabular-nums">
+              <div className="font-display font-extrabold text-[56px] text-[var(--accent-ink)] leading-none my-6 tabular-nums">
                 {now.toLocaleTimeString('es-CO', {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -228,18 +229,18 @@ export default function AttendancePage() {
 
               <div className="glass p-6 rounded-[20px] w-full mb-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-[12px] bg-[var(--signal-dim)] flex items-center justify-center border border-[rgba(0,212,255,0.2)]">
-                    <Clock className="w-5 h-5 text-[var(--signal)]" aria-hidden="true" />
+                  <div className="w-10 h-10 rounded-[12px] bg-[var(--signal-dim)] flex items-center justify-center border border-[color:var(--line)]">
+                    <Clock className="w-5 h-5 text-[var(--accent-ink)]" aria-hidden="true" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)]">En jornada desde</p>
+                    <p className="text-[12px] font-semibold text-[var(--muted)]">En jornada desde</p>
                     <p className="text-base font-display font-semibold text-[var(--off-white)]">
                       {formatEntryTime(record.entry_time)}
                     </p>
                   </div>
                 </div>
                 <div className="border-t border-white/5 pt-4">
-                  <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-0.5">Tiempo transcurrido</p>
+                  <p className="text-[12px] font-semibold text-[var(--muted)] mb-0.5">Tiempo transcurrido</p>
                   <p className="text-2xl font-display font-bold text-gradient">
                     {calcWorkedTime(record.entry_time, record.service_date)}
                   </p>
@@ -249,7 +250,7 @@ export default function AttendancePage() {
               <button
                 type="button"
                 onClick={() => setExitModalOpen(true)}
-                className="w-full py-4 rounded-[14px] border border-[rgba(0,212,255,0.25)] text-[var(--signal)] font-display font-bold text-[13px] tracking-[0.1em] uppercase active:scale-[0.97] transition-all flex items-center justify-center gap-2 bg-transparent"
+                className="btn-3d w-full"
               >
                 <LogOut className="w-5 h-5" aria-hidden="true" />
                 Registrar salida
@@ -264,7 +265,7 @@ export default function AttendancePage() {
             <div className="w-full max-w-[320px]">
               <div className="glass p-6 rounded-[20px]">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="text-[9px] font-bold tracking-[0.1em] uppercase px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                  <span className="text-[12px] font-bold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
                     Completada
                   </span>
                 </div>
@@ -274,7 +275,7 @@ export default function AttendancePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-0.5">Entrada</p>
+                    <p className="text-[12px] font-semibold text-[var(--muted)] mb-0.5">Entrada</p>
                     <p className="text-sm text-[var(--off-white)] font-dm font-medium">
                       {new Date(record.entry_time).toLocaleTimeString('es-CO', {
                         hour: '2-digit',
@@ -284,7 +285,7 @@ export default function AttendancePage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-0.5">Salida</p>
+                    <p className="text-[12px] font-semibold text-[var(--muted)] mb-0.5">Salida</p>
                     <p className="text-sm text-[var(--off-white)] font-dm font-medium">
                       {new Date(record.exit_time).toLocaleTimeString('es-CO', {
                         hour: '2-digit',
@@ -295,7 +296,7 @@ export default function AttendancePage() {
                   </div>
                   {record.lunch_minutes !== null && (
                     <div>
-                      <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-0.5">Almuerzo</p>
+                      <p className="text-[12px] font-semibold text-[var(--muted)] mb-0.5">Almuerzo</p>
                       <p className="text-sm text-[var(--off-white)] font-dm font-medium">
                         {record.lunch_minutes} min
                       </p>
@@ -303,8 +304,8 @@ export default function AttendancePage() {
                   )}
                   {record.total_minutes !== null && (
                     <div>
-                      <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-0.5">Total trabajado</p>
-                      <p className="text-sm text-[var(--signal)] font-dm font-semibold">
+                      <p className="text-[12px] font-semibold text-[var(--muted)] mb-0.5">Total trabajado</p>
+                      <p className="text-sm text-[var(--accent-ink)] font-dm font-semibold">
                         {formatMinutes(record.total_minutes)}
                       </p>
                     </div>
@@ -313,20 +314,20 @@ export default function AttendancePage() {
 
                 {(record.extra_day_minutes ?? 0) > 0 && (
                   <div className="mt-4 pt-4 border-t border-white/5">
-                    <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-2">Horas extras</p>
+                    <p className="text-[12px] font-semibold text-[var(--muted)] mb-2">Horas extras</p>
                     <div className="grid grid-cols-2 gap-3">
                       {(record.extra_day_minutes ?? 0) > 0 && (
                         <div className="px-3 py-2 rounded-[10px] bg-amber-500/10 border border-amber-500/20">
-                          <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[var(--muted)]">Diurnas</p>
+                          <p className="text-[12px] font-semibold text-[var(--muted)]">Diurnas</p>
                           <p className="text-sm text-amber-300 font-dm font-semibold">
                             {formatMinutes(record.extra_day_minutes!)}
                           </p>
                         </div>
                       )}
                       {(record.extra_night_minutes ?? 0) > 0 && (
-                        <div className="px-3 py-2 rounded-[10px] bg-[var(--signal-dim)] border border-[rgba(0,212,255,0.2)]">
-                          <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[var(--muted)]">Nocturnas</p>
-                          <p className="text-sm text-[var(--signal)] font-dm font-semibold">
+                        <div className="px-3 py-2 rounded-[10px] bg-[var(--signal-dim)] border border-[color:var(--line)]">
+                          <p className="text-[12px] font-semibold text-[var(--muted)]">Nocturnas</p>
+                          <p className="text-sm text-[var(--accent-ink)] font-dm font-semibold">
                             {formatMinutes(record.extra_night_minutes!)}
                           </p>
                         </div>
@@ -352,7 +353,7 @@ export default function AttendancePage() {
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="lunch-minutes"
-              className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-2 block"
+              className="text-[12px] font-semibold text-[var(--accent-ink)] mb-2 block"
             >
               <span className="flex items-center gap-2">
                 <Coffee className="w-4 h-4 text-[var(--muted)]" aria-hidden="true" />
@@ -368,7 +369,7 @@ export default function AttendancePage() {
               onChange={(e) =>
                 setLunchMinutes(e.target.value === '' ? '' : Number(e.target.value))
               }
-              className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[14px] px-5 py-4 text-base text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] transition-all [color-scheme:dark]"
+              className="w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[14px] px-5 py-4 text-base text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] transition-all [color-scheme:dark]"
             />
           </div>
           <div className="flex gap-3">

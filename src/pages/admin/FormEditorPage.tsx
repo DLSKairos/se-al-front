@@ -122,10 +122,10 @@ export default function FormEditorPage() {
   return (
     <div className="flex flex-col h-screen bg-[var(--navy)] overflow-hidden">
       {/* ── Header ─────────────────────────────────────────────── */}
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(0,212,255,0.1)] bg-[var(--navy-mid)] shrink-0">
+      <header className="flex items-center gap-3 px-4 py-3 border-b border-[color:var(--line)] bg-[var(--navy-mid)] shrink-0">
         <button
           onClick={handleBack}
-          className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(255,255,255,0.05)] transition-all"
+          className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] transition-all"
           aria-label="Volver"
         >
           <ArrowLeft size={18} />
@@ -136,7 +136,7 @@ export default function FormEditorPage() {
           value={state.name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Nombre del formulario"
-          className="flex-1 bg-transparent border-none outline-none text-base font-semibold text-[var(--off-white)] font-['Syne'] placeholder:text-[var(--muted)] min-w-0"
+          className="flex-1 bg-transparent border-none outline-none text-base font-semibold text-[var(--off-white)] font-display placeholder:text-[var(--muted)] min-w-0"
         />
 
         <div className="flex items-center gap-2 shrink-0">
@@ -148,7 +148,7 @@ export default function FormEditorPage() {
           {/* Notificaciones */}
           <button
             onClick={() => setNotifOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(255,255,255,0.05)] border border-transparent hover:border-[rgba(0,212,255,0.1)] transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-transparent hover:border-[color:var(--line)] transition-all"
           >
             <Bell size={14} />
             <span className="hidden sm:block">Notificaciones</span>
@@ -157,7 +157,7 @@ export default function FormEditorPage() {
           {/* Guardar */}
           <button
             onClick={() => setSaveOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--signal)] text-[var(--navy)] hover:bg-[var(--signal)]/90 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--signal)] text-[var(--on-brand)] hover:bg-[var(--signal)]/90 transition-all"
           >
             <Save size={14} />
             Guardar
@@ -181,10 +181,10 @@ export default function FormEditorPage() {
       </div>
 
       {/* ── Footer ─────────────────────────────────────────────── */}
-      <footer className="flex items-center justify-between px-4 py-2.5 border-t border-[rgba(0,212,255,0.1)] bg-[var(--navy-mid)] shrink-0">
+      <footer className="flex items-center justify-between px-4 py-2.5 border-t border-[color:var(--line)] bg-[var(--navy-mid)] shrink-0">
         {/* Selector de columnas */}
         <div className="flex items-center gap-1">
-          <span className="text-[10px] text-[var(--muted)] mr-2 uppercase tracking-wider">
+          <span className="text-[12px] text-[var(--muted)] mr-2 ">
             Columnas
           </span>
           {([1, 2, 3] as const).map((n) => (
@@ -193,8 +193,8 @@ export default function FormEditorPage() {
               onClick={() => setColumns(n)}
               className={`w-7 h-7 rounded-md text-xs font-medium transition-all ${
                 state.columns === n
-                  ? 'bg-[rgba(0,212,255,0.15)] text-[var(--signal)] border border-[var(--signal)]'
-                  : 'text-[var(--muted)] hover:text-[var(--off-white)] border border-transparent hover:border-[rgba(0,212,255,0.2)]'
+                  ? 'bg-[var(--wash-brand)] text-[var(--accent-ink)] border border-[var(--signal)]'
+                  : 'text-[var(--muted)] hover:text-[var(--off-white)] border border-transparent hover:border-[color:var(--line)]'
               }`}
             >
               {n}
@@ -207,8 +207,8 @@ export default function FormEditorPage() {
           onClick={() => setAiPanelOpen((v) => !v)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             aiPanelOpen
-              ? 'bg-[rgba(0,212,255,0.12)] text-[var(--signal)] border border-[var(--signal)]'
-              : 'text-[var(--muted)] hover:text-[var(--signal)] border border-transparent hover:border-[rgba(0,212,255,0.2)]'
+              ? 'bg-[var(--wash-brand)] text-[var(--accent-ink)] border border-[var(--signal)]'
+              : 'text-[var(--muted)] hover:text-[var(--accent-ink)] border border-transparent hover:border-[color:var(--line)]'
           }`}
         >
           <Sparkles size={13} />
@@ -217,7 +217,7 @@ export default function FormEditorPage() {
 
         {/* Estado del formulario */}
         <div
-          className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full border ${
+          className={`text-[12px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full border ${
             state.status === 'ACTIVE'
               ? 'text-emerald-400 border-emerald-400/30 bg-emerald-400/10'
               : 'text-amber-400 border-amber-400/30 bg-amber-400/10'

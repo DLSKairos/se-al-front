@@ -44,10 +44,10 @@ const ROLE_VARIANTS: Record<
 }
 
 const INPUT_CLASS =
-  "w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all placeholder:text-[var(--muted)]"
+  "w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all placeholder:text-[var(--muted)]"
 
 const SELECT_CLASS =
-  "w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] transition-all"
+  "w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] transition-all"
 
 // ── Tipos locales ───────────────────────────────────────────────────────────
 
@@ -80,7 +80,7 @@ function FieldLabel({ htmlFor, children }: LabelProps) {
   return (
     <label
       htmlFor={htmlFor}
-      className="block text-xs text-[var(--muted)] font-['DM_Sans'] mb-1.5 uppercase tracking-wide"
+      className="block text-xs text-[var(--muted)] font-body mb-1.5 "
     >
       {children}
     </label>
@@ -318,10 +318,10 @@ export default function UsersPage() {
       {/* Encabezado */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+          <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
             Usuarios
           </h1>
-          <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+          <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
             Gestiona los usuarios de tu organización
           </p>
         </div>
@@ -342,7 +342,7 @@ export default function UsersPage() {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm font-['DM_Sans']">
+            <table className="w-full text-sm font-body">
               <thead>
                 <tr className="border-b border-white/5">
                   {[
@@ -357,7 +357,7 @@ export default function UsersPage() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-5 px-5 pr-4 whitespace-nowrap"
+                      className="text-left font-display font-semibold text-xs text-[var(--muted)] pb-3 pt-5 px-5 pr-4 whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -380,7 +380,7 @@ export default function UsersPage() {
                   users.map((user, i) => (
                     <tr
                       key={user.id}
-                      className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
+                      className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${
                         i % 2 === 1 ? 'bg-white/[0.02]' : ''
                       }`}
                     >
@@ -679,7 +679,7 @@ export default function UsersPage() {
 
             {selectedUser?.pin_enabled && (
               <div className="border-t border-white/5 pt-3 mt-1">
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-2">
+                <p className="text-xs text-[var(--muted)] font-body mb-2">
                   Zona de peligro
                 </p>
                 <Button
@@ -741,7 +741,7 @@ export default function UsersPage() {
       >
         {activationInfo && (
           <div className="flex flex-col gap-3">
-            <div className="break-all text-xs font-mono bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] p-3 text-[var(--off-white)]">
+            <div className="break-all text-xs font-mono bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] p-3 text-[var(--off-white)]">
               {activationInfo.link}
             </div>
             <div className="flex gap-2">

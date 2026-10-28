@@ -22,15 +22,15 @@ function SignalLogo() {
     <div className="flex items-center gap-2.5 justify-center mb-2">
       <div
         className="w-2.5 h-2.5 rounded-full animate-pulse"
-        style={{ background: '#00D4FF' }}
+        style={{ background: 'var(--brand)' }}
       />
       <span
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif",
           fontWeight: 800,
           fontSize: '1.5rem',
           letterSpacing: '0.15em',
-          color: '#F0F4F8',
+          color: 'var(--fg)',
         }}
       >
         SEÑAL
@@ -47,7 +47,7 @@ function MissingTokenScreen() {
       <SignalLogo />
       <div
         className="w-14 h-14 mx-auto rounded-full flex items-center justify-center"
-        style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}
+        style={{ background: 'color-mix(in srgb,var(--danger) 10%,transparent)', border: '1px solid color-mix(in srgb,var(--danger) 25%,transparent)' }}
         aria-hidden="true"
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,13 +62,13 @@ function MissingTokenScreen() {
       </div>
       <div>
         <h1
-          style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.25rem', color: '#F0F4F8' }}
+          style={{ fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: 'var(--fg)' }}
         >
           Enlace inválido
         </h1>
         <p
           className="mt-2 leading-relaxed"
-          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'rgba(240,244,248,0.55)' }}
+          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'color-mix(in srgb,var(--fg) 55%,transparent)' }}
         >
           Este enlace de activación no es válido. Solicita a tu administrador que te envíe un nuevo enlace.
         </p>
@@ -113,7 +113,7 @@ function ErrorScreen({ code }: { code: TokenErrorCode }) {
       <SignalLogo />
       <div
         className="w-14 h-14 mx-auto rounded-full flex items-center justify-center"
-        style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}
+        style={{ background: 'color-mix(in srgb,var(--danger) 10%,transparent)', border: '1px solid color-mix(in srgb,var(--danger) 25%,transparent)' }}
         aria-hidden="true"
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -123,13 +123,13 @@ function ErrorScreen({ code }: { code: TokenErrorCode }) {
       </div>
       <div>
         <h1
-          style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.25rem', color: '#F0F4F8' }}
+          style={{ fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: 'var(--fg)' }}
         >
           {msg.title}
         </h1>
         <p
           className="mt-2 leading-relaxed"
-          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'rgba(240,244,248,0.55)' }}
+          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'color-mix(in srgb,var(--fg) 55%,transparent)' }}
         >
           {msg.body}
         </p>
@@ -149,12 +149,12 @@ function LoadingScreen() {
           <span
             key={i}
             className="w-2 h-2 rounded-full animate-pulse"
-            style={{ background: '#00D4FF', animationDelay: `${i * 0.2}s` }}
+            style={{ background: 'var(--brand)', animationDelay: `${i * 0.2}s` }}
           />
         ))}
       </div>
       <p
-        style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'rgba(240,244,248,0.55)' }}
+        style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'color-mix(in srgb,var(--fg) 55%,transparent)' }}
       >
         Verificando enlace…
       </p>
@@ -188,7 +188,7 @@ function ActivationScreen({
         <SignalLogo />
         <p
           className="mt-1"
-          style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: '0.875rem', color: 'rgba(240,244,248,0.55)' }}
+          style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: '0.875rem', color: 'color-mix(in srgb,var(--fg) 55%,transparent)' }}
         >
           Tu operación en movimiento, siempre.
         </p>
@@ -197,13 +197,13 @@ function ActivationScreen({
       {/* Icono de bienvenida */}
       <div
         className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
-        style={{ background: 'rgba(0,212,255,0.08)', border: '1px solid rgba(0,212,255,0.2)' }}
+        style={{ background: 'color-mix(in srgb,var(--brand) 8%,transparent)', border: '1px solid color-mix(in srgb,var(--brand) 20%,transparent)' }}
         aria-hidden="true"
       >
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-            stroke="#00D4FF"
+            stroke="var(--brand)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -212,7 +212,7 @@ function ActivationScreen({
             cx="12"
             cy="7"
             r="4"
-            stroke="#00D4FF"
+            stroke="var(--brand)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -225,62 +225,62 @@ function ActivationScreen({
         {isInvite ? (
           <>
             <p
-              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#00D4FF' }}
+              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--brand)' }}
               className="mb-1"
             >
               Invitación
             </p>
             <h1
-              style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.25rem', color: '#F0F4F8' }}
+              style={{ fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: 'var(--fg)' }}
             >
               Has sido invitado/a como administrador/a
             </h1>
             <p
               className="mt-2"
-              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'rgba(240,244,248,0.7)' }}
+              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'color-mix(in srgb,var(--fg) 70%,transparent)' }}
             >
-              de <span style={{ color: '#F0F4F8', fontWeight: 600 }}>{orgName}</span> en SEÑAL
+              de <span style={{ color: 'var(--fg)', fontWeight: 600 }}>{orgName}</span> en SEÑAL
             </p>
           </>
         ) : (
           <>
             <p
-              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#00D4FF' }}
+              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--brand)' }}
               className="mb-1"
             >
               Activación de cuenta
             </p>
             <h1
-              style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.25rem', color: '#F0F4F8' }}
+              style={{ fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: 'var(--fg)' }}
             >
               ¡Bienvenido/a, {userName}!
             </h1>
             <p
               className="mt-2 leading-relaxed"
-              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'rgba(240,244,248,0.7)' }}
+              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: 'color-mix(in srgb,var(--fg) 70%,transparent)' }}
             >
               Tu cuenta de administrador en{' '}
-              <span style={{ color: '#F0F4F8', fontWeight: 600 }}>{orgName}</span> está lista.
+              <span style={{ color: 'var(--fg)', fontWeight: 600 }}>{orgName}</span> está lista.
             </p>
           </>
         )}
       </div>
 
       {/* Divisor */}
-      <div style={{ height: '1px', background: 'rgba(255,255,255,0.07)' }} />
+      <div style={{ height: '1px', background: 'color-mix(in srgb,var(--fg) 7%,transparent)' }} />
 
       {/* CTA de vinculación */}
       <div className="flex flex-col gap-3">
         <p
           className="text-center"
-          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8125rem', color: 'rgba(240,244,248,0.6)' }}
+          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8125rem', color: 'color-mix(in srgb,var(--fg) 60%,transparent)' }}
         >
           Para activar tu cuenta, vincúlala con tu correo:
         </p>
         <OAuthButtons magicToken={token} flags={featureFlags} isLoading={flagsLoading} />
         <p
           className="text-center text-xs"
-          style={{ fontFamily: 'DM Sans, sans-serif', color: 'rgba(240,244,248,0.35)' }}
+          style={{ fontFamily: 'DM Sans, sans-serif', color: 'color-mix(in srgb,var(--fg) 35%,transparent)' }}
         >
           No se crea contraseña. Usarás tu cuenta de Google o Microsoft para ingresar.
         </p>
@@ -329,7 +329,7 @@ export default function ActivateAccountPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-5 py-10"
-      style={{ background: '#0C1624' }}
+      style={{ background: 'var(--bg)' }}
     >
       {/* Grid overlay decorativo */}
       <div
@@ -337,7 +337,7 @@ export default function ActivateAccountPage() {
         style={{
           opacity: 0.025,
           backgroundImage:
-            'linear-gradient(rgba(0,212,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,1) 1px, transparent 1px)',
+            'linear-gradient(color-mix(in srgb,var(--brand) 100%,transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb,var(--brand) 100%,transparent) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
         }}
       />
@@ -345,15 +345,15 @@ export default function ActivateAccountPage() {
       {/* Glow orb */}
       <div
         className="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.09) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, color-mix(in srgb,var(--brand) 9%,transparent) 0%, transparent 70%)' }}
       />
 
       {/* Tarjeta glass centrada */}
       <div
         className="relative z-10 w-full max-w-[380px] rounded-[18px] p-7"
         style={{
-          background: 'rgba(17,30,48,0.85)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          background: 'color-mix(in srgb,var(--surface) 85%,transparent)',
+          border: '1px solid color-mix(in srgb,var(--fg) 7%,transparent)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           boxShadow: '0 8px 40px rgba(0,0,0,0.45)',

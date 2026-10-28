@@ -9,7 +9,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Check } from 'lucide-react'
+import { Check, X, TriangleAlert, ClipboardX } from 'lucide-react'
 import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -24,31 +24,28 @@ import TypewriterQuestion from './questions/TypewriterQuestion'
 import { FormField, FormContext } from '@/types'
 import { SignatureField } from '@/components/forms/fields/SignatureField'
 
-// ─── Spinner & Error inline (evitar dependencia externa que no existe aún) ────
+// ─── Pantallas simples ────────────────────────────────────────────────────────
+function Screen({ children }: { children: React.ReactNode }) {
+  return <div className="route-bg min-h-screen flex flex-col items-center justify-center gap-5 p-6 text-center">{children}</div>
+}
+
 function LoadingScreen({ label }: { label?: string }) {
   return (
-    <div className="min-h-screen bg-[var(--navy)] flex flex-col items-center justify-center gap-4">
-      <div className="w-10 h-10 rounded-full border-2 border-[var(--signal)] border-t-transparent animate-spin" />
-      {label && (
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans']">{label}</p>
-      )}
-    </div>
+    <Screen>
+      <div className="w-12 h-12 rounded-full border-4 border-[var(--line)] border-t-[var(--brand)] animate-spin" />
+      {label && <p className="text-lg text-[var(--fg-muted)]">{label}</p>}
+    </Screen>
   )
 }
 
-function ErrorScreen({ message }: { message: string }) {
-  const navigate = useNavigate()
+function MessageScreen({ icon, title, text, action, onAction }: { icon: React.ReactNode; title: string; text?: string; action: string; onAction: () => void }) {
   return (
-    <div className="min-h-screen bg-[var(--navy)] flex flex-col items-center justify-center p-6 text-center gap-4">
-      <div className="text-5xl">⚠️</div>
-      <p className="text-[var(--off-white)] font-['DM_Sans']">{message}</p>
-      <button
-        onClick={() => navigate('/game/world-map')}
-        className="text-[var(--signal)] hover:underline text-sm font-['DM_Sans']"
-      >
-        ← Volver al mapa
-      </button>
-    </div>
+    <Screen>
+      <span className="w-20 h-20 rounded-[22px] bg-[var(--brand)] text-[var(--on-brand)] grid place-items-center">{icon}</span>
+      <h2 className="font-display font-extrabold text-4xl leading-none text-[var(--fg)]">{title}</h2>
+      {text && <p className="text-lg text-[var(--fg-muted)] max-w-xs">{text}</p>}
+      <button className="btn-3d w-full max-w-xs" onClick={onAction}>{action}</button>
+    </Screen>
   )
 }
 
@@ -121,7 +118,7 @@ export default function LevelWrapper() {
     setAnswers(newAnswers)
     setShowCelebration(true)
 
-    await new Promise<void>((r) => setTimeout(r, 800))
+    await new Promise<void>((r) => setTimeout(r, 650))
     setShowCelebration(false)
 
     if (isLastField) {
@@ -167,7 +164,7 @@ export default function LevelWrapper() {
       }
 
       setMissionDone(true)
-      setTimeout(() => navigate('/game/world-map', { replace: true }), 1800)
+      setTimeout(() => navigate('/game/world-map', { replace: true }), 3200)
     } catch (err) {
       const errAny = err as { response?: { data?: { detalle?: string; error?: string } } }
       const detalle = errAny?.response?.data?.detalle ?? errAny?.response?.data?.error ?? null
@@ -187,156 +184,94 @@ export default function LevelWrapper() {
 
   // ─── Estados de carga / error ───────────────────────────────────────────────
   if (isLoading) return <LoadingScreen label="Cargando formulario..." />
-  if (error || !context) return <ErrorScreen message="Error al cargar el formulario" />
-
-  // ─── Formulario ya completado ───────────────────────────────────────────────
-  if (context.is_readonly) {
-    return (
-      <div className="min-h-screen bg-[var(--navy)] flex flex-col items-center justify-center p-6 text-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-[rgba(34,197,94,0.15)] border-2 border-green-500 grid place-items-center">
-          <Check className="w-8 h-8 text-green-400" />
-        </div>
-        <h2 className="font-display font-extrabold text-xl text-[var(--off-white)]">
-          Ya completaste este formulario
-        </h2>
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
-          {context.template.name}
-        </p>
-        <button
-          onClick={() => navigate('/game/world-map')}
-          className="glass p-4 rounded-[14px] text-[var(--signal)] font-dm text-sm hover:text-[var(--off-white)] transition-colors"
-        >
-          ← Volver al mapa
-        </button>
-      </div>
-    )
+  if (error || !context) {
+    return <MessageScreen icon={<TriangleAlert className="w-10 h-10" />} title="No se pudo cargar" text="Revisa tu conexión e inténtalo de nuevo." action="Volver a la ruta" onAction={handleExit} />
   }
 
-  if (!currentField && !submitting && !missionDone && !submitError) return null
+  if (context.is_readonly) {
+    return <MessageScreen icon={<Check className="w-11 h-11" strokeWidth={3.5} />} title="Ya la completaste" text={context.template.name} action="Volver a la ruta" onAction={handleExit} />
+  }
+
+  // Plantilla sin preguntas para el juego: antes dejaba la pantalla en blanco
+  if (visibleFields.length === 0 && signatureFields.length === 0) {
+    return <MessageScreen icon={<ClipboardX className="w-10 h-10" />} title="Sin preguntas" text="Este formulario no tiene preguntas para el modo juego. Ábrelo en el formulario completo." action="Abrir formulario" onAction={() => navigate(`/form/${templateId}`)} />
+  }
 
   const questionType = currentField ? fieldTypeToQuestion(currentField.type) : null
 
   return (
-    <div
-      className="fixed inset-0 bg-cosmos flex flex-col"
-      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-    >
-      {/* Barra de progreso */}
-      <div className="h-1.5 shrink-0 overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-        <div
-          className="h-full rounded-full transition-[width] duration-500"
-          style={{
-            width: `${progressPct}%`,
-            background: 'linear-gradient(to right, var(--amber), var(--terracotta))',
-          }}
-        />
-      </div>
-
-      {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 shrink-0">
-        <div className="flex flex-col min-w-0 flex-1">
-          <span className="font-sub text-[10px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--amber)' }}>
-            MISIÓN
-          </span>
-          <span className="font-display font-extrabold text-lg truncate" style={{ color: 'var(--cream)' }}>
-            {context.template.name}
-          </span>
+    <div className="fixed inset-0 route-bg flex flex-col" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      {/* Barra superior: salir + progreso por pregunta */}
+      <header className="liquid shrink-0 mx-3 mt-3 rounded-[24px] p-2 pr-3 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={handleExit}
+          className="w-12 h-12 shrink-0 grid place-items-center rounded-full text-[var(--fg)] hover:bg-[var(--wash)] active:scale-95 transition"
+          aria-label="Salir de la inspección"
+        >
+          <X className="w-7 h-7" />
+        </button>
+        <div className="flex-1 min-w-0">
+          <p className="font-display font-bold text-xl leading-none text-[var(--fg)] truncate">{context.template.name}</p>
+          <div className="flex gap-1 mt-2" role="progressbar" aria-valuenow={currentFieldIndex} aria-valuemax={visibleFields.length} aria-label="Progreso">
+            {visibleFields.map((f, i) => (
+              <span
+                key={f.id}
+                className={`h-2 flex-1 rounded-full transition-colors duration-300 ${i < currentFieldIndex ? 'bg-[var(--ok)]' : i === currentFieldIndex ? 'bg-[var(--brand)] shadow-[0_0_0_1.5px_var(--fg)]' : 'bg-[var(--line-strong)]'}`}
+              />
+            ))}
+          </div>
         </div>
+        <span className="font-display font-bold text-xl text-[var(--fg-muted)] tabular-nums shrink-0">
+          {Math.min(currentFieldIndex + 1, visibleFields.length)}/{visibleFields.length}
+        </span>
       </header>
 
-      {/* Contenido principal */}
-      <div className="flex-1 px-5 overflow-auto pb-24">
+      <div className="flex-1 px-5 pt-6 overflow-auto pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] mx-auto w-full max-w-md flex flex-col">
+        {showCelebration && <MicroCelebration show type="positive" />}
 
-        {/* Estado: celebración */}
-        {showCelebration && (
-          <MicroCelebration show type="positive" />
-        )}
-
-        {/* Estado: submitting */}
         {submitting && !missionDone && (
           <div className="flex flex-col items-center gap-4 h-full justify-center" aria-live="polite">
-            <span className="text-5xl">⏳</span>
-            <p className="text-base text-[var(--off-white)] font-['DM_Sans']">
-              Guardando misión…
-            </p>
+            <div className="w-12 h-12 rounded-full border-4 border-[var(--line)] border-t-[var(--brand)] animate-spin" />
+            <p className="text-xl font-semibold text-[var(--fg)]">Guardando…</p>
           </div>
         )}
 
-        {/* Estado: error de submit */}
         {submitError && !submitting && (
-          <div className="flex flex-col items-center gap-4 max-w-sm text-center h-full justify-center mx-auto" role="alert">
-            <span className="text-4xl">⚠️</span>
-            <p className="text-sm text-red-400 font-['DM_Sans']">{submitError}</p>
-            <button
-              className="btn-primary-gradient rounded-[14px] px-6 py-2.5 font-bold font-['Syne'] text-sm"
-              onClick={() => handleSubmit(answers, signatureAnswers)}
-            >
-              Reintentar
-            </button>
+          <div className="flex flex-col items-center gap-4 text-center h-full justify-center" role="alert">
+            <span className="w-16 h-16 rounded-[18px] bg-[var(--warn)] text-[var(--on-warn)] grid place-items-center"><TriangleAlert className="w-9 h-9" /></span>
+            <p className="text-lg font-semibold text-[var(--danger-ink)]">{submitError}</p>
+            <button className="btn-3d w-full" onClick={() => handleSubmit(answers, signatureAnswers)}>Reintentar</button>
           </div>
         )}
 
-        {/* Paso de firma */}
         {showSignatureStep && !submitting && !missionDone && !submitError && (
-          <div className="flex flex-col gap-6 pt-4">
-            <div>
-              <p className="font-sub text-[10px] uppercase tracking-widest text-[var(--amber)] mb-1">
-                Último paso
-              </p>
-              <h2 className="font-display font-extrabold text-xl" style={{ color: 'var(--cream)' }}>
-                Se requiere tu firma
-              </h2>
-            </div>
+          <div className="flex flex-col gap-6">
+            <h2 className="font-display font-extrabold text-[38px] leading-none text-[var(--fg)]">Falta tu firma</h2>
             {signatureFields.map((sigField) => (
               <div key={sigField.id} className="flex flex-col gap-2">
-                <p className="text-sm font-semibold text-[var(--off-white)] font-['DM_Sans']">
-                  {sigField.label}
-                </p>
+                <p className="text-lg font-semibold text-[var(--fg)]">{sigField.label}</p>
                 <SignatureField
                   field={sigField}
                   value={signatureAnswers[sigField.key] ?? ''}
-                  onChange={(dataURL) =>
-                    setSignatureAnswers((prev) => ({ ...prev, [sigField.key]: dataURL }))
-                  }
+                  onChange={(dataURL) => setSignatureAnswers((prev) => ({ ...prev, [sigField.key]: dataURL }))}
                 />
               </div>
             ))}
-            <button
-              className="btn-primary-gradient rounded-[14px] px-6 py-3 font-bold font-['Syne'] text-sm w-full"
-              onClick={() => handleSubmit(answers, signatureAnswers)}
-            >
-              Confirmar y guardar
-            </button>
+            <button className="btn-3d w-full" onClick={() => handleSubmit(answers, signatureAnswers)}>Confirmar y guardar</button>
           </div>
         )}
 
-        {/* Pregunta activa */}
         {!showSignatureStep && !showCelebration && !submitting && !missionDone && !submitError && currentField && questionType && (
           <>
-            {/* Etiqueta contextual: nombre de misión · pregunta N de M */}
-            <div className="flex items-center gap-2 mb-4">
-              <span className="font-sub text-[10px] uppercase tracking-widest text-[var(--amber)]">
-                {context.template.name}
-              </span>
-              <span className="text-[rgba(255,255,255,0.2)] text-xs">·</span>
-              <span className="font-sub text-[10px] uppercase tracking-widest text-[rgba(250,244,232,0.45)]">
-                Pregunta {currentFieldIndex + 1} de {visibleFields.length}
-              </span>
-            </div>
-
             {currentField.help_text && (
-              <p className="text-xs font-semibold tracking-[0.15em] uppercase mb-2" style={{ color: 'var(--amber)', opacity: 0.8 }}>
-                {currentField.label}
-              </p>
+              <p className="text-lg font-semibold text-[var(--fg-muted)] mb-2">{currentField.label}</p>
             )}
             <TypewriterQuestion
               text={currentField.help_text ?? currentField.label}
-              speed={35}
               onDone={() => setTypingDone(true)}
             />
-
-            {/* Espaciado entre pregunta y opciones */}
-            <div className="mb-8" />
+            <div className="flex-1 min-h-8" />
 
             {questionType === 'yesno' && (
               <YesNoQuestion
@@ -359,13 +294,7 @@ export default function LevelWrapper() {
             {(questionType === 'text' || questionType === 'number' || questionType === 'date') && (
               <TextInputQuestion
                 key={currentFieldIndex}
-                type={
-                  questionType === 'number'
-                    ? 'number'
-                    : questionType === 'date'
-                    ? 'date'
-                    : 'text'
-                }
+                type={questionType === 'number' ? 'number' : questionType === 'date' ? 'date' : 'text'}
                 required={currentField.required}
                 typingDone={typingDone}
                 onAnswer={(v) => handleAnswer(currentField.key, v)}
@@ -373,75 +302,57 @@ export default function LevelWrapper() {
             )}
 
             {(questionType === 'file' || questionType === 'photo' || questionType === 'signature') && (
-              <div className="flex flex-col items-center gap-4 max-w-sm text-center">
-                <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
-                  Captura no disponible en este dispositivo
+              <div className="flex flex-col gap-3">
+                <p className="text-lg text-[var(--fg-muted)]">
+                  Las fotos y archivos se adjuntan en el formulario completo.
                 </p>
-                <button
-                  className="px-6 py-2.5 rounded-xl bg-white/10 border border-white/20 text-[var(--off-white)] font-['Syne'] text-sm hover:bg-white/20 transition-colors"
-                  onClick={() => handleAnswer(currentField.key, null)}
-                >
-                  Omitir →
+                <button className="btn-3d w-full" onClick={() => navigate(`/form/${templateId}`)}>
+                  Abrir formulario completo
                 </button>
+                {!currentField.required && (
+                  <button
+                    className="min-h-[56px] rounded-[16px] border-[1.5px] border-[color:var(--line-strong)] bg-[var(--surface)] text-[var(--fg)] font-bold text-lg"
+                    onClick={() => handleAnswer(currentField.key, null)}
+                  >
+                    Omitir esta pregunta
+                  </button>
+                )}
               </div>
             )}
           </>
         )}
       </div>
 
-      {/* Estado: misión completada — overlay sobre todo */}
       {missionDone && (
-        <div className="fixed inset-0 bg-[var(--navy)] flex flex-col items-center justify-center px-8 z-50">
-          {/* Radial burst */}
-          <div
-            className="absolute w-[300px] h-[300px] rounded-full animate-fade-up"
-            style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.15) 0%, rgba(34,197,94,0.08) 40%, transparent 70%)' }}
-          />
-          {/* Mini confetti */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div
+        <div className="fixed inset-0 route-bg flex flex-col items-center justify-center px-8 z-50">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+            {Array.from({ length: 14 }).map((_, i) => (
+              <span
                 key={i}
-                className="absolute w-2 h-2 rounded-full"
+                className="absolute w-3 h-3 rounded-[3px]"
                 style={{
-                  left:       `${10 + (i * 6.5) % 80}%`,
-                  top:        '-5%',
-                  background: (['var(--signal)', '#22c55e', 'var(--amber)'] as const)[i % 3],
-                  animation:  `confetti-fall ${2 + (i % 4) * 0.5}s ease-in forwards ${(i % 5) * 0.1}s`,
-                  opacity:    0.8,
+                  left: `${8 + (i * 6.5) % 84}%`,
+                  top: '-5%',
+                  background: (['var(--brand)', 'var(--ok)', 'var(--fg)'] as const)[i % 3],
+                  animation: `confetti-fall ${2 + (i % 4) * 0.5}s ease-in forwards ${(i % 5) * 0.1}s`,
                 }}
               />
             ))}
           </div>
-          {/* Checkmark */}
-          <div
-            className="w-20 h-20 rounded-full bg-[rgba(34,197,94,0.15)] border-2 border-green-500 grid place-items-center mb-6 relative z-10"
-            style={{ boxShadow: '0 0 40px rgba(34,197,94,0.3)' }}
-          >
-            <Check className="w-8 h-8 text-green-400" />
-          </div>
-          {/* Texto */}
+          <span className="w-32 h-32 rounded-[26%] bg-[var(--ok)] text-[var(--on-ok)] border-[5px] border-[var(--fg)] grid place-items-center mb-6 relative z-10 game-fade-scale shadow-[inset_0_3px_0_rgba(255,255,255,0.4),0_24px_40px_-16px_rgba(0,135,60,0.8)]">
+            <svg viewBox="0 0 24 24" className="w-20 h-20" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 12.5l4.5 4.5L19 7.5" className="check-draw" />
+            </svg>
+          </span>
           <div className="text-center relative z-10 animate-fade-up">
-            <h1 className="font-display font-extrabold text-[28px] text-[var(--signal)] mb-2">
-              ¡MISIÓN COMPLETADA!
-            </h1>
-            <p className="text-sm text-[var(--muted)] font-dm">{context?.template.name}</p>
+            <h1 className="font-display font-extrabold text-[44px] leading-none text-[var(--fg)] mb-2">¡Inspección completa!</h1>
+            <p className="text-lg text-[var(--fg-muted)]">{context.template.name}</p>
           </div>
-          {/* Badge del template */}
-          <div className="glass p-4 mt-6 flex items-center gap-3 relative z-10" style={{ borderRadius: 16 }}>
-            <span className="text-2xl">🏆</span>
-            <div>
-              <div className="font-display font-bold text-sm text-[var(--off-white)]">Permiso completado</div>
-              <div className="text-xs text-[var(--muted)] font-dm">Volviendo al mapa...</div>
-            </div>
-          </div>
+          <button className="btn-3d mt-8 relative z-10 w-full max-w-xs" onClick={handleExit}>Volver a la ruta</button>
         </div>
       )}
 
-      {/* CircleTransition de entrada */}
-      {revealing && (
-        <CircleTransition direction="in" onDone={() => setRevealing(false)} />
-      )}
+      {revealing && <CircleTransition direction="in" onDone={() => setRevealing(false)} />}
     </div>
   )
 }

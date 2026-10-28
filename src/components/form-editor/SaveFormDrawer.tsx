@@ -110,7 +110,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
       <div className="relative w-full max-w-md bg-(--glass-bg) [backdrop-filter:var(--glass-blur)] [-webkit-backdrop-filter:var(--glass-blur)] border border-(--glass-border) shadow-[var(--glass-shadow)] rounded-t-glass sm:rounded-glass p-6 z-10 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold text-[var(--off-white)] font-['Syne']">
+          <h2 className="text-base font-semibold text-[var(--off-white)] font-display">
             Guardar formulario
           </h2>
           <button onClick={onClose} className="text-[var(--muted)] hover:text-[var(--off-white)]">
@@ -121,26 +121,26 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
         <div className="space-y-4">
           {/* Nombre */}
           <div>
-            <label className="block text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1">
+            <label className="block text-[12px] font-semibold text-[var(--muted)] mb-1">
               Nombre *
             </label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
+              className="w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
               placeholder="Nombre del formulario"
             />
           </div>
 
           {/* Categoría */}
           <div>
-            <label className="block text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1">
+            <label className="block text-[12px] font-semibold text-[var(--muted)] mb-1">
               Categoría *
             </label>
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
+              className="w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
             >
               <option value="">Selecciona categoría</option>
               {categories.map((c) => (
@@ -153,7 +153,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
 
           {/* Estado */}
           <div>
-            <label className="block text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-2">
+            <label className="block text-[12px] font-semibold text-[var(--muted)] mb-2">
               Estado
             </label>
             <div className="flex gap-3">
@@ -163,8 +163,8 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
                   onClick={() => setStatus(s)}
                   className={`flex-1 py-2 rounded-lg text-xs font-medium border transition-all ${
                     status === s
-                      ? 'bg-[rgba(0,212,255,0.12)] border-[var(--signal)] text-[var(--signal)]'
-                      : 'bg-transparent border-[rgba(0,212,255,0.1)] text-[var(--muted)] hover:border-[rgba(0,212,255,0.3)]'
+                      ? 'bg-[var(--wash-brand)] border-[var(--signal)] text-[var(--accent-ink)]'
+                      : 'bg-transparent border-[color:var(--line)] text-[var(--muted)] hover:border-[color:var(--line-strong)]'
                   }`}
                 >
                   {s === 'DRAFT' ? 'Borrador' : 'Activo'}
@@ -175,7 +175,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
 
           {/* Cargos habilitados */}
           <div>
-            <label className="block text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--muted)] mb-1">
+            <label className="block text-[12px] font-semibold text-[var(--muted)] mb-1">
               Cargos habilitados{' '}
               <span className="text-[var(--muted)] normal-case tracking-normal font-normal">(vacío = todos)</span>
             </label>
@@ -185,12 +185,12 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
                 onChange={(e) => setJobTitleInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addJobTitle() } }}
                 placeholder="Ej: Operador de grúas"
-                className="flex-1 bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
+                className="flex-1 bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
               />
               <button
                 type="button"
                 onClick={addJobTitle}
-                className="px-3 py-2 rounded-lg text-xs font-medium bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[var(--signal)] hover:bg-[rgba(0,212,255,0.2)] transition-all"
+                className="px-3 py-2 rounded-lg text-xs font-medium bg-[var(--wash-brand)] border border-[color:var(--line)] text-[var(--accent-ink)] hover:bg-[var(--wash)] transition-all"
               >
                 Agregar
               </button>
@@ -200,13 +200,13 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
                 {jobTitles.map((title) => (
                   <span
                     key={title}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[var(--signal)] text-xs"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--wash-brand)] border border-[color:var(--line)] text-[var(--accent-ink)] text-xs"
                   >
                     {title}
                     <button
                       type="button"
                       onClick={() => removeJobTitle(title)}
-                      className="text-[var(--signal)] hover:text-white transition-colors"
+                      className="text-[var(--accent-ink)] hover:text-white transition-colors"
                     >
                       <XIcon size={10} />
                     </button>
@@ -217,7 +217,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
           </div>
 
           {/* Guardar como template */}
-          <div className="border border-[rgba(0,212,255,0.1)] rounded-lg p-3">
+          <div className="border border-[color:var(--line)] rounded-lg p-3">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -226,7 +226,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
                 className="accent-[var(--signal)]"
               />
               <div className="flex items-center gap-1.5 text-sm text-[var(--off-white)]">
-                <BookMarked size={14} className="text-[var(--signal)]" />
+                <BookMarked size={14} className="text-[var(--accent-ink)]" />
                 Guardar en mi biblioteca de templates
               </div>
             </label>
@@ -235,7 +235,7 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
                 value={blueprintName}
                 onChange={(e) => setBlueprintName(e.target.value)}
                 placeholder="Nombre del template"
-                className="mt-2 w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
+                className="mt-2 w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-lg px-3 py-2 text-sm text-[var(--off-white)] outline-none focus:border-[var(--signal)]"
               />
             )}
           </div>
@@ -245,14 +245,14 @@ export function SaveFormDrawer({ isOpen, onClose, templateId }: SaveFormDrawerPr
         <div className="flex gap-3 mt-6">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-[rgba(0,212,255,0.15)] text-[var(--muted)] hover:text-[var(--off-white)] hover:border-[rgba(0,212,255,0.3)] transition-all"
+            className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-[color:var(--line)] text-[var(--muted)] hover:text-[var(--off-white)] hover:border-[color:var(--line-strong)] transition-all"
           >
             Cancelar
           </button>
           <button
             onClick={() => saveMutation.mutate(buildPayload())}
             disabled={!name || !categoryId || saveMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-[var(--signal)] text-[var(--navy)] hover:bg-[var(--signal)]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-[var(--signal)] text-[var(--on-brand)] hover:bg-[var(--signal)]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             <Save size={15} />
             {saveMutation.isPending ? 'Guardando...' : 'Guardar formulario'}

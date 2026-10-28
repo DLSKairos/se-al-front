@@ -38,11 +38,11 @@ function ToggleField({
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="flex flex-col gap-0.5">
-        <label htmlFor={id} className="text-sm text-[var(--off-white)] font-['DM_Sans'] font-medium cursor-pointer">
+        <label htmlFor={id} className="text-sm text-[var(--off-white)] font-body font-medium cursor-pointer">
           {label}
         </label>
         {description && (
-          <span className="text-xs text-[var(--muted)] font-['DM_Sans']">{description}</span>
+          <span className="text-xs text-[var(--muted)] font-body">{description}</span>
         )}
       </div>
       <div className="relative shrink-0">
@@ -140,10 +140,10 @@ export default function AttendanceConfigPage() {
   return (
     <div className="flex flex-col gap-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+        <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
           Configuración de asistencia
         </h1>
-        <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+        <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
           Define las reglas para el cálculo de horas y recargos
         </p>
       </div>
@@ -162,14 +162,14 @@ export default function AttendanceConfigPage() {
 
         {/* Horarios */}
         <div className="glass-card p-5 flex flex-col gap-5">
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
             Horarios
           </h2>
 
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="standard_daily_hours"
-              className="text-sm text-[var(--muted)] font-['DM_Sans']"
+              className="text-sm text-[var(--muted)] font-body"
             >
               Horas diarias estándar
             </label>
@@ -185,7 +185,7 @@ export default function AttendanceConfigPage() {
                   standard_daily_hours: Number(e.target.value),
                 }))
               }
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all w-32"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all w-32"
             />
           </div>
 
@@ -193,7 +193,7 @@ export default function AttendanceConfigPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="night_shift_start"
-                className="text-sm text-[var(--muted)] font-['DM_Sans']"
+                className="text-sm text-[var(--muted)] font-body"
               >
                 Inicio turno nocturno
               </label>
@@ -204,13 +204,13 @@ export default function AttendanceConfigPage() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, night_shift_start: e.target.value }))
                 }
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+                className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="night_shift_end"
-                className="text-sm text-[var(--muted)] font-['DM_Sans']"
+                className="text-sm text-[var(--muted)] font-body"
               >
                 Fin turno nocturno
               </label>
@@ -221,7 +221,7 @@ export default function AttendanceConfigPage() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, night_shift_end: e.target.value }))
                 }
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+                className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
               />
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function AttendanceConfigPage() {
 
         {/* Recargos */}
         <div className="glass-card p-5 flex flex-col gap-5">
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
             Recargos
           </h2>
           <ToggleField
@@ -252,10 +252,10 @@ export default function AttendanceConfigPage() {
         {/* Festivos personalizados */}
         <div className="glass-card p-5 flex flex-col gap-4">
           <div>
-            <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-base">
+            <h2 className="font-display font-semibold text-[var(--off-white)] text-base">
               Festivos personalizados
             </h2>
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+            <p className="text-xs text-[var(--muted)] font-body mt-0.5">
               Agrega fechas adicionales que se tratarán como días festivos
             </p>
           </div>
@@ -265,7 +265,7 @@ export default function AttendanceConfigPage() {
               value={newHoliday}
               onChange={(e) => setNewHoliday(e.target.value)}
               aria-label="Fecha festivo"
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all flex-1"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all flex-1"
             />
             <Button
               type="button"
@@ -285,7 +285,7 @@ export default function AttendanceConfigPage() {
                   key={date}
                   className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2"
                 >
-                  <span className="text-sm text-[var(--off-white)] font-['DM_Sans']">
+                  <span className="text-sm text-[var(--off-white)] font-body">
                     {new Date(date + 'T00:00:00').toLocaleDateString('es-CO', {
                       weekday: 'long',
                       year: 'numeric',
@@ -305,7 +305,7 @@ export default function AttendanceConfigPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-[var(--muted)] font-['DM_Sans'] text-center py-3">
+            <p className="text-sm text-[var(--muted)] font-body text-center py-3">
               Sin festivos personalizados
             </p>
           )}

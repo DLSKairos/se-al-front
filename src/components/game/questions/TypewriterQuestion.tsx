@@ -6,48 +6,42 @@ interface TypewriterQuestionProps {
   onDone?: () => void
 }
 
-function TypewriterQuestion({ text = '', speed = 50, onDone }: TypewriterQuestionProps) {
-  const [displayedText, setDisplayedText] = useState('')
-  const [isTyping, setIsTyping] = useState(true)
-
-  const onDoneRef   = useRef(onDone)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
+/** Texto de la pregunta. Se escribe rápido y un toque lo muestra completo. */
+function TypewriterQuestion({ text = '', speed = 18, onDone }: TypewriterQuestionProps) {
+  const [shown, setShown] = useState(0)
+  const onDoneRef = useRef(onDone)
   useEffect(() => { onDoneRef.current = onDone }, [onDone])
 
   useEffect(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    setDisplayedText('')
-    setIsTyping(true)
-
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduce || !text) {
+      setShown(text.length)
+      onDoneRef.current?.()
+      return
+    }
+    setShown(0)
     let i = 0
-
-    intervalRef.current = setInterval(() => {
+    const id = setInterval(() => {
       i++
-      setDisplayedText(text.slice(0, i))
-
+      setShown(i)
       if (i >= text.length) {
-        if (intervalRef.current) clearInterval(intervalRef.current)
-        setIsTyping(false)
+        clearInterval(id)
         onDoneRef.current?.()
       }
     }, speed)
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => clearInterval(id)
   }, [text, speed])
 
+  const typing = shown < text.length
+
   return (
-    <p className="font-display font-extrabold text-[28px] leading-tight text-[var(--cream)] m-0">
-      {displayedText}
-      {isTyping && (
-        <span
-          className="game-cursor inline-block w-0.5 h-4 bg-[var(--signal)] ml-0.5 align-middle"
-          aria-hidden="true"
-        />
-      )}
+    <p
+      className="font-display font-extrabold text-[38px] leading-[1.02] text-[var(--fg)] m-0"
+      onClick={() => { if (typing) { setShown(text.length); onDoneRef.current?.() } }}
+      aria-label={text}
+    >
+      <span aria-hidden="true">{text.slice(0, shown)}</span>
+      {typing && <span className="game-cursor inline-block w-[4px] h-8 bg-[var(--fg)] ml-0.5 align-middle" aria-hidden="true" />}
     </p>
   )
 }

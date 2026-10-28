@@ -50,8 +50,8 @@ export function FileField({ field, value, onChange, disabled }: FileFieldProps) 
 
       {value ? (
         <div className="flex items-center gap-3 px-4 py-3 rounded-[var(--radius-input)] border border-[var(--signal-dim)] bg-[var(--navy-mid)]">
-          <Paperclip className="w-4 h-4 text-[var(--signal)] shrink-0" aria-hidden="true" />
-          <span className="text-sm text-[var(--off-white)] font-['DM_Sans'] truncate flex-1">
+          <Paperclip className="w-4 h-4 text-[var(--accent-ink)] shrink-0" aria-hidden="true" />
+          <span className="text-sm text-[var(--off-white)] font-body truncate flex-1">
             {value.name}
           </span>
           <span className="text-xs text-[var(--muted)] shrink-0">
@@ -76,7 +76,7 @@ export function FileField({ field, value, onChange, disabled }: FileFieldProps) 
           className="flex items-center gap-3 px-4 py-3 rounded-[var(--radius-input)] border border-dashed border-white/20 bg-[var(--navy-mid)] text-[var(--muted)] hover:border-[var(--signal-dim)] hover:text-[var(--off-white)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Paperclip className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span className="text-sm font-['DM_Sans']">Seleccionar archivo</span>
+          <span className="text-sm font-body">Seleccionar archivo</span>
         </button>
       )}
     </div>

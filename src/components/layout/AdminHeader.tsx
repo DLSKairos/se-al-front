@@ -33,11 +33,11 @@ export function AdminHeader({ collapsed, onToggleSidebar }: AdminHeaderProps) {
 
       {user && (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-[var(--muted)] font-['DM_Sans'] hidden sm:block">
+          <span className="text-xs text-[var(--muted)] font-body hidden sm:block">
             {roleLabel[user.role] ?? user.role}
           </span>
           <div className="w-7 h-7 rounded-full bg-[var(--signal-dim)] border border-[var(--signal)]/30 flex items-center justify-center">
-            <span className="text-xs font-bold text-[var(--signal)] font-['Syne']">
+            <span className="text-xs font-bold text-[var(--accent-ink)] font-display">
               {user.role[0]}
             </span>
           </div>

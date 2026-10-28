@@ -27,17 +27,17 @@ export function DynamicForm({ fields, values, onChange, disabled }: DynamicFormP
         <div key={field.id} className="flex flex-col gap-1.5">
           <label
             htmlFor={`field-${field.id}`}
-            className="text-sm font-medium text-[var(--off-white)] font-['DM_Sans']"
+            className="text-sm font-medium text-[var(--off-white)] font-body"
           >
             {field.label}
             {field.required && (
-              <span className="ml-1 text-[var(--signal)]" aria-hidden="true">
+              <span className="ml-1 text-[var(--accent-ink)]" aria-hidden="true">
                 *
               </span>
             )}
           </label>
           {field.help_text && (
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans'] -mt-0.5">
+            <p className="text-xs text-[var(--muted)] font-body -mt-0.5">
               {field.help_text}
             </p>
           )}
@@ -160,7 +160,7 @@ function FieldRenderer({ field, values, onChange, disabled }: FieldRendererProps
 
     default:
       return (
-        <p className="text-xs text-[var(--muted)] font-['DM_Sans'] italic">
+        <p className="text-xs text-[var(--muted)] font-body italic">
           Tipo de campo no soportado: {field.type}
         </p>
       )

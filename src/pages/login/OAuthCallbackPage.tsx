@@ -74,22 +74,22 @@ export default function OAuthCallbackPage() {
   return (
     <div
       className="fixed inset-0 flex flex-col items-center justify-center"
-      style={{ background: '#0C1624' }}
+      style={{ background: 'var(--bg)' }}
       aria-label="Verificando ingreso"
     >
       {/* Logo */}
       <div className="flex items-center gap-2.5 mb-6">
         <div
           className="w-2.5 h-2.5 rounded-full animate-pulse"
-          style={{ background: '#00D4FF' }}
+          style={{ background: 'var(--brand)' }}
         />
         <span
           style={{
-            fontFamily: 'Syne, sans-serif',
+            fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif",
             fontWeight: 800,
             fontSize: '1.5rem',
             letterSpacing: '0.15em',
-            color: '#F0F4F8',
+            color: 'var(--fg)',
           }}
         >
           SEÑAL
@@ -103,7 +103,7 @@ export default function OAuthCallbackPage() {
             key={i}
             className="w-2 h-2 rounded-full animate-pulse"
             style={{
-              background: '#00D4FF',
+              background: 'var(--brand)',
               animationDelay: `${i * 0.2}s`,
             }}
           />
@@ -114,7 +114,7 @@ export default function OAuthCallbackPage() {
         style={{
           fontFamily: 'DM Sans, sans-serif',
           fontSize: '0.875rem',
-          color: 'rgba(240,244,248,0.6)',
+          color: 'color-mix(in srgb,var(--fg) 60%,transparent)',
         }}
       >
         Verificando tu información…

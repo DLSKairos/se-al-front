@@ -75,7 +75,7 @@ function ReverseGeocodeCell({ lat, lng, index }: { lat: number; lng: number; ind
         <span className="text-sm text-[var(--off-white)] font-dm leading-tight">{street}</span>
       )}
       {city && (
-        <span className="text-xs text-[var(--signal)] font-dm font-medium">{city}</span>
+        <span className="text-xs text-[var(--accent-ink)] font-dm font-medium">{city}</span>
       )}
       {!street && !city && (
         <span className="text-xs text-[var(--muted)] font-mono">
@@ -226,10 +226,10 @@ export default function WorkLocationsPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+          <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
             Obras y ubicaciones
           </h1>
-          <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+          <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
             Gestiona las obras donde opera tu organización
           </p>
         </div>
@@ -241,13 +241,13 @@ export default function WorkLocationsPage() {
 
       <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm font-['DM_Sans']">
+          <table className="w-full text-sm font-body">
             <thead>
               <tr className="border-b border-white/5">
                 {['Nombre', 'Contratista', 'Departamento', 'Dirección', 'Estado', 'Acciones'].map((h) => (
                   <th
                     key={h}
-                    className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-4 px-4"
+                    className="text-left font-display font-semibold text-xs text-[var(--muted)] pb-3 pt-4 px-4"
                   >
                     {h}
                   </th>
@@ -260,7 +260,7 @@ export default function WorkLocationsPage() {
                 return (
                   <tr
                     key={loc.id}
-                    className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
+                    className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${
                       i % 2 === 1 ? 'bg-white/[0.02]' : ''
                     }`}
                   >
@@ -341,7 +341,7 @@ export default function WorkLocationsPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+              <label className="text-sm text-[var(--muted)] font-body">
                 Nombre <span className="text-red-400">*</span>
               </label>
               <input
@@ -350,11 +350,11 @@ export default function WorkLocationsPage() {
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Ej: Edificio Central"
                 required
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+                className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+              <label className="text-sm text-[var(--muted)] font-body">
                 Contratista
               </label>
               <input
@@ -362,19 +362,19 @@ export default function WorkLocationsPage() {
                 value={form.contractor}
                 onChange={(e) => setForm((f) => ({ ...f, contractor: e.target.value }))}
                 placeholder="Ej: Constructora ABC"
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+                className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <label className="text-sm text-[var(--muted)] font-body">
               Departamento (opcional)
             </label>
             <select
               value={form.department_id}
               onChange={(e) => setForm((f) => ({ ...f, department_id: e.target.value }))}
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             >
               <option value="">Sin departamento</option>
               {departments.map((dept) => (
@@ -386,7 +386,7 @@ export default function WorkLocationsPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <label className="text-sm text-[var(--muted)] font-body">
               Ubicación <span className="text-red-400">*</span>
             </label>
             <LocationPicker

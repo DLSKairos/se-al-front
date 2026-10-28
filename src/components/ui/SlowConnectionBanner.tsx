@@ -7,9 +7,9 @@ export function SlowConnectionBanner() {
   if (!isSlow) return null
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border-b border-amber-500/20 text-amber-400 text-xs font-['DM_Sans']">
-      <Wifi className="w-3.5 h-3.5 shrink-0" />
-      <span>Conexión lenta detectada — activa el modo lite para mejorar el rendimiento</span>
+    <div role="status" className="flex items-center gap-2 px-4 py-2.5 bg-[var(--warn)] text-[var(--on-warn)] text-sm font-semibold font-body">
+      <Wifi className="w-4 h-4 shrink-0" aria-hidden="true" />
+      <span>Conexión lenta: activa el modo lite para ir más rápido</span>
     </div>
   )
 }

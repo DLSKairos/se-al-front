@@ -38,18 +38,18 @@ function TokenErrorScreen({ code }: { code: TokenErrorCode }) {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-6 text-center"
-      style={{ background: '#0C1624' }}>
+      style={{ background: 'var(--bg)' }}>
       <div className="w-16 h-16 rounded-full bg-red-500/15 flex items-center justify-center">
         <AlertTriangle className="w-8 h-8 text-red-400" />
       </div>
       <div>
-        <h1 className="text-xl font-bold text-[var(--off-white)] font-['Syne'] mb-2">{title}</h1>
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans'] max-w-xs">{body}</p>
+        <h1 className="text-xl font-bold text-[var(--off-white)] font-display mb-2">{title}</h1>
+        <p className="text-sm text-[var(--muted)] font-body max-w-xs">{body}</p>
       </div>
       <div className="mt-4 px-4 py-3 rounded-[var(--radius-input)] bg-white/5 border border-white/10 max-w-xs">
-        <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+        <p className="text-xs text-[var(--muted)] font-body">
           Powered by{' '}
-          <span className="text-[var(--signal)] font-semibold">SEÑAL</span>
+          <span className="text-[var(--accent-ink)] font-semibold">SEÑAL</span>
         </p>
       </div>
     </div>
@@ -82,21 +82,21 @@ function CaptureButton({ label, preview, inputId, captureMode, onChange }: Captu
               className="w-full h-40 object-cover"
             />
             <div className="absolute inset-0 flex items-end justify-center pb-3">
-              <span className="bg-black/70 text-white text-xs px-3 py-1 rounded-full font-['DM_Sans'] flex items-center gap-1">
+              <span className="bg-black/70 text-white text-xs px-3 py-1 rounded-full font-body flex items-center gap-1">
                 <RefreshCw className="w-3 h-3" />
                 Retomar
               </span>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-[var(--radius-glass-md)] border-2 border-dashed border-[rgba(0,212,255,0.3)] bg-white/3 py-8 cursor-pointer hover:border-[var(--signal)]/60 transition-colors">
+          <div className="flex flex-col items-center justify-center gap-3 rounded-[var(--radius-glass-md)] border-2 border-dashed border-[color:var(--line-strong)] bg-white/3 py-8 cursor-pointer hover:border-[var(--signal)]/60 transition-colors">
             <div className="w-12 h-12 rounded-full bg-[var(--signal-dim)] flex items-center justify-center">
-              <Camera className="w-6 h-6 text-[var(--signal)]" />
+              <Camera className="w-6 h-6 text-[var(--accent-ink)]" />
             </div>
-            <p className="text-sm text-[var(--off-white)] font-['DM_Sans'] text-center">
+            <p className="text-sm text-[var(--off-white)] font-body text-center">
               {label}
             </p>
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans']">Toca para tomar la foto</p>
+            <p className="text-xs text-[var(--muted)] font-body">Toca para tomar la foto</p>
           </div>
         )}
       </label>
@@ -157,13 +157,13 @@ function IdentityStep({ token, onComplete }: IdentityStepProps) {
     <div className="flex flex-col gap-6">
       {/* Header paso */}
       <div className="text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--signal-dim)] text-[var(--signal)] text-xs font-['DM_Sans'] mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--signal-dim)] text-[var(--accent-ink)] text-xs font-body mb-3">
           <span>Paso 1 de 3</span>
         </div>
-        <h2 className="text-xl font-bold text-[var(--off-white)] font-['Syne'] mb-2">
+        <h2 className="text-xl font-bold text-[var(--off-white)] font-display mb-2">
           Verifica tu identidad
         </h2>
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+        <p className="text-sm text-[var(--muted)] font-body">
           Necesitamos una foto de tu cédula y una selfie para confirmar que eres tú quien firma.
         </p>
       </div>
@@ -186,7 +186,7 @@ function IdentityStep({ token, onComplete }: IdentityStepProps) {
 
       {uploadError && (
         <div className="p-3 rounded-[var(--radius-input)] bg-red-500/10 border border-red-500/20">
-          <p className="text-sm text-red-400 font-['DM_Sans']">{uploadError}</p>
+          <p className="text-sm text-red-400 font-body">{uploadError}</p>
         </div>
       )}
 
@@ -267,13 +267,13 @@ function ReadingStep({ view, onComplete }: ReadingStepProps) {
       {/* Progreso */}
       <div>
         <div className="flex justify-between items-center mb-1.5">
-          <span className="text-xs text-[var(--muted)] font-['DM_Sans']">
+          <span className="text-xs text-[var(--muted)] font-body">
             Sección {currentSectionIdx + 1} de {view.sections.length}
           </span>
           {/* Contador de lectura */}
           <span
-            className={`inline-flex items-center gap-1.5 text-xs font-['DM_Sans'] font-medium ${
-              canContinue ? 'text-emerald-400' : 'text-[var(--signal)]'
+            className={`inline-flex items-center gap-1.5 text-xs font-body font-medium ${
+              canContinue ? 'text-emerald-400' : 'text-[var(--accent-ink)]'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -283,7 +283,7 @@ function ReadingStep({ view, onComplete }: ReadingStepProps) {
         <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
           <motion.div
             className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, #00D4FF, #0096b3)' }}
+            style={{ background: 'var(--brand)' }}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.4 }}
@@ -294,10 +294,10 @@ function ReadingStep({ view, onComplete }: ReadingStepProps) {
       {/* Contador mínimo */}
       {!canContinue && (
         <div className="flex items-center justify-between px-3 py-2 rounded-[var(--radius-input)] bg-[var(--signal-dim)] border border-[var(--signal)]/20">
-          <span className="text-xs text-[var(--signal)] font-['DM_Sans']">
+          <span className="text-xs text-[var(--accent-ink)] font-body">
             Lee el documento completo ({minSecondsPerSection}s mínimo por sección)
           </span>
-          <span className="text-xs text-[var(--signal)] font-['DM_Sans'] font-bold tabular-nums">
+          <span className="text-xs text-[var(--accent-ink)] font-body font-bold tabular-nums">
             {formatTime(Math.max(minSecondsPerSection - elapsedDisplay, 0))}
           </span>
         </div>
@@ -313,7 +313,7 @@ function ReadingStep({ view, onComplete }: ReadingStepProps) {
           transition={{ duration: 0.25 }}
           className="flex flex-col gap-4"
         >
-          <h3 className="text-lg font-bold text-[var(--off-white)] font-['Syne']">
+          <h3 className="text-lg font-bold text-[var(--off-white)] font-display">
             {currentSection.name}
           </h3>
 
@@ -323,10 +323,10 @@ function ReadingStep({ view, onComplete }: ReadingStepProps) {
                 key={field.id}
                 className="p-3 rounded-[var(--radius-glass-md)] bg-white/5 border border-white/8"
               >
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans'] uppercase tracking-wide mb-1">
+                <p className="text-xs text-[var(--muted)] font-body mb-1">
                   {field.label}
                 </p>
-                <p className="text-sm text-[var(--off-white)] font-['DM_Sans']">
+                <p className="text-sm text-[var(--off-white)] font-body">
                   {field.value ?? <em className="text-[var(--muted)]">Sin respuesta</em>}
                 </p>
               </div>
@@ -416,13 +416,13 @@ function SigningStep({ token, view, onComplete }: SigningStepProps) {
   return (
     <div className="flex flex-col gap-5">
       <div className="text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--signal-dim)] text-[var(--signal)] text-xs font-['DM_Sans'] mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--signal-dim)] text-[var(--accent-ink)] text-xs font-body mb-3">
           <span>Paso 3 de 3</span>
         </div>
-        <h2 className="text-xl font-bold text-[var(--off-white)] font-['Syne'] mb-2">
+        <h2 className="text-xl font-bold text-[var(--off-white)] font-display mb-2">
           Tu firma
         </h2>
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+        <p className="text-sm text-[var(--muted)] font-body">
           Traza tu firma a continuación para finalizar.
         </p>
       </div>
@@ -431,14 +431,14 @@ function SigningStep({ token, view, onComplete }: SigningStepProps) {
       {geoStatus === 'loading' && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-input)] bg-[var(--signal-dim)] border border-[var(--signal)]/20">
           <span className="w-3 h-3 border-2 border-[var(--signal)] border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs text-[var(--signal)] font-['DM_Sans']">
+          <span className="text-xs text-[var(--accent-ink)] font-body">
             Obteniendo ubicación...
           </span>
         </div>
       )}
       {(geoStatus === 'denied' || geoStatus === 'error') && geoError && (
         <div className="flex flex-col gap-2 p-3 rounded-[var(--radius-input)] bg-amber-500/10 border border-amber-500/20">
-          <p className="text-xs text-amber-400 font-['DM_Sans']">{geoError}</p>
+          <p className="text-xs text-amber-400 font-body">{geoError}</p>
           <Button
             variant="secondary"
             size="sm"
@@ -459,10 +459,10 @@ function SigningStep({ token, view, onComplete }: SigningStepProps) {
       {/* Error de envío */}
       {submitError && (
         <div className="flex flex-col gap-2 p-3 rounded-[var(--radius-input)] bg-red-500/10 border border-red-500/20">
-          <p className="text-sm text-red-400 font-['DM_Sans']">{submitError}</p>
+          <p className="text-sm text-red-400 font-body">{submitError}</p>
           <button
             type="button"
-            className="self-start text-xs text-red-400 underline font-['DM_Sans']"
+            className="self-start text-xs text-red-400 underline font-body"
             onClick={() => setSubmitError(null)}
           >
             Reintentar
@@ -510,27 +510,27 @@ function SuccessScreen({ signedAt }: { signedAt: string }) {
       </motion.div>
 
       <div>
-        <h2 className="text-2xl font-bold text-[var(--off-white)] font-['Syne'] mb-2">
+        <h2 className="text-2xl font-bold text-[var(--off-white)] font-display mb-2">
           ¡Documento firmado!
         </h2>
-        <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+        <p className="text-sm text-[var(--muted)] font-body">
           Tu firma fue registrada correctamente.
         </p>
-        <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-1">
+        <p className="text-xs text-[var(--muted)] font-body mt-1">
           {new Date(signedAt).toLocaleString('es-CO')}
         </p>
       </div>
 
       <div className="mt-2 px-4 py-3 rounded-[var(--radius-input)] bg-white/5 border border-white/10 max-w-xs">
-        <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+        <p className="text-xs text-[var(--muted)] font-body">
           Puedes cerrar esta ventana.
         </p>
       </div>
 
       <div className="mt-4">
-        <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+        <p className="text-xs text-[var(--muted)] font-body">
           Powered by{' '}
-          <span className="text-[var(--signal)] font-semibold">SEÑAL</span>
+          <span className="text-[var(--accent-ink)] font-semibold">SEÑAL</span>
         </p>
       </div>
     </motion.div>
@@ -575,11 +575,11 @@ export default function PublicSignaturePage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ background: '#0C1624' }}
+        style={{ background: 'var(--bg)' }}
       >
         <div className="flex flex-col items-center gap-4">
           <span className="w-8 h-8 border-2 border-[var(--signal)] border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-[var(--muted)] font-['DM_Sans']">Cargando documento...</p>
+          <p className="text-sm text-[var(--muted)] font-body">Cargando documento...</p>
         </div>
       </div>
     )
@@ -597,12 +597,12 @@ export default function PublicSignaturePage() {
     return (
       <div
         className="min-h-screen flex flex-col"
-        style={{ background: 'linear-gradient(180deg, #0C1624 0%, #111E30 100%)' }}
+        style={{ background: 'var(--bg)' }}
       >
         <div className="flex-1 flex flex-col items-center justify-center p-6 gap-8 max-w-sm mx-auto w-full">
           {/* Logo SEÑAL */}
           <div className="text-center">
-            <span className="text-2xl font-bold font-['Syne']" style={{ color: '#00D4FF' }}>
+            <span className="text-2xl font-bold font-display" style={{ color: 'var(--brand)' }}>
               SEÑAL
             </span>
           </div>
@@ -610,26 +610,26 @@ export default function PublicSignaturePage() {
           {/* Info del documento */}
           <div className="w-full text-center">
             <div className="w-16 h-16 rounded-[var(--radius-glass)] bg-[var(--signal-dim)] mx-auto mb-4 flex items-center justify-center">
-              <svg className="w-8 h-8 text-[var(--signal)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-8 h-8 text-[var(--accent-ink)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne'] mb-2 leading-tight">
+            <h1 className="text-2xl font-bold text-[var(--off-white)] font-display mb-2 leading-tight">
               {view.document_name}
             </h1>
-            <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <p className="text-sm text-[var(--muted)] font-body">
               <span className="text-[var(--off-white)]">{view.requester_name}</span> solicita tu firma en este documento.
             </p>
           </div>
 
           {/* Info del firmante */}
           <div className="w-full p-4 rounded-[var(--radius-glass-md)] bg-white/5 border border-white/10">
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-1">Firmante</p>
-            <p className="text-base font-semibold text-[var(--off-white)] font-['DM_Sans']">
+            <p className="text-xs text-[var(--muted)] font-body mb-1">Firmante</p>
+            <p className="text-base font-semibold text-[var(--off-white)] font-body">
               {view.signer.name}
             </p>
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+            <p className="text-xs text-[var(--muted)] font-body">
               CC: {view.signer.identification_number}
             </p>
           </div>
@@ -651,7 +651,7 @@ export default function PublicSignaturePage() {
             <ChevronRight className="w-6 h-6" />
           </Button>
 
-          <p className="text-xs text-[var(--muted)] font-['DM_Sans'] text-center">
+          <p className="text-xs text-[var(--muted)] font-body text-center">
             Firma válida bajo la Ley 527 de 1999 (Colombia)
           </p>
         </div>
@@ -664,14 +664,14 @@ export default function PublicSignaturePage() {
   return (
     <div
       className="min-h-screen flex flex-col"
-      style={{ background: 'linear-gradient(180deg, #0C1624 0%, #111E30 100%)' }}
+      style={{ background: 'var(--bg)' }}
     >
       {/* Header mínimo */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/8">
-        <span className="text-sm font-bold font-['Syne']" style={{ color: '#00D4FF' }}>
+        <span className="text-sm font-bold font-display" style={{ color: 'var(--brand)' }}>
           SEÑAL
         </span>
-        <span className="text-xs text-[var(--muted)] font-['DM_Sans'] truncate max-w-[60%] text-right">
+        <span className="text-xs text-[var(--muted)] font-body truncate max-w-[60%] text-right">
           {view.document_name}
         </span>
       </div>

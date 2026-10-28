@@ -110,14 +110,14 @@ export function FieldTypePopover({
                 onClick={() => handleSelect(type)}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors text-left ${
                   isActive
-                    ? 'bg-[rgba(0,212,255,0.12)] text-[var(--signal)]'
-                    : 'hover:bg-[rgba(0,212,255,0.08)] text-[var(--off-white)]'
+                    ? 'bg-[var(--wash-brand)] text-[var(--accent-ink)]'
+                    : 'hover:bg-[var(--wash)] text-[var(--off-white)]'
                 }`}
               >
                 <DynamicIcon
                   name={FIELD_TYPE_ICON_NAMES[type]}
                   size={14}
-                  className={isActive ? 'text-[var(--signal)]' : 'text-[var(--muted)]'}
+                  className={isActive ? 'text-[var(--accent-ink)]' : 'text-[var(--muted)]'}
                 />
                 <span>{FIELD_TYPE_LABELS[type]}</span>
               </button>

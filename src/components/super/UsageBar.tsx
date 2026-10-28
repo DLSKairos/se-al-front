@@ -20,7 +20,7 @@ export function UsageBar({ current, max, label }: UsageBarProps) {
 
   return (
     <div className="flex flex-col gap-1 w-full">
-      <div className="flex items-center justify-between text-xs font-['DM_Sans']">
+      <div className="flex items-center justify-between text-xs font-body">
         <span className="text-[var(--muted)]">{label}</span>
         <span className="text-[var(--off-white)] tabular-nums">
           {current} / {max}

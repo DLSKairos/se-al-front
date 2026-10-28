@@ -23,24 +23,24 @@ function SesionCard({ sesion }: { sesion: InventarioSession }) {
     <button
       type="button"
       onClick={() => navigate(`/inventarios/${sesion.id}`)}
-      className="w-full flex items-center gap-4 p-5 glass rounded-[20px] hover:border-[rgba(0,212,255,0.3)] transition-all text-left active:scale-[0.98]"
+      className="w-full flex items-center gap-4 p-5 glass rounded-[20px] hover:border-[color:var(--line-strong)] transition-all text-left active:scale-[0.98]"
     >
-      <div className="w-12 h-12 rounded-[14px] bg-[rgba(0,212,255,0.06)] flex items-center justify-center shrink-0 border border-[rgba(0,212,255,0.12)]">
-        <Package className="w-6 h-6 text-[var(--signal)]" aria-hidden="true" />
+      <div className="w-12 h-12 rounded-[14px] bg-[var(--wash)] flex items-center justify-center shrink-0 border border-[color:var(--line)]">
+        <Package className="w-6 h-6 text-[var(--accent-ink)]" aria-hidden="true" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap mb-1">
-          <p className="text-sm font-['Syne'] font-semibold text-[var(--off-white)] truncate">
+          <p className="text-sm font-display font-semibold text-[var(--off-white)] truncate">
             {sesion.tipo_formulario}
           </p>
           <BadgeEstado estado={sesion.estado} />
         </div>
         {sesion.consignatario && (
-          <p className="text-xs text-[var(--muted)] font-['DM_Sans'] truncate mb-0.5">
+          <p className="text-xs text-[var(--muted)] font-body truncate mb-0.5">
             {sesion.consignatario}
           </p>
         )}
-        <p className="text-[10px] text-white/30 font-['DM_Sans']">
+        <p className="text-[12px] text-[var(--fg-muted)] font-body">
           {fecha}
           {totalItems > 0 ? ` · ${totalItems} ítem${totalItems !== 1 ? 's' : ''}` : ''}
         </p>
@@ -86,20 +86,20 @@ export default function InventariosListPage() {
       {/* Header */}
       <div className="px-6 pt-12 pb-6 flex items-center justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
+          <p className="text-[12px] font-semibold text-[var(--accent-ink)] mb-1">
             Módulo
           </p>
-          <h1 className="font-['Syne'] font-extrabold text-xl text-[var(--off-white)] leading-tight">
+          <h1 className="font-display font-extrabold text-xl text-[var(--off-white)] leading-tight">
             Inventarios
           </h1>
         </div>
         <button
           type="button"
           onClick={() => navigate('/inventarios/nueva')}
-          className="flex items-center gap-1.5 px-3 py-2.5 rounded-[var(--radius-btn)] font-['Syne'] font-semibold text-[var(--navy)] text-sm shrink-0 transition-all active:scale-[0.97] whitespace-nowrap"
+          className="flex items-center gap-1.5 px-3 py-2.5 rounded-[var(--radius-btn)] font-display font-semibold text-[var(--on-brand)] text-sm shrink-0 transition-all active:scale-[0.97] whitespace-nowrap"
           style={{
-            background: 'linear-gradient(135deg, #00D4FF, #0096b3)',
-            boxShadow: '0 0 16px rgba(0,212,255,0.3)',
+            background: 'var(--brand)',
+            boxShadow: '0 6px 16px -6px color-mix(in srgb,var(--brand) 70%,transparent)',
           }}
         >
           <Plus className="w-4 h-4 shrink-0" aria-hidden="true" />
@@ -123,13 +123,13 @@ export default function InventariosListPage() {
         {!isLoading && !error && sesiones.length === 0 && (
           <div className="glass p-10 rounded-[20px] flex flex-col items-center text-center gap-4">
             <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[var(--signal-dim)]">
-              <ClipboardCheck className="w-7 h-7 text-[var(--signal)]" aria-hidden="true" />
+              <ClipboardCheck className="w-7 h-7 text-[var(--accent-ink)]" aria-hidden="true" />
             </div>
             <div>
-              <p className="font-['Syne'] font-semibold text-[var(--off-white)] text-sm mb-1">
+              <p className="font-display font-semibold text-[var(--off-white)] text-sm mb-1">
                 No tienes actas creadas aún
               </p>
-              <p className="text-xs text-white/40 font-['DM_Sans']">
+              <p className="text-xs text-[var(--fg-muted)] font-body">
                 Toca "Nueva Acta" para comenzar un inventario aduanero.
               </p>
             </div>

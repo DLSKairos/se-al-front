@@ -1,3 +1,4 @@
+/* global clients */
 const isLocalhost = self.location.hostname === 'localhost'
 const CACHE_NAME = 'senal-shell-v1'
 

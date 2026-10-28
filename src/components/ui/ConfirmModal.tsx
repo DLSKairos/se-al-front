@@ -41,11 +41,11 @@ export function ConfirmModal({
                   className={`w-5 h-5 ${variant === 'danger' ? 'text-red-400' : 'text-amber-400'}`}
                 />
               </div>
-              <Dialog.Title className="font-['Syne'] font-semibold text-[var(--off-white)] text-lg">
+              <Dialog.Title className="font-display font-semibold text-[var(--off-white)] text-lg">
                 {title}
               </Dialog.Title>
             </div>
-            <Dialog.Description className="text-sm text-[var(--muted)] font-['DM_Sans'] leading-relaxed">
+            <Dialog.Description className="text-sm text-[var(--muted)] font-body leading-relaxed">
               {description}
             </Dialog.Description>
             <div className="flex gap-3 justify-end pt-2">

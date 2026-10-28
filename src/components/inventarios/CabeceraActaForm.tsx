@@ -39,7 +39,7 @@ interface SeccionFormProps {
 function SeccionForm({ titulo, campos, valores, onChange }: SeccionFormProps) {
   return (
     <div className="flex flex-col gap-3">
-      <h4 className="text-[10px] uppercase tracking-widest text-white/30 font-['DM_Sans'] pb-1 border-b border-white/5">
+      <h4 className="text-[12px] text-[var(--fg-muted)] font-body pb-1 border-b border-white/5">
         {titulo}
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -49,7 +49,7 @@ function SeccionForm({ titulo, campos, valores, onChange }: SeccionFormProps) {
 
           return (
             <div key={campo} className={colSpan ? 'sm:col-span-2' : ''}>
-              <label className="block text-[10px] uppercase tracking-wide text-white/40 font-['DM_Sans'] mb-1">
+              <label className="block text-[12px] text-[var(--fg-muted)] font-body mb-1">
                 {label}
               </label>
               <input
@@ -64,7 +64,7 @@ function SeccionForm({ titulo, campos, valores, onChange }: SeccionFormProps) {
                     onChange(campo, e.target.value)
                   }
                 }}
-                className="w-full bg-[var(--navy)] border border-white/10 rounded-[var(--radius-input)] px-3 py-2 text-[var(--off-white)] placeholder-white/20 text-sm font-['DM_Sans'] focus:outline-none focus:border-[var(--signal)]/50 transition-colors"
+                className="w-full bg-[var(--navy)] border border-white/10 rounded-[var(--radius-input)] px-3 py-2 text-[var(--off-white)] placeholder-white/20 text-sm font-body focus:outline-none focus:border-[var(--signal)]/50 transition-colors"
               />
             </div>
           )

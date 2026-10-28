@@ -1,14 +1,8 @@
 /**
- * TextInputQuestion — campo de texto grande con botón "Comprobar" full-width
- *
- * Props:
- *   type        'text' | 'number' | 'date' | 'datetime-local'
- *   required    boolean
- *   placeholder string
- *   typingDone  boolean — controlado por LevelWrapper
- *   onAnswer    (value: string) => void
+ * TextInputQuestion — campo grande con botón de confirmar a todo el ancho
  */
 import { useState, useRef, useEffect } from 'react'
+import { Check } from 'lucide-react'
 
 interface TextInputQuestionProps {
   type?: 'text' | 'number' | 'date' | 'datetime-local'
@@ -30,73 +24,36 @@ function TextInputQuestion({
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (typingDone && inputRef.current) {
-      inputRef.current.focus()
-    }
+    if (typingDone) inputRef.current?.focus()
   }, [typingDone])
 
-  const placeholder = propPlaceholder
-    ?? (type === 'number' ? '0' : type === 'date' ? 'YYYY-MM-DD' : '')
+  const placeholder = propPlaceholder ?? (type === 'number' ? '0' : '')
+  const canSubmit = !required || !!value.trim()
 
   const handleSubmit = () => {
-    if (submitted) return
-    if (required && !value.trim()) return
+    if (submitted || !canSubmit) return
     setSubmitted(true)
     onAnswer(value)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleSubmit()
-  }
-
-  const canSubmit = !required || !!value.trim()
-
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      <div
-        className={[
-          'flex flex-col gap-3 w-full transition-all duration-300',
-          typingDone ? 'opacity-100' : 'opacity-0 pointer-events-none',
-        ].join(' ')}
-      >
-        <input
-          ref={inputRef}
-          className={[
-            'w-full px-5 py-4 rounded-2xl border-2 font-dm text-base',
-            'bg-[rgba(255,255,255,0.05)] text-[var(--cream)]',
-            'placeholder:text-[rgba(250,244,232,0.3)] outline-none',
-            'transition-colors',
-            submitted
-              ? 'border-white/10 opacity-60'
-              : 'border-white/15 focus:border-[var(--signal)] focus:bg-[rgba(0,212,255,0.04)]',
-          ].join(' ')}
-          type={type}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          disabled={submitted}
-          aria-label="Respuesta"
-          required={required}
-        />
-
-        <button
-          className={[
-            'w-full py-4 rounded-2xl font-sub font-bold text-base tracking-wide uppercase',
-            'transition-all duration-200 active:scale-[0.98]',
-            submitted
-              ? 'bg-green-500/20 text-green-400 border-2 border-green-500/30'
-              : !canSubmit
-              ? 'bg-white/10 text-[var(--muted)] cursor-not-allowed'
-              : 'bg-[var(--terracotta)] text-[var(--cream)] hover:opacity-90',
-          ].join(' ')}
-          onClick={handleSubmit}
-          disabled={submitted}
-          aria-label="Confirmar respuesta"
-        >
-          {submitted ? '✓ Guardado' : 'Comprobar'}
-        </button>
-      </div>
+    <div className={`flex flex-col gap-3 w-full ${typingDone ? 'game-bounce-in' : 'opacity-0 pointer-events-none'}`}>
+      <input
+        ref={inputRef}
+        className="w-full min-h-[72px] px-5 rounded-[20px] border-[3px] border-[var(--fg)] bg-[var(--surface)] text-[var(--fg)] font-body font-semibold text-2xl placeholder:text-[var(--fg-muted)] placeholder:font-normal outline-none focus:ring-4 focus:ring-[color:var(--wash-brand)] disabled:opacity-60"
+        type={type}
+        inputMode={type === 'number' ? 'decimal' : undefined}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit() }}
+        placeholder={placeholder}
+        disabled={submitted}
+        aria-label="Respuesta"
+        required={required}
+      />
+      <button className="btn-3d w-full" onClick={handleSubmit} disabled={submitted || !canSubmit} aria-label="Confirmar respuesta">
+        {submitted ? <><Check className="w-6 h-6" strokeWidth={3.5} /> Guardado</> : 'Confirmar'}
+      </button>
     </div>
   )
 }

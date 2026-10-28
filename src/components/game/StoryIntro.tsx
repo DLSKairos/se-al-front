@@ -1,21 +1,22 @@
 /**
- * StoryIntro — intro cinematográfica con diálogos tipo typewriter
+ * StoryIntro — saludo de inicio de jornada con diálogos tipo máquina de escribir
  *
  * Props:
- *   character  string — clave del personaje (para imagen)
+ *   character  string — clave del personaje (imagen opcional en /assets)
  *   obraName   string — nombre de la obra
  *   onComplete fn     — callback al terminar todos los diálogos
  */
 import { useState, useEffect, useRef } from 'react'
+import { HardHat } from 'lucide-react'
 
-const TYPEWRITER_SPEED = 50
-const DIALOG_PAUSE     = 1600
+const TYPEWRITER_SPEED = 28
+const DIALOG_PAUSE     = 1500
 
 function buildDialogs(characterName: string, obraName: string): string[] {
   return [
-    `${characterName}, hoy tienes una jornada importante por delante`,
-    `En ${obraName}, tu trabajo marca la diferencia`,
-    `Completa tus registros del día para mantener la operación al día`,
+    `${characterName}, hoy tienes una jornada importante por delante.`,
+    `En ${obraName}, tu trabajo marca la diferencia.`,
+    `Completa tus registros del día para mantener la operación al día.`,
     `Todo listo. ¡Que tengas una jornada segura!`,
   ]
 }
@@ -60,7 +61,7 @@ function StoryIntro({
     setDisplayedText('')
     setIsTyping(true)
 
-    let i    = 0
+    let i = 0
     const text = dialogs[dialogIndex]
 
     typeIntervalRef.current = setInterval(() => {
@@ -86,78 +87,56 @@ function StoryIntro({
   }, [dialogIndex])
 
   return (
-    <div className="fixed inset-0 z-[8000] bg-[var(--navy)] flex flex-col items-center justify-between p-6">
-      {/* Background subtle gradient */}
-      <div className="absolute inset-0 opacity-20 bg-radial-story" />
+    <div className="fixed inset-0 z-[8000] route-bg flex flex-col items-center justify-between p-5" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1.25rem)' }}>
+      <div className="hazard absolute inset-x-0 top-0 h-3" aria-hidden="true" />
 
-      {/* Radial burst signal */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at 50% 70%, rgba(0,212,255,0.06) 0%, transparent 60%)' }}
-      />
-
-      {/* Skip button */}
-      <div className="relative w-full flex justify-end">
+      <div className="relative w-full flex justify-end pt-3">
         <button
-          className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-btn,8px)] text-[var(--muted)] text-xs font-['DM_Sans'] hover:text-[var(--off-white)] transition-colors"
+          className="liquid min-h-[48px] px-5 rounded-full text-[var(--fg)] text-base font-bold font-body"
           onClick={handleSkip}
           aria-label="Saltar introducción"
         >
-          <span>Saltar intro</span>
-          <span className="text-[var(--signal)] font-bold">»</span>
+          Saltar
         </button>
       </div>
 
-      {/* Character */}
-      <div className="relative flex-1 flex items-end justify-center pb-4">
+      <div className="relative flex-1 flex items-center justify-center">
         {!imgError ? (
           <img
             src={`/assets/${character}-idle.png`}
             alt={characterName}
-            className="h-48 object-contain drop-shadow-[0_8px_24px_rgba(0,212,255,0.2)]"
+            className="h-56 object-contain"
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="text-8xl" aria-hidden="true">👷</div>
+          <span className="w-40 h-40 rounded-[44px] bg-[var(--brand)] text-[var(--on-brand)] grid place-items-center shadow-[inset_0_2px_0_rgba(255,255,255,0.55),0_24px_40px_-18px_rgba(168,127,0,0.9)]" aria-hidden="true">
+            <HardHat className="w-24 h-24" strokeWidth={1.75} />
+          </span>
         )}
       </div>
 
-      {/* Dialog bubble */}
       <div className="relative w-full max-w-sm mb-6">
-        <div
-          className="w-0 h-0 mx-auto mb-[-1px] speech-triangle-up"
-          aria-hidden="true"
-        />
-        <div className="glass p-5 rounded-[20px] min-h-[72px] flex items-center">
-          <p className="text-[var(--off-white)] text-base leading-relaxed font-['DM_Sans'] m-0">
+        <div className="liquid rounded-[28px] px-6 py-5 min-h-[120px] flex items-center">
+          <p className="text-[var(--fg)] text-[26px] leading-tight font-display font-bold m-0" aria-live="polite">
             {displayedText}
             {isTyping && (
-              <span
-                className="game-cursor inline-block w-0.5 h-4 bg-[var(--signal)] ml-0.5 align-middle"
-                aria-hidden="true"
-              />
+              <span className="game-cursor inline-block w-[3px] h-6 bg-[var(--fg)] ml-0.5 align-middle" aria-hidden="true" />
             )}
           </p>
         </div>
       </div>
 
-      {/* Progress dots */}
       <div
-        className="flex gap-2 mb-2"
+        className="relative flex gap-2 mb-3 w-full max-w-sm"
         role="status"
         aria-label={`Diálogo ${dialogIndex + 1} de ${dialogs.length}`}
       >
         {dialogs.map((_, i) => (
           <span
             key={i}
-            className={[
-              'rounded-full transition-all duration-300',
-              i === dialogIndex
-                ? 'w-5 h-2.5 bg-[var(--signal)]'
-                : i < dialogIndex
-                ? 'w-2.5 h-2.5 bg-[var(--signal)] opacity-50'
-                : 'w-2.5 h-2.5 bg-white/20',
-            ].join(' ')}
+            className={`h-2 flex-1 rounded-full transition-colors duration-300 ${
+              i <= dialogIndex ? 'bg-[var(--fg)]' : 'bg-[var(--line-strong)]'
+            }`}
           />
         ))}
       </div>

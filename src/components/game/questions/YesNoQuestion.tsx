@@ -1,72 +1,51 @@
 /**
- * YesNoQuestion — botones táctiles grandes para responder Sí / No / N/A
- *
- * Props:
- *   onAnswer    fn — (value: boolean) => void
- *   typingDone  boolean — controlado por LevelWrapper
+ * YesNoQuestion — dos carteles táctiles grandes: Sí (cuadrado verde) / No (círculo rojo).
+ * Sin N/A: el formulario normal solo guarda verdadero o falso, y N/A se guardaba como "No".
  */
 import { useState } from 'react'
+import { Check, X } from 'lucide-react'
 
 interface YesNoQuestionProps {
   onAnswer: (value: boolean) => void
   typingDone?: boolean
 }
 
-const DEFAULT_OPTIONS = [
-  { value: 'yes', label: 'Sí',  icon: '✓', negative: false },
-  { value: 'no',  label: 'No',  icon: '✗', negative: true  },
-  { value: 'na',  label: 'N/A', icon: '—', negative: false },
-]
-
-const OPTION_COLORS: Record<string, string> = {
-  yes: 'border-green-500 text-green-400 hover:bg-green-500/20 aria-pressed:bg-green-500/30',
-  no:  'border-red-500  text-red-400  hover:bg-red-500/20  aria-pressed:bg-red-500/30',
-  na:  'border-slate-400 text-slate-300 hover:bg-slate-500/20 aria-pressed:bg-slate-500/30',
-}
-
 function YesNoQuestion({ onAnswer, typingDone = true }: YesNoQuestionProps) {
-  const [selected, setSelected] = useState<string | null>(null)
-  const options = DEFAULT_OPTIONS
+  const [selected, setSelected] = useState<'yes' | 'no' | null>(null)
 
-  const handleSelect = (value: string) => {
+  const handleSelect = (value: 'yes' | 'no') => {
     if (selected) return
     setSelected(value)
     onAnswer(value === 'yes')
   }
 
+  const base =
+    'flex-1 min-h-[148px] flex flex-col items-center justify-center gap-2 rounded-[24px] border-[3px] font-display font-extrabold text-[34px] leading-none transition-[transform,opacity] duration-150 active:scale-[0.96] disabled:cursor-default'
+
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      <div
-        className={[
-          'flex gap-3 flex-wrap justify-center transition-all duration-300',
-          typingDone ? 'opacity-100 translate-y-0 game-bounce-in' : 'opacity-0 translate-y-4 pointer-events-none',
-        ].join(' ')}
+    <div
+      className={`flex gap-3 w-full ${typingDone ? 'game-bounce-in' : 'opacity-0 pointer-events-none'}`}
+      role="group"
+      aria-label="Respuesta"
+    >
+      <button
+        className={`${base} bg-[var(--ok)] text-[var(--on-ok)] border-[var(--fg)] ${selected === 'no' ? 'opacity-35' : ''}`}
+        onClick={() => handleSelect('yes')}
+        disabled={!!selected}
+        aria-pressed={selected === 'yes'}
       >
-        {options.map((opt) => {
-          const colorCls = OPTION_COLORS[opt.value] ?? OPTION_COLORS.na
-          const isChosen = selected === opt.value
-          return (
-            <button
-              key={opt.value}
-              className={[
-                'flex flex-col items-center gap-2 flex-1 px-4 py-5',
-                'rounded-2xl border-2 font-sub font-bold text-base',
-                'transition-all duration-150 active:scale-95',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                colorCls,
-                isChosen ? 'scale-95 ring-2 ring-white/30' : '',
-              ].join(' ')}
-              onClick={() => handleSelect(opt.value)}
-              disabled={!!selected}
-              aria-label={opt.label}
-              aria-pressed={isChosen}
-            >
-              <span className="text-3xl">{opt.icon}</span>
-              <span>{opt.label}</span>
-            </button>
-          )
-        })}
-      </div>
+        <Check className="w-14 h-14" strokeWidth={3.5} aria-hidden="true" />
+        Sí
+      </button>
+      <button
+        className={`${base} bg-[var(--danger)] text-[var(--on-danger)] border-[var(--fg)] ${selected === 'yes' ? 'opacity-35' : ''}`}
+        onClick={() => handleSelect('no')}
+        disabled={!!selected}
+        aria-pressed={selected === 'no'}
+      >
+        <X className="w-14 h-14" strokeWidth={3.5} aria-hidden="true" />
+        No
+      </button>
     </div>
   )
 }

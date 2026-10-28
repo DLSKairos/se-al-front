@@ -59,10 +59,10 @@ export default function OrganizationsPage() {
       {/* Encabezado */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-['Syne'] font-bold text-2xl text-[var(--off-white)]">
+          <h1 className="font-display font-bold text-2xl text-[var(--off-white)]">
             Organizaciones
           </h1>
-          <p className="text-sm text-[var(--muted)] font-['DM_Sans'] mt-1">
+          <p className="text-sm text-[var(--muted)] font-body mt-1">
             {orgs.length}{' '}
             {orgs.length === 1 ? 'organización registrada' : 'organizaciones registradas'}
           </p>
@@ -81,13 +81,13 @@ export default function OrganizationsPage() {
       {orgs.length === 0 && (
         <div className="glass-card rounded-2xl p-12 flex flex-col items-center gap-4 text-center">
           <div className="w-16 h-16 rounded-2xl bg-[var(--signal)]/10 flex items-center justify-center">
-            <Building2 className="w-8 h-8 text-[var(--signal)]" />
+            <Building2 className="w-8 h-8 text-[var(--accent-ink)]" />
           </div>
           <div>
-            <p className="font-['Syne'] font-semibold text-[var(--off-white)] text-lg">
+            <p className="font-display font-semibold text-[var(--off-white)] text-lg">
               No hay organizaciones
             </p>
-            <p className="text-sm text-[var(--muted)] font-['DM_Sans'] mt-1">
+            <p className="text-sm text-[var(--muted)] font-body mt-1">
               Crea la primera organización para comenzar
             </p>
           </div>
@@ -112,7 +112,7 @@ export default function OrganizationsPage() {
                   {['Organización', 'Plan', 'Usuarios', 'Sedes', 'Registrada'].map((h) => (
                     <th
                       key={h}
-                      className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider font-['DM_Sans']"
+                      className="text-left px-6 py-4 text-xs font-semibold text-[var(--muted)] font-body"
                     >
                       {h}
                     </th>
@@ -150,15 +150,15 @@ function OrgRow({ org, onClick }: { org: OrgWithUsage; onClick: () => void }) {
   return (
     <tr
       onClick={onClick}
-      className="group cursor-pointer hover:bg-[rgba(22,34,56,0.3)] transition-colors"
+      className="group cursor-pointer hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors"
     >
       {/* Nombre */}
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-[var(--signal)]/10 flex items-center justify-center shrink-0">
-            <Building2 className="w-4 h-4 text-[var(--signal)]" />
+            <Building2 className="w-4 h-4 text-[var(--accent-ink)]" />
           </div>
-          <span className="font-['DM_Sans'] font-medium text-[var(--off-white)] group-hover:text-[var(--signal)] transition-colors">
+          <span className="font-body font-medium text-[var(--off-white)] group-hover:text-[var(--accent-ink)] transition-colors">
             {org.config?.display_name ?? org.name}
           </span>
         </div>
@@ -189,7 +189,7 @@ function OrgRow({ org, onClick }: { org: OrgWithUsage; onClick: () => void }) {
 
       {/* Fecha */}
       <td className="px-6 py-4">
-        <span className="flex items-center gap-1.5 text-sm text-[var(--muted)] font-['DM_Sans'] whitespace-nowrap">
+        <span className="flex items-center gap-1.5 text-sm text-[var(--muted)] font-body whitespace-nowrap">
           <Calendar className="w-3.5 h-3.5 shrink-0" />
           {formattedDate}
         </span>

@@ -135,7 +135,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             placeholder="Buscar dirección, barrio o lugar..."
             autoComplete="off"
-            className="w-full pl-9 pr-9 py-3 bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all placeholder:text-[var(--muted)]"
+            className="w-full pl-9 pr-9 py-3 bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all placeholder:text-[var(--muted)]"
           />
           {searching && (
             <Loader2 className="absolute right-3 w-4 h-4 text-[var(--muted)] animate-spin pointer-events-none" />
@@ -154,7 +154,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
                   onMouseDown={(e) => { e.preventDefault(); selectSuggestion(r) }}
                   className="w-full text-left px-4 py-2.5 flex items-start gap-2 hover:bg-white/5 transition-colors"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-[var(--signal)] shrink-0 mt-0.5" />
+                  <MapPin className="w-3.5 h-3.5 text-[var(--accent-ink)] shrink-0 mt-0.5" />
                   <span className="text-xs text-[var(--off-white)] font-dm line-clamp-2">
                     {r.display_name}
                   </span>
@@ -166,7 +166,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
       </div>
 
       {/* Map */}
-      <div className="rounded-[12px] overflow-hidden border border-[rgba(0,212,255,0.15)] h-64 relative z-0">
+      <div className="rounded-[12px] overflow-hidden border border-[color:var(--line)] h-64 relative z-0">
         <MapContainer
           center={initialCenter}
           zoom={initialZoom}

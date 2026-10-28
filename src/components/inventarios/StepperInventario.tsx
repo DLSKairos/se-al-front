@@ -44,10 +44,10 @@ export function StepperInventario({ pasoActual, onPasoClick, pasosCompletados }:
                   className={[
                     'flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all duration-200',
                     completado
-                      ? 'bg-[var(--signal)] border-[var(--signal)] text-[var(--navy)]'
+                      ? 'bg-[var(--signal)] border-[var(--signal)] text-[var(--on-brand)]'
                       : activo
-                        ? 'bg-[var(--signal-dim)] border-[var(--signal)] text-[var(--signal)] shadow-[0_0_12px_rgba(0,212,255,0.35)]'
-                        : 'bg-[var(--navy-light)] border-white/10 text-white/30',
+                        ? 'bg-[var(--signal-dim)] border-[var(--signal)] text-[var(--accent-ink)] shadow-[0_0_12px_color-mix(in_srgb,var(--brand)_35%,transparent)]'
+                        : 'bg-[var(--navy-light)] border-white/10 text-[var(--fg-muted)]',
                     futuro ? 'opacity-50' : '',
                   ].join(' ')}
                 >
@@ -55,8 +55,8 @@ export function StepperInventario({ pasoActual, onPasoClick, pasosCompletados }:
                 </div>
                 <span
                   className={[
-                    "text-xs font-['Syne'] font-medium transition-colors duration-200",
-                    completado ? 'text-[var(--signal)]' : activo ? 'text-[var(--off-white)]' : 'text-white/30',
+                    "text-xs font-display font-medium transition-colors duration-200",
+                    completado ? 'text-[var(--accent-ink)]' : activo ? 'text-[var(--off-white)]' : 'text-[var(--fg-muted)]',
                   ].join(' ')}
                 >
                   {paso.label}
@@ -84,19 +84,19 @@ export function StepperInventario({ pasoActual, onPasoClick, pasosCompletados }:
           onClick={() => pasoAnterior && onPasoClick?.(pasoAnterior)}
           disabled={!pasoAnterior}
           aria-label="Paso anterior"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-[var(--navy-light)] border border-white/10 text-white/50 disabled:opacity-20 disabled:cursor-default transition-opacity"
+          className="flex items-center justify-center w-9 h-9 rounded-full bg-[var(--navy-light)] border border-white/10 text-[var(--fg-muted)] disabled:opacity-20 disabled:cursor-default transition-opacity"
         >
           <ChevronLeft className="w-4 h-4" aria-hidden="true" />
         </button>
 
         <div className="flex flex-col items-center gap-1">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--signal-dim)] border-2 border-[var(--signal)] text-[var(--signal)] shadow-[0_0_14px_rgba(0,212,255,0.35)]">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--signal-dim)] border-2 border-[var(--signal)] text-[var(--accent-ink)] shadow-[0_0_14px_color-mix(in_srgb,var(--brand)_35%,transparent)]">
             <pasoInfo.Icon className="w-5 h-5" aria-hidden="true" />
           </div>
-          <span className="text-xs font-['Syne'] font-semibold text-[var(--signal)]">
+          <span className="text-xs font-display font-semibold text-[var(--accent-ink)]">
             {pasoInfo.label}
           </span>
-          <span className="text-[10px] text-white/30 font-['DM_Sans']">
+          <span className="text-[12px] text-[var(--fg-muted)] font-body">
             Paso {pasoActual} de {pasos.length}
           </span>
         </div>
@@ -106,7 +106,7 @@ export function StepperInventario({ pasoActual, onPasoClick, pasosCompletados }:
           onClick={() => pasoSiguiente && onPasoClick?.(pasoSiguiente)}
           disabled={!pasoSiguiente}
           aria-label="Paso siguiente"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-[var(--navy-light)] border border-white/10 text-white/50 disabled:opacity-20 disabled:cursor-default transition-opacity"
+          className="flex items-center justify-center w-9 h-9 rounded-full bg-[var(--navy-light)] border border-white/10 text-[var(--fg-muted)] disabled:opacity-20 disabled:cursor-default transition-opacity"
         >
           <ChevronRight className="w-4 h-4" aria-hidden="true" />
         </button>

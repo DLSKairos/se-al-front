@@ -47,7 +47,7 @@ function SectionOptionsMenu({
     <div ref={ref} className="relative">
       <button
         onClick={(e) => { e.stopPropagation(); setOpen((p) => !p) }}
-        className="p-1.5 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] transition-colors"
+        className="p-1.5 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[var(--wash)] transition-colors"
         aria-label="Opciones de sección"
       >
         <MoreHorizontal size={15} />
@@ -57,7 +57,7 @@ function SectionOptionsMenu({
         <div className="absolute right-0 top-full mt-1 glass-card-md p-1 w-52 z-50">
           <button
             onClick={() => handle(onToggleObservations)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] cursor-pointer text-left"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-[var(--off-white)] hover:bg-[var(--wash)] cursor-pointer text-left"
           >
             <MessageSquare size={13} className="text-[var(--muted)]" />
             {hasObservations ? 'Quitar observaciones' : 'Agregar observaciones'}
@@ -147,7 +147,7 @@ export function SectionBlock({ section, dragHandleProps, isDragging }: SectionBl
 
   return (
     <div
-      className={`border border-[rgba(0,212,255,0.12)] rounded-xl mb-3 overflow-hidden transition-opacity ${
+      className={`border border-[color:var(--line)] rounded-xl mb-3 overflow-hidden transition-opacity ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}
     >
@@ -156,7 +156,7 @@ export function SectionBlock({ section, dragHandleProps, isDragging }: SectionBl
         {/* Drag handle de sección */}
         <button
           {...dragHandleProps}
-          className="text-[var(--muted)] hover:text-[var(--signal)] cursor-grab active:cursor-grabbing shrink-0 transition-colors"
+          className="text-[var(--muted)] hover:text-[var(--accent-ink)] cursor-grab active:cursor-grabbing shrink-0 transition-colors"
           aria-label="Reordenar sección"
         >
           <GripVertical size={16} />
@@ -169,7 +169,7 @@ export function SectionBlock({ section, dragHandleProps, isDragging }: SectionBl
           onChange={(e) => setSectionName(e.target.value)}
           onBlur={commitName}
           onKeyDown={handleNameKeyDown}
-          className="bg-transparent border-none outline-none text-sm font-semibold text-[var(--off-white)] flex-1 min-w-0 font-['Syne']"
+          className="bg-transparent border-none outline-none text-sm font-semibold text-[var(--off-white)] flex-1 min-w-0 font-display"
           aria-label="Nombre de la sección"
         />
 
@@ -181,7 +181,7 @@ export function SectionBlock({ section, dragHandleProps, isDragging }: SectionBl
         {/* Collapse */}
         <button
           onClick={() => setCollapsed((c) => !c)}
-          className="p-1.5 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[rgba(0,212,255,0.08)] transition-colors shrink-0"
+          className="p-1.5 rounded text-[var(--muted)] hover:text-[var(--off-white)] hover:bg-[var(--wash)] transition-colors shrink-0"
           aria-label={collapsed ? 'Expandir sección' : 'Colapsar sección'}
         >
           {collapsed ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
@@ -233,10 +233,10 @@ export function SectionBlock({ section, dragHandleProps, isDragging }: SectionBl
 
               {/* Campo de observaciones (solo visual, no draggable) */}
               {section.hasObservations && (
-                <div className="flex items-center gap-2 px-3 py-2 mt-0.5 rounded-lg border border-dashed border-[rgba(0,212,255,0.12)] opacity-60">
+                <div className="flex items-center gap-2 px-3 py-2 mt-0.5 rounded-lg border border-dashed border-[color:var(--line)] opacity-60">
                   <GripVertical size={16} className="text-[var(--muted)]" />
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--muted)]" />
-                  <span className="text-sm text-[var(--muted)] flex-1 font-['DM_Sans'] italic">
+                  <span className="text-sm text-[var(--muted)] flex-1 font-body italic">
                     Observaciones
                   </span>
                   <span className="text-xs text-[var(--muted)]">Texto</span>
@@ -246,7 +246,7 @@ export function SectionBlock({ section, dragHandleProps, isDragging }: SectionBl
               {/* Botón agregar campo */}
               <button
                 onClick={() => addField(section.id)}
-                className="flex items-center gap-1 text-xs text-[var(--signal)] hover:text-[var(--signal)]/80 px-4 py-2 mt-1 transition-colors w-full"
+                className="flex items-center gap-1 text-xs text-[var(--accent-ink)] hover:text-[var(--accent-ink)]/80 px-4 py-2 mt-1 transition-colors w-full"
                 aria-label="Agregar campo a esta sección"
               >
                 <Plus size={13} />

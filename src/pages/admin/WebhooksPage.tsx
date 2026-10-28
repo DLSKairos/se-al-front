@@ -69,7 +69,7 @@ function SecretModal({
       size="lg"
     >
       <div className="flex flex-col gap-4">
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-sm text-amber-300 font-['DM_Sans']">
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-sm text-amber-300 font-body">
           Una vez que cierres este modal el secreto no podrá recuperarse. Guárdalo en un lugar seguro.
         </div>
         <div className="flex gap-2">
@@ -78,7 +78,7 @@ function SecretModal({
             readOnly
             value={secret}
             aria-label="Secreto del webhook"
-            className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-mono flex-1 outline-none select-all"
+            className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-mono flex-1 outline-none select-all"
           />
           <Button variant="secondary" onClick={copySecret} aria-label="Copiar secreto">
             {copied ? (
@@ -215,10 +215,10 @@ export default function WebhooksPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+          <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
             Webhooks
           </h1>
-          <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+          <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
             Notifica a sistemas externos cuando ocurren eventos en SEÑAL
           </p>
         </div>
@@ -230,7 +230,7 @@ export default function WebhooksPage() {
 
       <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm font-['DM_Sans']">
+          <table className="w-full text-sm font-body">
             <thead>
               <tr className="border-b border-white/5">
                 {['URL', 'Eventos', 'Estado', 'Acciones'].map((h) => (
@@ -247,7 +247,7 @@ export default function WebhooksPage() {
               {webhooks.map((wh, i) => (
                 <tr
                   key={wh.id}
-                  className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors ${
+                  className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors ${
                     i % 2 === 1 ? 'bg-white/[0.02]' : ''
                   }`}
                 >
@@ -332,7 +332,7 @@ export default function WebhooksPage() {
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <label className="text-sm text-[var(--muted)] font-body">
               URL del endpoint <span className="text-red-400">*</span>
             </label>
             <input
@@ -341,12 +341,12 @@ export default function WebhooksPage() {
               onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
               placeholder="https://mi-sistema.com/webhook"
               required
-              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all"
+              className="bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <span className="text-sm text-[var(--muted)] font-body">
               Eventos (vacío = todos)
             </span>
             <div className="flex flex-wrap gap-2">
@@ -355,9 +355,9 @@ export default function WebhooksPage() {
                   key={evt}
                   type="button"
                   onClick={() => toggleEvent(evt)}
-                  className={`px-3 py-1.5 text-xs rounded-lg border font-['DM_Sans'] transition-colors ${
+                  className={`px-3 py-1.5 text-xs rounded-lg border font-body transition-colors ${
                     form.event_types.includes(evt)
-                      ? 'bg-[var(--signal)] text-[var(--navy)] border-[var(--signal)] font-semibold'
+                      ? 'bg-[var(--signal)] text-[var(--on-brand)] border-[var(--signal)] font-semibold'
                       : 'bg-white/5 text-[var(--muted)] border-white/10 hover:border-[var(--signal)]'
                   }`}
                 >
@@ -381,7 +381,7 @@ export default function WebhooksPage() {
                 <div className="w-10 h-5 bg-white/10 rounded-full peer-checked:bg-[var(--signal)] transition-colors" />
                 <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5 pointer-events-none" />
               </div>
-              <span className="text-sm text-[var(--off-white)] font-['DM_Sans']">
+              <span className="text-sm text-[var(--off-white)] font-body">
                 Activar al crear
               </span>
             </label>

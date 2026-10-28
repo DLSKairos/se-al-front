@@ -77,10 +77,10 @@ const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
 ]
 
 const INPUT_CLASS =
-  'bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all placeholder:text-[var(--muted)] w-full'
+  'bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all placeholder:text-[var(--muted)] w-full'
 
 const SELECT_CLASS =
-  'bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all'
+  'bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all'
 
 // ── Componente principal ──────────────────────────────────────────────────────
 
@@ -181,10 +181,10 @@ export default function FormSubmissionsPage() {
       {/* Encabezado */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+          <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
             Envíos
           </h1>
-          <p className="text-sm text-[var(--muted)] mt-0.5 font-['DM_Sans']">
+          <p className="text-sm text-[var(--muted)] mt-0.5 font-body">
             Gestiona y revisa todos los formularios enviados
           </p>
         </div>
@@ -286,14 +286,14 @@ export default function FormSubmissionsPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm font-['DM_Sans']">
+              <table className="w-full text-sm font-body">
                 <thead>
                   <tr className="border-b border-white/5">
                     {['Formulario', 'Usuario', 'Obra', 'Estado', 'Fecha', 'Acciones'].map(
                       (h) => (
                         <th
                           key={h}
-                          className="text-left font-display font-semibold text-xs text-[var(--muted)] uppercase tracking-wider pb-3 pt-5 px-5 pr-4"
+                          className="text-left font-display font-semibold text-xs text-[var(--muted)] pb-3 pt-5 px-5 pr-4"
                         >
                           {h}
                         </th>
@@ -331,7 +331,7 @@ export default function FormSubmissionsPage() {
             {/* Paginación */}
             {data && data.total > LIMIT && (
               <div className="flex items-center justify-between px-5 py-4 border-t border-white/5">
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+                <p className="text-xs text-[var(--muted)] font-body">
                   {data.total} resultado{data.total !== 1 ? 's' : ''} —
                   Página {filters.page} de {totalPages}
                 </p>
@@ -379,10 +379,10 @@ export default function FormSubmissionsPage() {
                 .map((field, i) => (
                   <div
                     key={field.id}
-                    className="flex flex-col gap-0.5 px-3 py-2.5 rounded-lg hover:bg-[rgba(0,212,255,0.04)] transition-colors border border-transparent hover:border-[rgba(0,212,255,0.08)]"
+                    className="flex flex-col gap-0.5 px-3 py-2.5 rounded-lg hover:bg-[var(--wash)] transition-colors border border-transparent hover:border-[color:var(--line)]"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-[var(--muted)] font-dm w-5 shrink-0 text-right">
+                      <span className="text-[12px] text-[var(--muted)] font-dm w-5 shrink-0 text-right">
                         {i + 1}
                       </span>
                       <span
@@ -394,7 +394,7 @@ export default function FormSubmissionsPage() {
                       <p className="text-sm text-[var(--off-white)] font-dm font-medium flex-1 min-w-0">
                         {field.label}
                       </p>
-                      <span className="text-[9px] font-bold tracking-[0.08em] uppercase px-2 py-0.5 rounded bg-[rgba(255,255,255,0.06)] text-[var(--muted)] border border-white/10 shrink-0">
+                      <span className="text-[12px] font-bold px-2 py-0.5 rounded bg-[color-mix(in_srgb,var(--fg)_6%,transparent)] text-[var(--muted)] border border-white/10 shrink-0">
                         {FIELD_TYPE_LABELS[field.type] ?? field.type}
                       </span>
                     </div>
@@ -464,7 +464,7 @@ function SubmissionRow({ submission, index, onView, onReject }: SubmissionRowPro
 
   return (
     <tr
-      className={`border-b border-white/5 hover:bg-[rgba(22,34,56,0.3)] transition-colors cursor-pointer ${
+      className={`border-b border-white/5 hover:bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-colors cursor-pointer ${
         index % 2 === 1 ? 'bg-white/[0.02]' : ''
       }`}
       onClick={onView}

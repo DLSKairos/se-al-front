@@ -70,10 +70,10 @@ export default function CreateOrgPage() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="font-['Syne'] font-bold text-2xl text-[var(--off-white)]">
+          <h1 className="font-display font-bold text-2xl text-[var(--off-white)]">
             Nueva organización
           </h1>
-          <p className="text-sm text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+          <p className="text-sm text-[var(--muted)] font-body mt-0.5">
             Crea una nueva organización en SEÑAL
           </p>
         </div>
@@ -85,9 +85,9 @@ export default function CreateOrgPage() {
           {/* Ícono ilustrativo */}
           <div className="flex items-center gap-4 pb-4 border-b border-white/5">
             <div className="w-12 h-12 rounded-xl bg-[var(--signal)]/10 flex items-center justify-center shrink-0">
-              <Building2 className="w-6 h-6 text-[var(--signal)]" />
+              <Building2 className="w-6 h-6 text-[var(--accent-ink)]" />
             </div>
-            <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+            <p className="text-sm text-[var(--muted)] font-body">
               La organización agrupará usuarios, formularios, ubicaciones y toda la
               configuración del tenant.
             </p>
@@ -97,7 +97,7 @@ export default function CreateOrgPage() {
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="org-name"
-              className="text-sm font-medium text-[var(--off-white)] font-['DM_Sans']"
+              className="text-sm font-medium text-[var(--off-white)] font-body"
             >
               Nombre de la organización
               <span className="text-red-400 ml-1" aria-hidden="true">*</span>
@@ -113,13 +113,13 @@ export default function CreateOrgPage() {
               disabled={createMutation.isPending}
               aria-invalid={!!nameError}
               aria-describedby={nameError ? 'org-name-error' : undefined}
-              className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-3 text-[var(--off-white)] placeholder-[var(--muted)] font-dm text-sm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_rgba(0,212,255,0.1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed aria-[invalid=true]:border-red-500/50"
+              className="w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-3 text-[var(--off-white)] placeholder-[var(--muted)] font-dm text-sm outline-none focus:border-[var(--signal)] focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_10%,transparent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed aria-[invalid=true]:border-red-500/50"
             />
             {nameError && (
               <p
                 id="org-name-error"
                 role="alert"
-                className="text-xs text-red-400 font-['DM_Sans']"
+                className="text-xs text-red-400 font-body"
               >
                 {nameError}
               </p>

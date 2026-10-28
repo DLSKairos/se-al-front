@@ -51,7 +51,7 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-[var(--signal)] hover:underline"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--accent-ink)] hover:underline"
           >
             <Download className="w-3 h-3" />
             Descargar imagen
@@ -64,7 +64,7 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--signal)] hover:underline"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--accent-ink)] hover:underline"
       >
         <Download className="w-3.5 h-3.5" />
         Descargar archivo
@@ -96,7 +96,7 @@ function FieldValueDisplay({ fieldValue }: { fieldValue: FormSubmissionValue }) 
           {content.map((item, i) => (
             <span
               key={i}
-              className="inline-flex items-center px-2 py-0.5 text-xs rounded bg-[var(--signal-dim)] text-[var(--signal)] border border-[var(--signal)]/20"
+              className="inline-flex items-center px-2 py-0.5 text-xs rounded bg-[var(--signal-dim)] text-[var(--accent-ink)] border border-[var(--signal)]/20"
             >
               {String(item)}
             </span>
@@ -138,7 +138,7 @@ function SignatureCard({ signature }: { signature: FormSignature }) {
     <div className="glass-card-md p-4 flex flex-col gap-3">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-medium text-[var(--off-white)] font-['DM_Sans']">
+          <p className="text-sm font-medium text-[var(--off-white)] font-body">
             {signature.signer_name}
           </p>
           {signature.signer_role && (
@@ -180,11 +180,11 @@ function InfoRow({ icon: Icon, label, value }: InfoRowProps) {
   return (
     <div className="flex items-center gap-3">
       <div className="w-8 h-8 rounded-lg bg-[var(--signal-dim)] flex items-center justify-center shrink-0">
-        <Icon className="w-4 h-4 text-[var(--signal)]" />
+        <Icon className="w-4 h-4 text-[var(--accent-ink)]" />
       </div>
       <div>
-        <p className="text-xs text-[var(--muted)] font-['DM_Sans']">{label}</p>
-        <p className="text-sm text-[var(--off-white)] font-['DM_Sans']">{value}</p>
+        <p className="text-xs text-[var(--muted)] font-body">{label}</p>
+        <p className="text-sm text-[var(--off-white)] font-body">{value}</p>
       </div>
     </div>
   )
@@ -248,10 +248,10 @@ export default function SubmissionDetailPage() {
         >
           <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
           <div>
-            <p className="text-sm font-semibold text-red-300 font-['DM_Sans'] mb-0.5">
+            <p className="text-sm font-semibold text-red-300 font-body mb-0.5">
               Formulario rechazado
             </p>
-            <p className="text-sm text-red-200/80 font-['DM_Sans']">{rejectionReason}</p>
+            <p className="text-sm text-red-200/80 font-body">{rejectionReason}</p>
           </div>
         </div>
       )}
@@ -270,7 +270,7 @@ export default function SubmissionDetailPage() {
           </Button>
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-[var(--off-white)] font-['Syne']">
+              <h1 className="text-2xl font-bold text-[var(--off-white)] font-display">
                 {submission.template?.name ?? 'Envío'}
               </h1>
               <SubmissionStatusBadge
@@ -279,7 +279,7 @@ export default function SubmissionDetailPage() {
                 rejectionReason={rejectionReason}
               />
             </div>
-            <p className="text-sm text-[var(--muted)] mt-1 font-['DM_Sans']">
+            <p className="text-sm text-[var(--muted)] mt-1 font-body">
               Enviado por{' '}
               <span className="text-[var(--off-white)]">
                 {submission.submitter?.name ?? submission.submitted_by}
@@ -316,7 +316,7 @@ export default function SubmissionDetailPage() {
 
       {/* Información de contexto */}
       <div className="glass-card p-5">
-        <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
+        <h2 className="font-display font-semibold text-[var(--off-white)] mb-4 text-sm">
           Información del envío
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -356,9 +356,9 @@ export default function SubmissionDetailPage() {
       <div className="glass-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-7 h-7 rounded-lg bg-[var(--signal-dim)] flex items-center justify-center shrink-0">
-            <Users className="w-3.5 h-3.5 text-[var(--signal)]" />
+            <Users className="w-3.5 h-3.5 text-[var(--accent-ink)]" />
           </div>
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] text-sm">
+          <h2 className="font-display font-semibold text-[var(--off-white)] text-sm">
             Firmantes requeridos
           </h2>
         </div>
@@ -372,7 +372,7 @@ export default function SubmissionDetailPage() {
       {/* Valores del formulario */}
       {hasValues && (
         <div className="glass-card p-5">
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
+          <h2 className="font-display font-semibold text-[var(--off-white)] mb-4 text-sm">
             Respuestas del formulario
           </h2>
           <div className="flex flex-col divide-y divide-white/5">
@@ -384,7 +384,7 @@ export default function SubmissionDetailPage() {
               })
               .map((fieldValue) => (
                 <div key={fieldValue.id} className="py-4 first:pt-0 last:pb-0">
-                  <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-1.5 uppercase tracking-wide">
+                  <p className="text-xs text-[var(--muted)] font-body mb-1.5 ">
                     {fieldValue.field?.label ?? fieldValue.field_id}
                   </p>
                   <FieldValueDisplay fieldValue={fieldValue} />
@@ -397,13 +397,13 @@ export default function SubmissionDetailPage() {
       {/* Datos raw si no hay values estructurados */}
       {!hasValues && Object.keys(submission.data).length > 0 && (
         <div className="glass-card p-5">
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
+          <h2 className="font-display font-semibold text-[var(--off-white)] mb-4 text-sm">
             Datos del formulario
           </h2>
           <div className="flex flex-col divide-y divide-white/5">
             {Object.entries(submission.data).map(([key, value]) => (
               <div key={key} className="py-4 first:pt-0 last:pb-0">
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mb-1.5 uppercase tracking-wide">
+                <p className="text-xs text-[var(--muted)] font-body mb-1.5 ">
                   {key}
                 </p>
                 <p className="text-sm text-[var(--off-white)] whitespace-pre-wrap">
@@ -420,7 +420,7 @@ export default function SubmissionDetailPage() {
       {/* Firmas simples (FormSignature legacy) */}
       {hasSignatures && (
         <div className="glass-card p-5">
-          <h2 className="font-['Syne'] font-semibold text-[var(--off-white)] mb-4 text-sm">
+          <h2 className="font-display font-semibold text-[var(--off-white)] mb-4 text-sm">
             Firmas ({submission.signatures!.length})
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -434,7 +434,7 @@ export default function SubmissionDetailPage() {
       {/* Sin contenido */}
       {!hasValues && Object.keys(submission.data).length === 0 && !hasSignatures && (
         <div className="glass-card p-10 text-center">
-          <p className="text-[var(--muted)] text-sm font-['DM_Sans']">
+          <p className="text-[var(--muted)] text-sm font-body">
             Este envío no contiene datos adicionales
           </p>
         </div>

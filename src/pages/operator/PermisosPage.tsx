@@ -5,6 +5,7 @@ import api from '@/lib/api'
 import { QK } from '@/lib/queryKeys'
 import { FormTemplate } from '@/types'
 import { LoadingSpinner, ErrorMessage } from '@/components/ui'
+import { TemplateIcon } from '@/components/ui/TemplateIcon'
 import { SOSButton } from '@/components/ui/SOSButton'
 import { usePageTitle } from '@/hooks/usePageTitle'
 
@@ -14,6 +15,7 @@ export function frequencyLabel(freq: string) {
     WEEKLY: 'Semanal',
     PER_EVENT: 'Por evento',
     ONCE: 'Una vez',
+    MONTHLY: 'Mensual',
   }
   return map[freq] ?? 'Cuando aplique'
 }
@@ -33,16 +35,13 @@ export default function PermisosPage() {
       className="min-h-screen bg-[var(--navy)] flex flex-col pb-24 overflow-x-hidden"
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
-      <div className="px-6 pt-4 pb-2">
-        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)]">
-          Formularios
-        </p>
-        <h1 className="font-display font-bold text-sm text-[var(--off-white)]">
-          Permisos disponibles
+      <div className="px-5 pb-2">
+        <h1 className="font-display font-extrabold text-[44px] leading-[0.95] text-[var(--fg)] pt-12">
+          Permisos
         </h1>
       </div>
 
-      <div className="flex flex-col gap-3 px-6 pt-4">
+      <div className="flex flex-col gap-3 px-5 pt-4">
         {isLoading && <LoadingSpinner label="Cargando permisos..." />}
 
         {!isLoading && error && (
@@ -65,21 +64,21 @@ export default function PermisosPage() {
             key={template.id}
             type="button"
             onClick={() => navigate(`/form/${template.id}`)}
-            className="w-full min-w-0 flex items-center gap-4 p-5 glass rounded-[20px] hover:border-[rgba(0,212,255,0.3)] transition-all text-left active:scale-[0.98] overflow-hidden"
+            className="w-full min-w-0 flex items-center gap-4 p-5 glass rounded-[20px] hover:border-[color:var(--line-strong)] transition-all text-left active:scale-[0.98] overflow-hidden"
           >
-            <div className="w-12 h-12 rounded-[14px] bg-[rgba(255,255,255,0.04)] flex items-center justify-center text-2xl shrink-0 border border-white/5">
-              {template.icon ?? '📋'}
+            <div className="w-12 h-12 rounded-[14px] bg-[var(--brand)] text-[var(--on-brand)] flex items-center justify-center text-2xl shrink-0 border border-white/5">
+              <TemplateIcon icon={template.icon} className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-display font-semibold text-[var(--off-white)] truncate mb-1">
                 {template.name}
               </p>
               {template.description && (
-                <p className="text-xs text-[var(--muted)] font-dm line-clamp-1 mb-1.5">
+                <p className="text-xs text-[var(--muted)] font-dm line-clamp-2 mb-1.5">
                   {template.description}
                 </p>
               )}
-              <span className="text-[9px] font-bold tracking-[0.1em] uppercase px-2.5 py-1 rounded bg-[rgba(0,212,255,0.1)] text-[var(--signal)] border border-[rgba(0,212,255,0.25)]">
+              <span className="text-[12px] font-bold px-2.5 py-1 rounded bg-[var(--wash-brand)] text-[var(--accent-ink)] border border-[color:var(--line-strong)]">
                 {frequencyLabel(template.data_frequency)}
               </span>
             </div>

@@ -69,7 +69,7 @@ const CommunicationsPage   = lazy(() => import('@/pages/admin/CommunicationsPage
 
 const Placeholder = ({ name }: { name: string }) => (
   <div className="flex items-center justify-center min-h-screen bg-[var(--navy)]">
-    <p className="text-[var(--off-white)] text-xl font-['DM_Sans']">{name} — en construcción</p>
+    <p className="text-[var(--off-white)] text-xl font-body">{name} — en construcción</p>
   </div>
 )
 

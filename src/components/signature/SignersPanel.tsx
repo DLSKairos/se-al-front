@@ -12,7 +12,7 @@ import type { SignatureStatusEntry, ExternalSigner, SignatureLinkStatus } from '
 function LinkStatusChip({ status }: { status: SignatureLinkStatus | null }) {
   if (status === 'SIGNED') {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-['DM_Sans']">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-body">
         <Check className="w-3 h-3" />
         Firmado
       </span>
@@ -20,7 +20,7 @@ function LinkStatusChip({ status }: { status: SignatureLinkStatus | null }) {
   }
   if (status === 'VIEWED') {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-[var(--signal-dim)] text-[var(--signal)] border border-[var(--signal)]/25 font-['DM_Sans']">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-[var(--signal-dim)] text-[var(--accent-ink)] border border-[var(--signal)]/25 font-body">
         <Eye className="w-3 h-3" />
         Visto
       </span>
@@ -28,14 +28,14 @@ function LinkStatusChip({ status }: { status: SignatureLinkStatus | null }) {
   }
   if (status === 'SENT') {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-amber-500/15 text-amber-400 border border-amber-500/25 font-['DM_Sans']">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-amber-500/15 text-amber-400 border border-amber-500/25 font-body">
         <Send className="w-3 h-3" />
         Link enviado
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-white/5 text-[var(--muted)] border border-white/10 font-['DM_Sans']">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-[var(--radius-badge)] bg-white/5 text-[var(--muted)] border border-white/10 font-body">
       <Clock className="w-3 h-3" />
       Pendiente
     </span>
@@ -62,14 +62,14 @@ function SignerRow({
       <div className="flex flex-col gap-3 p-4 rounded-[var(--radius-glass-md)] bg-white/5 border border-white/8">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-base font-semibold text-[var(--off-white)] font-['Syne']">
+            <p className="text-base font-semibold text-[var(--off-white)] font-display">
               {entry.name}
             </p>
-            <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+            <p className="text-xs text-[var(--muted)] font-body mt-0.5">
               {entry.type === 'INTERNAL' ? 'Operario SEÑAL' : 'Firmante externo'}
             </p>
             {entry.signed_at && (
-              <p className="text-xs text-[var(--muted)] font-['DM_Sans'] mt-0.5">
+              <p className="text-xs text-[var(--muted)] font-body mt-0.5">
                 Firmado el {new Date(entry.signed_at).toLocaleString('es-CO')}
               </p>
             )}
@@ -88,15 +88,15 @@ function SignerRow({
     <div className="flex items-center justify-between gap-3 py-3 border-b border-white/5 last:border-0">
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-8 h-8 rounded-full bg-[var(--signal-dim)] flex items-center justify-center shrink-0">
-          <span className="text-xs font-bold text-[var(--signal)] font-['Syne']">
+          <span className="text-xs font-bold text-[var(--accent-ink)] font-display">
             {entry.name.charAt(0).toUpperCase()}
           </span>
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-medium text-[var(--off-white)] font-['DM_Sans'] truncate">
+          <p className="text-sm font-medium text-[var(--off-white)] font-body truncate">
             {entry.name}
           </p>
-          <p className="text-xs text-[var(--muted)] font-['DM_Sans']">
+          <p className="text-xs text-[var(--muted)] font-body">
             {entry.type === 'INTERNAL' ? 'Operario SEÑAL' : 'Externo'}
             {entry.signed_at && ` · ${new Date(entry.signed_at).toLocaleDateString('es-CO')}`}
           </p>
@@ -219,9 +219,9 @@ function AddSignerModal({
         {/* Tabs */}
         <div className="flex rounded-[var(--radius-btn)] overflow-hidden border border-white/10">
           <button
-            className={`flex-1 py-2 text-sm font-['DM_Sans'] transition-colors ${
+            className={`flex-1 py-2 text-sm font-body transition-colors ${
               mode === 'catalog'
-                ? 'bg-[var(--signal-dim)] text-[var(--signal)]'
+                ? 'bg-[var(--signal-dim)] text-[var(--accent-ink)]'
                 : 'text-[var(--muted)] hover:text-[var(--off-white)]'
             }`}
             onClick={() => setMode('catalog')}
@@ -230,9 +230,9 @@ function AddSignerModal({
             Del catálogo
           </button>
           <button
-            className={`flex-1 py-2 text-sm font-['DM_Sans'] transition-colors ${
+            className={`flex-1 py-2 text-sm font-body transition-colors ${
               mode === 'new'
-                ? 'bg-[var(--signal-dim)] text-[var(--signal)]'
+                ? 'bg-[var(--signal-dim)] text-[var(--accent-ink)]'
                 : 'text-[var(--muted)] hover:text-[var(--off-white)]'
             }`}
             onClick={() => setMode('new')}
@@ -252,22 +252,22 @@ function AddSignerModal({
                 placeholder="Buscar por nombre o cédula..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] pl-10 pr-4 py-2.5 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] placeholder:text-[var(--muted)]"
+                className="w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] pl-10 pr-4 py-2.5 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] placeholder:text-[var(--muted)]"
               />
             </div>
 
             {/* Lista */}
             <div className="max-h-52 overflow-y-auto flex flex-col gap-1.5">
               {loadingSigners && (
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans'] text-center py-4">
+                <p className="text-xs text-[var(--muted)] font-body text-center py-4">
                   Cargando firmantes...
                 </p>
               )}
               {!loadingSigners && filtered.length === 0 && (
-                <p className="text-xs text-[var(--muted)] font-['DM_Sans'] text-center py-4">
+                <p className="text-xs text-[var(--muted)] font-body text-center py-4">
                   No hay firmantes en el catálogo.{' '}
                   <button
-                    className="text-[var(--signal)] hover:underline"
+                    className="text-[var(--accent-ink)] hover:underline"
                     onClick={() => setMode('new')}
                   >
                     Crea uno nuevo
@@ -285,16 +285,16 @@ function AddSignerModal({
                   onClick={() => setSelectedSignerId(s.id)}
                 >
                   <div className="w-8 h-8 rounded-full bg-[var(--signal-dim)] flex items-center justify-center shrink-0">
-                    <span className="text-xs font-bold text-[var(--signal)]">
+                    <span className="text-xs font-bold text-[var(--accent-ink)]">
                       {s.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm text-[var(--off-white)] font-['DM_Sans'] truncate">{s.name}</p>
+                    <p className="text-sm text-[var(--off-white)] font-body truncate">{s.name}</p>
                     <p className="text-xs text-[var(--muted)]">CC: {s.identification_number} · {s.phone}</p>
                   </div>
                   {selectedSignerId === s.id && (
-                    <Check className="w-4 h-4 text-[var(--signal)] shrink-0 ml-auto" />
+                    <Check className="w-4 h-4 text-[var(--accent-ink)] shrink-0 ml-auto" />
                   )}
                 </button>
               ))}
@@ -323,7 +323,7 @@ function AddSignerModal({
               <div key={key}>
                 <label
                   htmlFor={`new-signer-${key}`}
-                  className="block text-xs text-[var(--muted)] font-['DM_Sans'] mb-1"
+                  className="block text-xs text-[var(--muted)] font-body mb-1"
                 >
                   {label}
                 </label>
@@ -333,7 +333,7 @@ function AddSignerModal({
                   value={form[key as keyof typeof form]}
                   onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                   placeholder={placeholder}
-                  className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(0,212,255,0.15)] rounded-[var(--radius-input)] px-4 py-2.5 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] placeholder:text-[var(--muted)]"
+                  className="w-full bg-[color-mix(in_srgb,var(--fg)_5%,transparent)] border border-[color:var(--line)] rounded-[var(--radius-input)] px-4 py-2.5 text-sm text-[var(--off-white)] font-dm outline-none focus:border-[var(--signal)] placeholder:text-[var(--muted)]"
                 />
                 {formErrors[key] && (
                   <p className="text-xs text-red-400 mt-1">{formErrors[key]}</p>
@@ -402,8 +402,8 @@ function SendLinkModal({ open, onClose, token, submissionId }: SendLinkModalProp
     >
       <div className="flex flex-col gap-4">
         <div className="p-3 rounded-[var(--radius-input)] bg-white/5 border border-white/8">
-          <p className="text-xs text-[var(--muted)] font-['DM_Sans']">Destinatario</p>
-          <p className="text-sm text-[var(--off-white)] font-semibold font-['DM_Sans']">
+          <p className="text-xs text-[var(--muted)] font-body">Destinatario</p>
+          <p className="text-sm text-[var(--off-white)] font-semibold font-body">
             {token.external_signer?.name ?? '—'}
           </p>
           <p className="text-xs text-[var(--muted)] mt-0.5">
@@ -412,7 +412,7 @@ function SendLinkModal({ open, onClose, token, submissionId }: SendLinkModalProp
         </div>
 
         <div className="p-3 rounded-[var(--radius-input)] bg-amber-500/8 border border-amber-500/20">
-          <p className="text-xs text-amber-400 font-['DM_Sans']">
+          <p className="text-xs text-amber-400 font-body">
             El link vence en 2 horas. Al tocar el botón se abrira WhatsApp con el mensaje listo.
           </p>
         </div>
@@ -484,7 +484,7 @@ export default function SignersPanel({
   if (error) {
     return (
       <div className="p-4 rounded-[var(--radius-glass-md)] bg-red-500/10 border border-red-500/20">
-        <p className="text-sm text-red-400 font-['DM_Sans']">
+        <p className="text-sm text-red-400 font-body">
           Error al cargar los firmantes.{' '}
           <button className="underline hover:no-underline" onClick={() => refetch()}>
             Reintentar
@@ -499,7 +499,7 @@ export default function SignersPanel({
       {/* Lista de firmantes */}
       {signerEntries.length === 0 ? (
         <div className="text-center py-6">
-          <p className="text-sm text-[var(--muted)] font-['DM_Sans']">
+          <p className="text-sm text-[var(--muted)] font-body">
             No hay firmantes registrados para este documento.
           </p>
         </div>

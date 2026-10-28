@@ -23,14 +23,8 @@ type GpsState = 'idle' | 'loading' | 'ok' | 'error'
 // consistente a cada obra sin necesitar campo de imagen en el backend.
 
 const GRADIENTS: [string, string][] = [
-  ['#1a2a4a', '#0e3a5c'],   // azul profundo
-  ['#1a2e1a', '#0d3d1a'],   // verde oscuro
-  ['#2e1a0e', '#3d1a00'],   // marrón tierra
-  ['#1a1a2e', '#16213e'],   // navy violáceo
-  ['#2e1a2e', '#1a0d26'],   // morado oscuro
-  ['#2e2a1a', '#3d3000'],   // ocre oscuro
-  ['#0e2e2e', '#003d3d'],   // teal oscuro
-  ['#2e0e1a', '#3d0014'],   // rojo oscuro
+  ['#1E1D18', '#2B2920'],
+  ['#1E1D18', '#26241D'],
 ]
 
 function getGradient(name: string): [string, string] {
@@ -67,10 +61,8 @@ function LocationCard({ location, isSelected, hasCheckinToday, onSelect }: Locat
         minHeight: 140,
         border: isSelected
           ? '2px solid var(--signal)'
-          : '2px solid rgba(255,255,255,0.06)',
-        boxShadow: isSelected
-          ? '0 0 0 1px rgba(0,212,255,0.2), 0 4px 20px rgba(0,0,0,0.4)'
-          : '0 4px 20px rgba(0,0,0,0.3)',
+          : '2px solid color-mix(in srgb,var(--fg) 6%,transparent)',
+        boxShadow: isSelected ? 'var(--shadow-2)' : 'var(--shadow-1)',
       }}
       whileTap={{ scale: 0.97 }}
       animate={isSelected ? { scale: 1.02 } : { scale: 1 }}
@@ -99,7 +91,7 @@ function LocationCard({ location, isSelected, hasCheckinToday, onSelect }: Locat
             className="absolute inset-0"
             style={{
               background:
-                'radial-gradient(ellipse at 50% 50%, rgba(0,212,255,0.15) 0%, transparent 70%)',
+                'radial-gradient(ellipse at 50% 50%, color-mix(in srgb,var(--brand) 15%,transparent) 0%, transparent 70%)',
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -120,14 +112,14 @@ function LocationCard({ location, isSelected, hasCheckinToday, onSelect }: Locat
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wide">
+              <span className="text-[13px] font-bold text-[#7CF0A8] ">
                 Activa
               </span>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm">
-              <span className="w-2 h-2 rounded-full bg-white/30" />
-              <span className="text-[10px] font-semibold text-white/40 uppercase tracking-wide">
+              <span className="w-2 h-2 rounded-full bg-[#FFFFFF66]" />
+              <span className="text-[13px] font-bold text-[#FFFFFFB8] ">
                 Inactiva
               </span>
             </div>
@@ -142,7 +134,7 @@ function LocationCard({ location, isSelected, hasCheckinToday, onSelect }: Locat
               className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
               style={{ background: 'var(--signal)' }}
             >
-              <CheckCircle className="w-4 h-4 text-[var(--navy)]" />
+              <CheckCircle className="w-4 h-4 text-[var(--on-brand)]" />
             </motion.div>
           )}
         </div>
@@ -152,11 +144,11 @@ function LocationCard({ location, isSelected, hasCheckinToday, onSelect }: Locat
           {/* Badge "Ya ingresaste hoy" */}
           {hasCheckinToday && (
             <div
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-2 text-[10px] font-bold uppercase tracking-wide"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-2 text-[12px] font-bold "
               style={{
-                background: 'rgba(0,212,255,0.2)',
-                border: '1px solid rgba(0,212,255,0.4)',
-                color: 'var(--signal)',
+                background: 'color-mix(in srgb,var(--brand) 20%,transparent)',
+                border: '1px solid color-mix(in srgb,var(--brand) 40%,transparent)',
+                color: '#FFC400',
               }}
             >
               <CheckCircle className="w-3 h-3" />
@@ -165,14 +157,14 @@ function LocationCard({ location, isSelected, hasCheckinToday, onSelect }: Locat
           )}
 
           <h2
-            className="font-display font-bold text-white leading-tight"
+            className="font-display font-bold text-[#FFFFFF] leading-tight"
             style={{ fontSize: 'clamp(15px, 4vw, 18px)' }}
           >
             {location.name}
           </h2>
 
           {location.contractor && (
-            <p className="text-[11px] text-white/60 font-dm mt-1 truncate">
+            <p className="text-[13px] text-[#FFFFFFB8] font-body mt-1 truncate">
               {location.contractor}
             </p>
           )}
@@ -190,8 +182,8 @@ function CardSkeleton() {
       className="w-full rounded-[18px] animate-pulse"
       style={{
         minHeight: 140,
-        background: 'rgba(255,255,255,0.05)',
-        border: '2px solid rgba(255,255,255,0.04)',
+        background: 'color-mix(in srgb,var(--fg) 5%,transparent)',
+        border: '2px solid color-mix(in srgb,var(--fg) 4%,transparent)',
       }}
     />
   )
@@ -211,15 +203,15 @@ function EmptyState() {
         aria-hidden="true"
         className="mb-6 opacity-60"
       >
-        <circle cx="40" cy="40" r="36" fill="rgba(0,212,255,0.08)" stroke="rgba(0,212,255,0.2)" strokeWidth="1.5" />
+        <circle cx="40" cy="40" r="36" fill="color-mix(in srgb,var(--brand) 8%,transparent)" stroke="color-mix(in srgb,var(--brand) 20%,transparent)" strokeWidth="1.5" />
         <path
           d="M40 22c-7.18 0-13 5.82-13 13 0 7.5 8.5 17.5 12.05 21.5a1.3 1.3 0 001.9 0C44.5 52.5 53 42.5 53 35c0-7.18-5.82-13-13-13z"
-          fill="rgba(0,212,255,0.15)"
-          stroke="rgba(0,212,255,0.4)"
+          fill="color-mix(in srgb,var(--brand) 15%,transparent)"
+          stroke="color-mix(in srgb,var(--brand) 40%,transparent)"
           strokeWidth="1.5"
         />
-        <circle cx="40" cy="35" r="4" fill="rgba(0,212,255,0.5)" />
-        <path d="M28 60h24M32 65h16" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="40" cy="35" r="4" fill="color-mix(in srgb,var(--brand) 50%,transparent)" />
+        <path d="M28 60h24M32 65h16" stroke="color-mix(in srgb,var(--fg) 15%,transparent)" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
 
       <p className="font-display font-semibold text-[var(--off-white)] text-lg mb-2">
@@ -257,8 +249,8 @@ function renderGpsStatus(
           role="alert"
           className={`${wrapperClass}flex items-start gap-3 p-4 rounded-[14px] ${spacingClass}`}
           style={{
-            background: 'rgba(239,68,68,0.1)',
-            border: '1px solid rgba(239,68,68,0.2)',
+            background: 'color-mix(in srgb,var(--danger) 10%,transparent)',
+            border: '1px solid color-mix(in srgb,var(--danger) 20%,transparent)',
           }}
         >
           <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
@@ -298,7 +290,7 @@ function renderConfirmButtonLabel(gpsState: GpsState, idleGapClass: string) {
         <span
           className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin inline-block shrink-0"
           style={{
-            borderColor: 'rgba(12,22,36,0.5)',
+            borderColor: 'color-mix(in srgb,var(--surface) 50%,transparent)',
             borderTopColor: 'transparent',
           }}
         />
@@ -348,7 +340,7 @@ function SingleLocationView({
         className="w-full rounded-[24px] overflow-hidden mb-8"
         style={{
           background: `linear-gradient(150deg, ${from} 0%, ${to} 100%)`,
-          border: '2px solid rgba(0,212,255,0.2)',
+          border: '2px solid color-mix(in srgb,var(--brand) 20%,transparent)',
           boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
         }}
       >
@@ -367,7 +359,7 @@ function SingleLocationView({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
               </span>
-              <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">
+              <span className="text-xs font-semibold text-emerald-400 ">
                 Obra activa
               </span>
             </div>
@@ -375,11 +367,11 @@ function SingleLocationView({
 
           {hasCheckinToday && (
             <div
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-4 text-xs font-bold uppercase tracking-wide"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-4 text-xs font-bold "
               style={{
-                background: 'rgba(0,212,255,0.2)',
-                border: '1px solid rgba(0,212,255,0.4)',
-                color: 'var(--signal)',
+                background: 'color-mix(in srgb,var(--brand) 20%,transparent)',
+                border: '1px solid color-mix(in srgb,var(--brand) 40%,transparent)',
+                color: 'var(--accent-ink)',
               }}
             >
               <CheckCircle className="w-3.5 h-3.5" />
@@ -391,7 +383,7 @@ function SingleLocationView({
             {location.name}
           </h2>
           {location.contractor && (
-            <p className="text-white/60 font-dm text-sm">{location.contractor}</p>
+            <p className="text-[var(--fg-muted)] font-dm text-sm">{location.contractor}</p>
           )}
         </div>
       </div>
@@ -409,10 +401,10 @@ function SingleLocationView({
         className="w-full rounded-[18px] font-display font-bold text-xl transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none"
         style={{
           background: 'var(--signal)',
-          color: 'var(--navy)',
+          color: 'var(--on-brand)',
           padding: '20px 24px',
           minHeight: 68,
-          boxShadow: '0 4px 20px rgba(0,212,255,0.35)',
+          boxShadow: '0 4px 20px color-mix(in srgb,var(--brand) 35%,transparent)',
         }}
       >
         {renderConfirmButtonLabel(gpsState, 'gap-3')}
@@ -568,10 +560,7 @@ export default function LocationSelectPage() {
         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
         <div className="px-5 pt-12 pb-4">
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-            Ubicacion
-          </p>
-          <h1 className="font-display font-extrabold text-2xl text-[var(--off-white)] leading-tight">
+          <h1 className="font-display font-extrabold text-[40px] text-[var(--fg)] leading-[0.95]">
             Selecciona tu obra
           </h1>
         </div>
@@ -592,10 +581,10 @@ export default function LocationSelectPage() {
         }}
       >
         <div className="px-5 pt-8 pb-2">
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
+          <p className="text-[12px] font-semibold text-[var(--accent-ink)] mb-1">
             Tu obra
           </p>
-          <h1 className="font-display font-extrabold text-2xl text-[var(--off-white)] leading-tight">
+          <h1 className="font-display font-extrabold text-[40px] text-[var(--fg)] leading-[0.95]">
             Confirma tu ubicación
           </h1>
         </div>
@@ -625,10 +614,7 @@ export default function LocationSelectPage() {
     >
       {/* Header */}
       <div className="px-5 pt-12 pb-4 shrink-0">
-        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--signal)] mb-1">
-          Ubicación
-        </p>
-        <h1 className="font-display font-extrabold text-2xl text-[var(--off-white)] leading-tight mb-4">
+        <h1 className="font-display font-extrabold text-[40px] text-[var(--fg)] leading-[0.95] mb-4">
           Selecciona tu obra
         </h1>
 
@@ -636,14 +622,14 @@ export default function LocationSelectPage() {
         <div
           className="flex items-center gap-3 rounded-[14px] px-4"
           style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: '1.5px solid rgba(0,212,255,0.15)',
+            background: 'color-mix(in srgb,var(--fg) 6%,transparent)',
+            border: '1.5px solid color-mix(in srgb,var(--brand) 15%,transparent)',
             height: 52,
           }}
         >
           <Search
             className="w-5 h-5 shrink-0"
-            style={{ color: 'var(--signal)' }}
+            style={{ color: 'var(--accent-ink)' }}
             aria-hidden="true"
           />
           <input
@@ -735,10 +721,10 @@ export default function LocationSelectPage() {
               className="w-full rounded-[16px] font-display font-bold text-lg transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none"
               style={{
                 background: 'var(--signal)',
-                color: 'var(--navy)',
+                color: 'var(--on-brand)',
                 padding: '18px 24px',
                 minHeight: 60,
-                boxShadow: '0 4px 20px rgba(0,212,255,0.3)',
+                boxShadow: '0 4px 20px color-mix(in srgb,var(--brand) 30%,transparent)',
               }}
             >
               {renderConfirmButtonLabel(gpsState, 'gap-2')}

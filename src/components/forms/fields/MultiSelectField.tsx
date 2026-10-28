@@ -29,7 +29,7 @@ export function MultiSelectField({ field, value, onChange, disabled }: MultiSele
             className={`flex items-center gap-3 p-4 rounded-[14px] border cursor-pointer transition-all duration-200 select-none active:scale-[0.98] ${
               checked
                 ? 'border-[var(--signal)] bg-[var(--signal-dim)] text-[var(--off-white)]'
-                : 'border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] text-[var(--muted)] hover:border-white/20 hover:text-[var(--off-white)]'
+                : 'border-[color-mix(in_srgb,var(--fg)_8%,transparent)] bg-[color-mix(in_srgb,var(--fg)_3%,transparent)] text-[var(--muted)] hover:border-white/20 hover:text-[var(--off-white)]'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <input
@@ -43,12 +43,12 @@ export function MultiSelectField({ field, value, onChange, disabled }: MultiSele
               className={`w-5 h-5 rounded flex items-center justify-center shrink-0 transition-colors ${
                 checked
                   ? 'bg-[var(--signal)] border-0'
-                  : 'border border-[rgba(255,255,255,0.2)] bg-transparent'
+                  : 'border border-[color-mix(in_srgb,var(--fg)_20%,transparent)] bg-transparent'
               }`}
               aria-hidden="true"
             >
               {checked && (
-                <svg className="w-3 h-3 text-[var(--navy)]" viewBox="0 0 12 12" fill="none">
+                <svg className="w-3 h-3 text-[var(--on-brand)]" viewBox="0 0 12 12" fill="none">
                   <path
                     d="M2 6l3 3 5-5"
                     stroke="currentColor"
