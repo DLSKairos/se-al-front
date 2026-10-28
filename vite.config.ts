@@ -128,6 +128,7 @@ export default defineConfig(({ mode }) => {
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    env: { VITE_API_URL: 'https://localhost:3000/api' },
     exclude: ['node_modules/**', 'e2e/**'],
     coverage: {
       provider: 'v8',
